@@ -1,6 +1,11 @@
 import type { Express } from "express";
 import { createServer, type Server } from "node:http";
-import { generateTrainingProgram, generateWorkoutFeedback } from "./services/ai";
+import {
+  generateTrainingProgram,
+  generateWorkoutFeedback,
+  generateExerciseSubstitutions,
+  generateRecoveryAdvice,
+} from "./services/ai";
 
 interface WorkoutRequest {
   muscleGroups: string[];
@@ -245,6 +250,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating workout feedback:", error);
       res.status(500).json({ error: "Failed to generate feedback" });
+    }
+  });
+
+  app.post("/api/ai/substitutions", async (req, res) => {
+    try {
+      const { originalExercise, targetMuscle, equipment, constraints } =
+        req.body;
+
+      if (!originalExercise || !targetMuscle || !equipment) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const substitutions = await generateExerciseSubstitutions({
+        originalExercise,
+        targetMuscle,
+        equipment,
+        constraints,
+      });
+
+      res.json(substitutions);
+    } catch (error) {
+      console.error("Error generating substitutions:", error);
+      res.status(500).json({ error: "Failed to generate substitutions" });
+    }
+  });
+
+  app.post("/api/ai/recovery", async (req, res) => {
+    try {
+      const {
+        streak,
+        minutesTrained,
+        musclesHitLastWeek,
+        plannedMuscleToday,
+        averageSessionDuration,
+      } = req.body;
+
+      if (
+        streak === undefined ||
+        !minutesTrained ||
+        !musclesHitLastWeek ||
+        !plannedMuscleToday
+      ) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const advice = await generateRecoveryAdvice({
+        streak,
+        minutesTrained,
+        musclesHitLastWeek,
+        plannedMuscleToday,
+        averageSessionDuration: averageSessionDuration || 45,
+      });
+
+      res.json(advice);
+    } catch (error) {
+      console.error("Error generating recovery advice:", error);
+      res.status(500).json({ error: "Failed to generate recovery advice" });
     }
   });
 

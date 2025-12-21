@@ -269,7 +269,7 @@ export default function ProfileScreen() {
             style={styles.premiumButton}
           >
             <LinearGradient
-              colors={["#9D4EDD", "#5A189A"]}
+              colors={["#9D4EDD", "#5A189A"] as any}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.premiumGradient}
@@ -278,6 +278,50 @@ export default function ProfileScreen() {
               <View style={{ flex: 1 }}>
                 <ThemedText style={styles.premiumTitle}>AI Workout Feedback</ThemedText>
                 <ThemedText style={styles.premiumSubtitle}>Get personalized coaching insights</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("ExerciseSubstitution");
+            }}
+            style={[styles.premiumButton, { marginTop: Spacing.md }]}
+          >
+            <LinearGradient
+              colors={["#9D4EDD", "#5A189A"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="shuffle" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>Smart Substitutions</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>Find alternative exercises instantly</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("RecoveryAdvisor");
+            }}
+            style={[styles.premiumButton, { marginTop: Spacing.md }]}
+          >
+            <LinearGradient
+              colors={["#9D4EDD", "#5A189A"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="heart" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>Recovery Advisor</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>Should you train today?</ThemedText>
               </View>
               <Feather name="arrow-right" size={20} color="#FFF" />
             </LinearGradient>

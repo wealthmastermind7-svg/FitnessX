@@ -182,3 +182,135 @@ Return ONLY valid JSON (no markdown):
     throw error;
   }
 }
+
+export interface ExerciseSubstitutionInput {
+  originalExercise: string;
+  targetMuscle: string;
+  equipment: string[];
+  constraints?: string[];
+}
+
+interface ExerciseSubstitution {
+  exercises: Array<{
+    name: string;
+    difficulty: string;
+    why: string;
+  }>;
+}
+
+export async function generateExerciseSubstitutions(
+  input: ExerciseSubstitutionInput
+): Promise<ExerciseSubstitution> {
+  const prompt = `You are a strength and conditioning coach helping find exercise alternatives.
+
+Original Exercise: ${input.originalExercise}
+Target Muscle: ${input.targetMuscle}
+Available Equipment: ${input.equipment.join(", ")}
+${input.constraints ? `Constraints: ${input.constraints.join(", ")}` : ""}
+
+Suggest 3 exercise alternatives that:
+1. Target the same muscle group
+2. Have similar difficulty
+3. Can be done with available equipment
+4. Account for any constraints
+
+Return ONLY valid JSON (no markdown):
+{
+  "exercises": [
+    {
+      "name": "exercise name",
+      "difficulty": "easy/moderate/hard",
+      "why": "why this works as a substitute"
+    }
+  ]
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
+      max_tokens: 300,
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error("No content in response");
+    }
+
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+
+    const substitutions = JSON.parse(jsonMatch[0]) as ExerciseSubstitution;
+    return substitutions;
+  } catch (error) {
+    console.error("Error generating exercise substitutions:", error);
+    throw error;
+  }
+}
+
+export interface RecoveryAdvisorInput {
+  streak: number;
+  minutesTrained: number;
+  musclesHitLastWeek: string[];
+  plannedMuscleToday: string;
+  averageSessionDuration: number;
+}
+
+interface RecoveryAdvice {
+  recommendation: string;
+  reasoning: string;
+  alternatives: string[];
+}
+
+export async function generateRecoveryAdvice(
+  input: RecoveryAdvisorInput
+): Promise<RecoveryAdvice> {
+  const prompt = `You are an expert sports physiologist and strength coach advising on recovery and training readiness.
+
+User Training Profile:
+- Current Streak: ${input.streak} workouts
+- Total Minutes Trained This Week: ${input.minutesTrained}
+- Muscles Hit Last Week: ${input.musclesHitLastWeek.join(", ")}
+- Planned Muscle Today: ${input.plannedMuscleToday}
+- Average Session Duration: ${input.averageSessionDuration} minutes
+
+Provide recovery and training advice in JSON format:
+1. Should they train today? (yes/modify/rest)
+2. If modifying, what should they do instead?
+3. Why?
+
+Return ONLY valid JSON (no markdown):
+{
+  "recommendation": "train/modify/rest",
+  "reasoning": "explanation of recommendation based on data",
+  "alternatives": ["alternative 1 if needed", "alternative 2 if needed"]
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.5,
+      max_tokens: 300,
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error("No content in response");
+    }
+
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+
+    const advice = JSON.parse(jsonMatch[0]) as RecoveryAdvice;
+    return advice;
+  } catch (error) {
+    console.error("Error generating recovery advice:", error);
+    throw error;
+  }
+}
