@@ -9,10 +9,13 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { useNavigation } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -80,6 +83,7 @@ function StatCard({ label, value, icon }: { label: string; value: string | numbe
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const [profile, setProfile] = useState<UserProfile>({
     displayName: "Athlete",
     experienceLevel: "Intermediate",
@@ -255,6 +259,32 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Premium Features</ThemedText>
+          
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("WorkoutFeedback");
+            }}
+            style={styles.premiumButton}
+          >
+            <LinearGradient
+              colors={["#9D4EDD", "#5A189A"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="message-square" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>AI Workout Feedback</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>Get personalized coaching insights</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Data</ThemedText>
           
           <View style={styles.settingsCard}>
@@ -392,5 +422,24 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xs,
+  },
+  premiumButton: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  premiumGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.lg,
+  },
+  premiumTitle: {
+    ...Typography.body,
+    color: "#FFF",
+    fontWeight: "600",
+  },
+  premiumSubtitle: {
+    ...Typography.small,
+    color: "rgba(255,255,255,0.7)",
+    marginTop: Spacing.xs,
   },
 });

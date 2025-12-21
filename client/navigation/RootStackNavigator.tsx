@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WorkoutDetailScreen from "@/screens/WorkoutDetailScreen";
 import TrainingProgramScreen from "@/screens/TrainingProgramScreen";
+import WorkoutFeedbackScreen from "@/screens/WorkoutFeedbackScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -28,6 +29,7 @@ export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
   TrainingProgram: { program: any };
+  WorkoutFeedback: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -58,6 +60,14 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="TrainingProgram"
         component={TrainingProgramScreen}
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="WorkoutFeedback"
+        component={WorkoutFeedbackScreen}
         options={{
           presentation: "modal",
           headerShown: false,

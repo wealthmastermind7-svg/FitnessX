@@ -104,3 +104,81 @@ Return ONLY valid JSON in this exact schema (no markdown, no code blocks):
     throw error;
   }
 }
+
+export interface WorkoutFeedbackInput {
+  exercisesCompleted: Array<{
+    name: string;
+    targetSets: number;
+    completedSets: number;
+    reps: string;
+    rpe?: number; // Rate of Perceived Exertion (1-10)
+  }>;
+  totalDuration: number; // in minutes
+  musclesFocused: string[];
+  difficulty: string;
+}
+
+interface WorkoutFeedback {
+  strengths: string[];
+  areas_to_improve: string[];
+  next_session_recommendation: string;
+}
+
+export async function generateWorkoutFeedback(
+  input: WorkoutFeedbackInput
+): Promise<WorkoutFeedback> {
+  const exerciseSummary = input.exercisesCompleted
+    .map(
+      (e) =>
+        `${e.name}: ${e.completedSets}/${e.targetSets} sets x ${e.reps} reps (RPE: ${e.rpe ?? "N/A"})`
+    )
+    .join("\n");
+
+  const prompt = `You are an experienced strength and conditioning coach providing personalized feedback on a completed workout.
+
+Workout Summary:
+- Duration: ${input.totalDuration} minutes
+- Difficulty: ${input.difficulty}
+- Muscles Focused: ${input.musclesFocused.join(", ")}
+- Exercises Completed:
+${exerciseSummary}
+
+Analyze this workout and provide concise coaching feedback in JSON format. Focus on:
+1. What the user did well (be specific)
+2. Where they might be undertraining or overtraining
+3. A specific, actionable recommendation for their next session
+
+Keep feedback to 2-3 points each, brief and actionable. No medical advice.
+
+Return ONLY valid JSON (no markdown):
+{
+  "strengths": ["specific positive 1", "specific positive 2"],
+  "areas_to_improve": ["area 1 with reason", "area 2 with reason"],
+  "next_session_recommendation": "specific actionable advice for next time"
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+      max_tokens: 400,
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error("No content in response");
+    }
+
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error("No JSON found in response");
+    }
+
+    const feedback = JSON.parse(jsonMatch[0]) as WorkoutFeedback;
+    return feedback;
+  } catch (error) {
+    console.error("Error generating workout feedback:", error);
+    throw error;
+  }
+}

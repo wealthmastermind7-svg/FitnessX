@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "node:http";
-import { generateTrainingProgram } from "./services/ai";
+import { generateTrainingProgram, generateWorkoutFeedback } from "./services/ai";
 
 interface WorkoutRequest {
   muscleGroups: string[];
@@ -222,6 +222,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating AI program:", error);
       res.status(500).json({ error: "Failed to generate training program" });
+    }
+  });
+
+  app.post("/api/ai/feedback", async (req, res) => {
+    try {
+      const { exercisesCompleted, totalDuration, musclesFocused, difficulty } =
+        req.body;
+
+      if (!exercisesCompleted || !totalDuration) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const feedback = await generateWorkoutFeedback({
+        exercisesCompleted,
+        totalDuration,
+        musclesFocused: musclesFocused || [],
+        difficulty: difficulty || "Moderate",
+      });
+
+      res.json(feedback);
+    } catch (error) {
+      console.error("Error generating workout feedback:", error);
+      res.status(500).json({ error: "Failed to generate feedback" });
     }
   });
 
