@@ -1,5 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "node:http";
+import { generateTrainingProgram } from "./services/ai";
 
 interface WorkoutRequest {
   muscleGroups: string[];
@@ -191,6 +192,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/workouts", async (req, res) => {
     res.json([]);
+  });
+
+  app.post("/api/ai/program", async (req, res) => {
+    try {
+      const {
+        weeks,
+        experience,
+        equipment,
+        targetMuscles,
+        sessionsPerWeek,
+        sessionLength,
+      } = req.body;
+
+      if (!weeks || !experience || !equipment || !targetMuscles) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const program = await generateTrainingProgram({
+        weeks,
+        experience,
+        equipment,
+        targetMuscles,
+        sessionsPerWeek: sessionsPerWeek || 4,
+        sessionLength: sessionLength || 45,
+      });
+
+      res.json(program);
+    } catch (error) {
+      console.error("Error generating AI program:", error);
+      res.status(500).json({ error: "Failed to generate training program" });
+    }
   });
 
   const httpServer = createServer(app);

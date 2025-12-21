@@ -23,6 +23,7 @@ import KeyboardAwareScrollViewCompat from "@/components/KeyboardAwareScrollViewC
 import { Colors, Spacing, BorderRadius, Typography, Shadows, Gradients } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MUSCLE_GROUPS = [
   "Chest", "Back", "Shoulders", "Biceps", "Triceps",
@@ -93,9 +94,48 @@ export default function GenerateScreen() {
   const [difficulty, setDifficulty] = useState("Intermediate");
   const [description, setDescription] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [sessionLength, setSessionLength] = useState(45);
   
   const buttonScale = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
+
+  const handleGenerateProgram = useCallback(async () => {
+    if (selectedMuscles.length === 0) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      return;
+    }
+
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setIsGenerating(true);
+
+    try {
+      const response = await fetch(`${baseUrl}api/ai/program`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          weeks: 8,
+          experience: difficulty.toLowerCase(),
+          equipment: selectedEquipment.includes("Any") ? ["any"] : selectedEquipment.map(e => e.toLowerCase()),
+          targetMuscles: selectedMuscles,
+          sessionsPerWeek: 4,
+          sessionLength,
+        }),
+      });
+
+      if (response.ok) {
+        const program = await response.json();
+        await AsyncStorage.setItem("lastProgram", JSON.stringify(program));
+        navigation.navigate("TrainingProgram", { program });
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
+    } catch (error) {
+      console.error("Error generating AI program:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+    } finally {
+      setIsGenerating(false);
+    }
+  }, [selectedMuscles, selectedEquipment, difficulty, sessionLength, navigation, baseUrl]);
 
   const muscleImageUrl = selectedMuscles.length > 0
     ? `${baseUrl}api/muscle-image?muscles=${selectedMuscles.join(",").toLowerCase()}&color=255,107,107`
@@ -287,7 +327,7 @@ export default function GenerateScreen() {
           disabled={isGenerating || selectedMuscles.length === 0}
         >
           <LinearGradient
-            colors={selectedMuscles.length > 0 ? Gradients.accent : ["#555", "#444"]}
+            colors={(selectedMuscles.length > 0 ? Gradients.accent : ["#555", "#444"]) as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[
@@ -308,6 +348,31 @@ export default function GenerateScreen() {
           </LinearGradient>
         </Pressable>
       </Animated.View>
+
+      <Pressable
+        onPressIn={handleButtonPressIn}
+        onPressOut={handleButtonPressOut}
+        onPress={handleGenerateProgram}
+        disabled={isGenerating || selectedMuscles.length === 0}
+        style={[
+          styles.premiumButton,
+          {
+            bottom: tabBarHeight + Spacing.xl + Spacing.buttonHeight + Spacing.lg,
+          },
+        ]}
+      >
+        <LinearGradient
+          colors={["#9D4EDD", "#5A189A"] as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.premiumGradient}
+        >
+          <Feather name="star" size={18} color="#FFF" style={{ marginRight: Spacing.sm }} />
+          <ThemedText style={styles.premiumButtonText}>
+            {isGenerating ? "Creating..." : "8-Week Program"}
+          </ThemedText>
+        </LinearGradient>
+      </Pressable>
     </ThemedView>
   );
 }
@@ -436,6 +501,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   floatingButtonText: {
+    ...Typography.body,
+    color: "#FFF",
+    fontWeight: "600",
+  },
+  premiumButton: {
+    position: "absolute",
+    left: Spacing.lg,
+    right: Spacing.lg,
+  },
+  premiumGradient: {
+    height: Spacing.buttonHeight,
+    borderRadius: BorderRadius.md,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+  premiumButtonText: {
     ...Typography.body,
     color: "#FFF",
     fontWeight: "600",
