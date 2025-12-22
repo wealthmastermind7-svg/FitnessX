@@ -1,39 +1,20 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import Constants from "expo-constants";
-
-const extra = Constants.expoConfig?.extra;
 
 /**
- * Gets the base URL for the Express API server
- * 
- * PRODUCTION-SAFE: Works in both Expo Go and TestFlight
- * Priority:
- * 1. Build-time config (TestFlight/Production via app.config.js)
- * 2. Runtime environment variable (Expo Go)
- * 3. Fallback to localhost (development)
- * 
+ * Gets the base URL for the Express API server (e.g., "http://localhost:3000")
  * @returns {string} The API base URL
  */
 export function getApiUrl(): string {
-  let host: string | null = null;
+  let host = process.env.EXPO_PUBLIC_DOMAIN;
 
-  // 1. Try build-time config (works in TestFlight)
-  if (extra?.apiDomain) {
-    host = extra.apiDomain;
-  }
-
-  // 2. Try runtime environment variable (works in Expo Go)
-  if (!host && process.env.EXPO_PUBLIC_DOMAIN) {
-    host = process.env.EXPO_PUBLIC_DOMAIN;
-  }
-
-  // 3. Fallback for local development
+  // Fallback for TestFlight/production builds where env var may not be set
   if (!host) {
+    // In development/Expo Go, this should be set
+    // In production, use a default (will be replaced with your actual domain)
     host = "localhost:5000";
   }
 
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const url = new URL(`${protocol}://${host}`);
+  let url = new URL(`https://${host}`);
 
   return url.href;
 }

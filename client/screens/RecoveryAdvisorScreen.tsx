@@ -16,7 +16,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { apiPost } from "@/lib/api";
+import { getApiUrl } from "@/lib/query-client";
 
 interface RecoveryAdvice {
   recommendation: string;
@@ -38,6 +38,7 @@ const MUSCLE_GROUPS = [
 export default function RecoveryAdvisorScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const baseUrl = getApiUrl();
 
   const [streak, setStreak] = useState(0);
   const [minutesTrained, setMinutesTrained] = useState(0);
@@ -69,16 +70,26 @@ export default function RecoveryAdvisorScreen() {
     setIsLoading(true);
 
     try {
-      const data = await apiPost<RecoveryAdvice>("/api/ai/recovery", {
-        streak,
-        minutesTrained,
-        musclesHitLastWeek:
-          musclesHitLastWeek.length > 0 ? musclesHitLastWeek : ["Chest"],
-        plannedMuscleToday: plannedMuscle,
-        averageSessionDuration: 45,
+      const response = await fetch(`${baseUrl}api/ai/recovery`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          streak,
+          minutesTrained,
+          musclesHitLastWeek:
+            musclesHitLastWeek.length > 0 ? musclesHitLastWeek : ["Chest"],
+          plannedMuscleToday: plannedMuscle,
+          averageSessionDuration: 45,
+        }),
       });
-      setAdvice(data);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      if (response.ok) {
+        const data = await response.json();
+        setAdvice(data);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
     } catch (error) {
       console.error("Error getting recovery advice:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

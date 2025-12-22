@@ -37,11 +37,6 @@ const RAPIDAPI_HOST = "muscle-group-image-generator.p.rapidapi.com";
 const EXERCISEDB_HOST = "exercisedb.p.rapidapi.com";
 const NUTRITION_HOST = "ai-workout-planner-exercise-fitness-nutrition-guide.p.rapidapi.com";
 
-// Log on startup to verify key is loaded
-if (process.env.NODE_ENV === "development") {
-  console.log("[Server] RAPIDAPI_KEY loaded:", RAPIDAPI_KEY ? `${RAPIDAPI_KEY.slice(0, 8)}...` : "NOT FOUND");
-}
-
 interface ExerciseDBExercise {
   id: string;
   name: string;
@@ -391,8 +386,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const searchUrl = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=1`;
           const exerciseResponse = await fetch(searchUrl, {
             headers: {
-              "x-rapidapi-key": RAPIDAPI_KEY || "",
-              "x-rapidapi-host": EXERCISEDB_HOST,
+              "X-RapidAPI-Key": RAPIDAPI_KEY || "",
+              "X-RapidAPI-Host": EXERCISEDB_HOST,
             },
           });
 
@@ -416,8 +411,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ExerciseDB API Endpoints - Exercise Browsing with Animated GIFs
   const exerciseDbHeaders = {
-    "x-rapidapi-key": RAPIDAPI_KEY || "",
-    "x-rapidapi-host": EXERCISEDB_HOST,
+    "X-RapidAPI-Key": RAPIDAPI_KEY || "",
+    "X-RapidAPI-Host": EXERCISEDB_HOST,
   };
 
   // Helper to validate API key before making ExerciseDB requests
@@ -433,35 +428,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const keyCheck = validateRapidApiKey();
       if (!keyCheck.valid) {
-        console.warn("[Exercises] API key missing:", keyCheck.error);
         return res.status(500).json({ error: keyCheck.error });
       }
 
-      console.log("[Exercises] API key present, length:", RAPIDAPI_KEY?.length || 0);
-
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
-      const url = `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`;
 
-      console.log("[Exercises] Fetching from:", url);
-      console.log("[Exercises] Headers:", { "x-rapidapi-host": exerciseDbHeaders["x-rapidapi-host"], "x-rapidapi-key": "***" });
-
-      const response = await fetch(url, { headers: exerciseDbHeaders });
-
-      console.log("[Exercises] Response status:", response.status);
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("[Exercises] ExerciseDB API error:", response.status, errorText);
-        return res.status(response.status).json({ error: `ExerciseDB API error: ${response.status}` });
+        console.error("ExerciseDB API error:", response.status, errorText);
+        throw new Error("ExerciseDB API error");
       }
 
       const data = await response.json();
-      console.log("[Exercises] Success! Returning", Array.isArray(data) ? data.length : "non-array", "items");
       res.json(data);
     } catch (error) {
-      console.error("[Exercises] Catch block error:", error);
-      res.status(500).json({ error: "Failed to fetch exercises", details: String(error) });
+      console.error("Error fetching exercises:", error);
+      res.status(500).json({ error: "Failed to fetch exercises" });
     }
   });
 
@@ -632,36 +620,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search exercises by name
   app.get("/api/exercises/name/:name", async (req, res) => {
     try {
-      const keyCheck = validateRapidApiKey();
-      if (!keyCheck.valid) {
-        console.warn("[Search] API key missing:", keyCheck.error);
-        return res.status(500).json({ error: keyCheck.error });
-      }
-
       const { name } = req.params;
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
-      const url = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`;
 
-      console.log("[Search] Query:", name, "limit:", limit);
-      console.log("[Search] Fetching from:", url);
-
-      const response = await fetch(url, { headers: exerciseDbHeaders });
-
-      console.log("[Search] Response status:", response.status);
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        console.error("[Search] ExerciseDB error:", response.status, errorText);
-        return res.status(response.status).json({ error: `ExerciseDB API error: ${response.status}` });
+        throw new Error("ExerciseDB API error");
       }
 
       const data = await response.json();
-      console.log("[Search] Success! Returning", Array.isArray(data) ? data.length : "non-array", "items");
       res.json(data);
     } catch (error) {
-      console.error("[Search] Error:", error);
-      res.status(500).json({ error: "Failed to search exercises", details: String(error) });
+      console.error("Error searching exercises:", error);
+      res.status(500).json({ error: "Failed to search exercises" });
     }
   });
 

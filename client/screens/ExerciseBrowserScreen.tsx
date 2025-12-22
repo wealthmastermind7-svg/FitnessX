@@ -22,8 +22,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { api, getExerciseImageUrl, ExerciseDBExercise } from "@/lib/api";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
+import { getApiUrl } from "@/lib/query-client";
+import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 
 type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
 
@@ -58,6 +58,7 @@ export default function ExerciseBrowserScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
+  const baseUrl = getApiUrl();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
@@ -65,15 +66,15 @@ export default function ExerciseBrowserScreen() {
   );
   const [refreshing, setRefreshing] = useState(false);
 
-  const queryKey = useMemo(() => {
+  const fetchUrl = useMemo(() => {
     if (searchQuery.trim()) {
-      return ["/api/exercises/name", searchQuery.trim()];
+      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
     }
     if (selectedBodyPart !== "all") {
-      return ["/api/exercises/bodyPart", selectedBodyPart];
+      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
     }
-    return ["/api/exercises"];
-  }, [searchQuery, selectedBodyPart]);
+    return `${baseUrl}api/exercises?limit=100`;
+  }, [baseUrl, searchQuery, selectedBodyPart]);
 
   const {
     data: exercises,
@@ -81,17 +82,8 @@ export default function ExerciseBrowserScreen() {
     refetch,
     error,
   } = useQuery<ExerciseDBExercise[]>({
-    queryKey,
-    queryFn: async () => {
-      if (searchQuery.trim()) {
-        return api.exercises.search(searchQuery.trim());
-      } else if (selectedBodyPart !== "all") {
-        return api.exercises.getByBodyPart(selectedBodyPart);
-      }
-      return api.exercises.list();
-    },
+    queryKey: [fetchUrl],
     staleTime: 5 * 60 * 1000,
-    retry: 2,
   });
 
   const onRefresh = useCallback(async () => {
@@ -116,33 +108,25 @@ export default function ExerciseBrowserScreen() {
     setSearchQuery("");
   };
 
-  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => {
-    const imageUrl = getExerciseImageUrl(item.id, 180);
-    console.log(`[ExerciseBrowserScreen] Loading image for ${item.id}: ${imageUrl}`);
-    return (
-      <Pressable
-        onPress={() => handleExercisePress(item, index)}
-        style={({ pressed }) => [
-          styles.exerciseCard,
-          pressed && styles.exerciseCardPressed,
-        ]}
-      >
+  const getExerciseImageUrl = (exerciseId: string, resolution: string = "360") => {
+    return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
+  };
+
+  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => (
+    <Pressable
+      onPress={() => handleExercisePress(item, index)}
+      style={({ pressed }) => [
+        styles.exerciseCard,
+        pressed && styles.exerciseCardPressed,
+      ]}
+    >
       <View style={styles.exerciseImageContainer}>
         <Image
-          source={{ uri: imageUrl }}
+          source={{ uri: getExerciseImageUrl(item.id, "180") }}
           style={styles.exerciseImage}
           contentFit="cover"
           transition={200}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
-          onError={(error) => {
-            console.error(`[ExerciseBrowserScreen] Image load FAILED for ${item.id}:`, imageUrl, error);
-          }}
-          onLoadStart={() => {
-            console.log(`[ExerciseBrowserScreen] Image loading START: ${item.id}`);
-          }}
-          onLoad={() => {
-            console.log(`[ExerciseBrowserScreen] Image loaded SUCCESS: ${item.id}`);
-          }}
         />
         <View style={styles.exerciseOverlay}>
           <View style={styles.targetBadge}>
@@ -167,8 +151,7 @@ export default function ExerciseBrowserScreen() {
       </View>
       <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
     </Pressable>
-    );
-  };
+  );
 
   const ListHeader = () => (
     <View>
@@ -248,42 +231,32 @@ export default function ExerciseBrowserScreen() {
     </View>
   );
 
-  const ListEmpty = () => {
-    const errorMessage = error ? String(error).toLowerCase() : "";
-    const isApiKeyError = errorMessage.includes("api key") || errorMessage.includes("rapidapi");
-    
-    return (
-      <View style={styles.emptyContainer}>
-        {isLoading ? (
-          <>
-            <ActivityIndicator size="large" color={Colors.dark.accent} />
-            <ThemedText style={styles.emptySubtitle}>Loading exercises...</ThemedText>
-          </>
-        ) : error ? (
-          <>
-            <Feather name="alert-circle" size={48} color={Colors.dark.textSecondary} />
-            <ThemedText style={styles.emptyTitle}>Unable to load exercises</ThemedText>
-            <ThemedText style={styles.emptySubtitle}>
-              {isApiKeyError 
-                ? "Exercise database is temporarily unavailable. Check your API configuration."
-                : "Check your connection and try again"}
-            </ThemedText>
-            <Pressable onPress={onRefresh} style={styles.retryButton}>
-              <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-            </Pressable>
-          </>
-        ) : (
-          <>
-            <Feather name="search" size={48} color={Colors.dark.textSecondary} />
-            <ThemedText style={styles.emptyTitle}>No exercises found</ThemedText>
-            <ThemedText style={styles.emptySubtitle}>
-              Try a different search term or filter
-            </ThemedText>
-          </>
-        )}
-      </View>
-    );
-  };
+  const ListEmpty = () => (
+    <View style={styles.emptyContainer}>
+      {isLoading ? (
+        <ActivityIndicator size="large" color={Colors.dark.accent} />
+      ) : error ? (
+        <>
+          <Feather name="alert-circle" size={48} color={Colors.dark.textSecondary} />
+          <ThemedText style={styles.emptyTitle}>Unable to load exercises</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>
+            Check your connection and try again
+          </ThemedText>
+          <Pressable onPress={onRefresh} style={styles.retryButton}>
+            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+          </Pressable>
+        </>
+      ) : (
+        <>
+          <Feather name="search" size={48} color={Colors.dark.textSecondary} />
+          <ThemedText style={styles.emptyTitle}>No exercises found</ThemedText>
+          <ThemedText style={styles.emptySubtitle}>
+            Try a different search term or filter
+          </ThemedText>
+        </>
+      )}
+    </View>
+  );
 
   return (
     <ThemedView style={styles.container}>

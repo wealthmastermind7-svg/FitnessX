@@ -5,13 +5,12 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { useNavigation, useRoute, RouteProp, NavigationProp } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@tanstack/react-query";
 
@@ -19,10 +18,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { api, ExerciseDBExercise, getExerciseImageUrl } from "@/lib/api";
-import { apiRequest } from "@/lib/query-client";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
-import { getFormRuleForExercise } from "@/lib/pose-analysis";
+import { getApiUrl, apiRequest } from "@/lib/query-client";
+import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
 
@@ -30,7 +27,6 @@ interface AIAlternative {
   name: string;
   difficulty: string;
   why: string;
-  id?: string;
 }
 
 interface AISubstitutionsResponse {
@@ -39,18 +35,17 @@ interface AISubstitutionsResponse {
 
 export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const navigation = useNavigation();
   const route = useRoute<RouteParams>();
   const initialExercise = route.params?.exercise as ExerciseDBExercise;
   const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
   const initialIndex = route.params?.exerciseIndex ?? 0;
+  const baseUrl = getApiUrl();
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showAIInsights, setShowAIInsights] = useState(false);
-  const [loadingAltExercise, setLoadingAltExercise] = useState<string | null>(null);
 
   const exercise = exercises[currentIndex];
-  const formRule = getFormRuleForExercise(exercise.name);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -63,27 +58,6 @@ export default function ExerciseDetailScreen() {
     if (currentIndex < exercises.length - 1) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setCurrentIndex(currentIndex + 1);
-    }
-  };
-
-  const handleAlternativePress = async (altName: string) => {
-    try {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      setLoadingAltExercise(altName);
-      
-      const exerciseList = await api.exercises.search(altName);
-      
-      if (exerciseList && exerciseList.length > 0) {
-        navigation.navigate("ExerciseDetail", {
-          exercise: exerciseList[0],
-          exercises: exerciseList,
-          exerciseIndex: 0,
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching alternative exercise:", error);
-    } finally {
-      setLoadingAltExercise(null);
     }
   };
 
@@ -177,24 +151,12 @@ export default function ExerciseDetailScreen() {
               </LinearGradient>
             </View>
           ) : (
-            <>
-              <Image
-                source={{ uri: getExerciseImageUrl(exercise.id, 720) }}
-                style={styles.gifImage}
-                contentFit="contain"
-                transition={300}
-                onError={(error) => {
-                  console.error(`[ExerciseDetail] GIF LOAD FAILED for ${exercise.id}:`, error);
-                }}
-                onLoadStart={() => {
-                  console.log(`[ExerciseDetail] GIF loading START: ${exercise.id}`);
-                }}
-                onLoad={() => {
-                  console.log(`[ExerciseDetail] GIF loaded SUCCESS: ${exercise.id}`);
-                }}
-                placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
-              />
-            </>
+            <Image
+              source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
+              style={styles.gifImage}
+              contentFit="contain"
+              transition={300}
+            />
           )}
           <View style={styles.gifOverlay}>
             <View style={styles.muscleHighlight}>
@@ -283,34 +245,6 @@ export default function ExerciseDetailScreen() {
           </LinearGradient>
         </Pressable>
 
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-            navigation.navigate("FormCoach", { exerciseName: exercise.name });
-          }}
-          style={styles.formCoachButton}
-        >
-          <LinearGradient
-            colors={["#10B981", "#059669"] as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.aiButtonGradient}
-          >
-            <Feather name="video" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
-            <View style={{ flex: 1 }}>
-              <ThemedText style={styles.aiButtonTitle}>
-                Form Coach
-              </ThemedText>
-              <ThemedText style={styles.aiButtonSubtitle}>
-                {Platform.OS === "web" 
-                  ? "Real-time AI form tracking with camera" 
-                  : "Exercise form tips and guidance"}
-              </ThemedText>
-            </View>
-            <Feather name="arrow-right" size={20} color="#FFF" />
-          </LinearGradient>
-        </Pressable>
-
         {showAIInsights && (
           <Card style={styles.aiInsightsCard}>
             <View style={styles.cardHeader}>
@@ -330,35 +264,19 @@ export default function ExerciseDetailScreen() {
             ) : aiInsightsMutation.data?.exercises ? (
               aiInsightsMutation.data.exercises.map(
                 (alt: { name: string; difficulty: string; why: string }, idx: number) => (
-                  <Pressable
-                    key={idx}
-                    onPress={() => handleAlternativePress(alt.name)}
-                    disabled={loadingAltExercise === alt.name}
-                    style={styles.alternativeItemPressable}
-                  >
-                    <View style={styles.alternativeItem}>
-                      <View style={styles.alternativeHeader}>
-                        <View style={{ flex: 1 }}>
-                          <ThemedText style={styles.alternativeName}>
-                            {alt.name}
-                          </ThemedText>
-                        </View>
-                        {loadingAltExercise === alt.name ? (
-                          <ActivityIndicator size="small" color="#9D4EDD" />
-                        ) : (
-                          <>
-                            <View style={styles.difficultyBadge}>
-                              <ThemedText style={styles.difficultyText}>
-                                {alt.difficulty}
-                              </ThemedText>
-                            </View>
-                            <Feather name="arrow-right" size={16} color="#9D4EDD" style={{ marginLeft: Spacing.md }} />
-                          </>
-                        )}
+                  <View key={idx} style={styles.alternativeItem}>
+                    <View style={styles.alternativeHeader}>
+                      <ThemedText style={styles.alternativeName}>
+                        {alt.name}
+                      </ThemedText>
+                      <View style={styles.difficultyBadge}>
+                        <ThemedText style={styles.difficultyText}>
+                          {alt.difficulty}
+                        </ThemedText>
                       </View>
-                      <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
                     </View>
-                  </Pressable>
+                    <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
+                  </View>
                 )
               )
             ) : aiInsightsMutation.isError ? (
@@ -608,11 +526,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
   },
-  formCoachButton: {
-    marginBottom: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-  },
   aiButtonGradient: {
     flexDirection: "row",
     alignItems: "center",
@@ -633,9 +546,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     borderWidth: 1,
     borderColor: "#9D4EDD40",
-  },
-  alternativeItemPressable: {
-    marginBottom: Spacing.sm,
   },
   loadingContainer: {
     flexDirection: "row",

@@ -21,7 +21,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getMuscleImageUrl } from "@/lib/api";
+import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
 import { Image as ExpoImage } from "expo-image";
 
@@ -107,8 +107,9 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [imageLoaded, setImageLoaded] = React.useState(false);
+  const baseUrl = getApiUrl();
   const apiMuscleName = getMuscleApiName(muscle);
-  const imageUrl = getMuscleImageUrl(apiMuscleName);
+  const imageUrl = `${baseUrl}api/muscle-image?muscles=${apiMuscleName}&color=255,107,107`;
   const useStaticImage = muscle === "Calves";
   const calfImageUri = require("../assets/calf-muscles.png");
 

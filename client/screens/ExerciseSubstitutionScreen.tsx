@@ -16,7 +16,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { apiPost } from "@/lib/api";
+import { getApiUrl } from "@/lib/query-client";
 
 interface Substitution {
   name: string;
@@ -31,6 +31,7 @@ interface Result {
 export default function ExerciseSubstitutionScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const baseUrl = getApiUrl();
 
   const [originalExercise, setOriginalExercise] = useState("");
   const [targetMuscle, setTargetMuscle] = useState("");
@@ -48,17 +49,27 @@ export default function ExerciseSubstitutionScreen() {
     setIsLoading(true);
 
     try {
-      const data = await apiPost<Result>("/api/ai/substitutions", {
-        originalExercise: originalExercise.trim(),
-        targetMuscle: targetMuscle.trim(),
-        equipment: ["dumbbell", "barbell", "resistance band", "bodyweight"],
-        constraints: constraints
-          .split(",")
-          .map((c) => c.trim())
-          .filter((c) => c),
+      const response = await fetch(`${baseUrl}api/ai/substitutions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          originalExercise: originalExercise.trim(),
+          targetMuscle: targetMuscle.trim(),
+          equipment: ["dumbbell", "barbell", "resistance band", "bodyweight"],
+          constraints: constraints
+            .split(",")
+            .map((c) => c.trim())
+            .filter((c) => c),
+        }),
       });
-      setResult(data);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+
+      if (response.ok) {
+        const data = await response.json();
+        setResult(data);
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      }
     } catch (error) {
       console.error("Error getting substitutions:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

@@ -18,7 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
-import { api, getExerciseImageUrl, ExerciseDBExercise, getDualMuscleImageUrl, getBaseMuscleImageUrl } from "@/lib/api";
+import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Exercise } from "@/navigation/RootStackNavigator";
 
 interface ExerciseDBData {
@@ -50,6 +50,7 @@ function ExerciseCard({
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
+  const baseUrl = getApiUrl();
 
   useEffect(() => {
     Animated.parallel([
@@ -67,7 +68,7 @@ function ExerciseCard({
     ]).start();
   }, [index]);
 
-  const gifUrl = getExerciseImageUrl(exerciseData.id);
+  const gifUrl = `${baseUrl}api/exercises/image/${exerciseData.id}`;
 
   return (
     <Pressable onPress={onPress}>
@@ -175,6 +176,7 @@ export default function WorkoutDetailScreen() {
   const route = useRoute<WorkoutDetailRouteProp>();
   const { workout } = route.params;
   const scrollY = useRef(new Animated.Value(0)).current;
+  const baseUrl = getApiUrl();
   
   const [exerciseDataMap, setExerciseDataMap] = useState<Record<string, ExerciseDBData>>(() => 
     buildInitialFallbacks(workout.exercises)
@@ -232,26 +234,29 @@ export default function WorkoutDetailScreen() {
           
           for (const variant of nameVariants) {
             if (foundExercise) break;
-            try {
-              const exercises = await api.exercises.search(variant) as ExerciseDBData[];
+            const searchName = encodeURIComponent(variant);
+            const response = await fetch(`${baseUrl}api/exercises/name/${searchName}`);
+            if (response.ok) {
+              const exercises: ExerciseDBData[] = await response.json();
               if (exercises.length > 0) {
                 foundExercise = exercises[0];
               }
-            } catch {
-              // Continue to next variant
             }
           }
           
           if (!foundExercise && exercise.muscleGroup) {
             const bodyPart = muscleToBodyPart[exercise.muscleGroup.toLowerCase()] || "chest";
             try {
-              const bodyPartExercises = await api.exercises.getByBodyPart(bodyPart) as ExerciseDBData[];
-              if (bodyPartExercises.length > 0) {
-                const randomIndex = Math.floor(Math.random() * Math.min(bodyPartExercises.length, 10));
-                foundExercise = {
-                  ...bodyPartExercises[randomIndex],
-                  name: exercise.name,
-                };
+              const bodyPartResponse = await fetch(`${baseUrl}api/exercises/bodyPart/${encodeURIComponent(bodyPart)}`);
+              if (bodyPartResponse.ok) {
+                const bodyPartExercises: ExerciseDBData[] = await bodyPartResponse.json();
+                if (bodyPartExercises.length > 0) {
+                  const randomIndex = Math.floor(Math.random() * Math.min(bodyPartExercises.length, 10));
+                  foundExercise = {
+                    ...bodyPartExercises[randomIndex],
+                    name: exercise.name,
+                  };
+                }
               }
             } catch {
               // Body part fetch failed, keep initial fallback
@@ -270,12 +275,14 @@ export default function WorkoutDetailScreen() {
             instructions: [`Perform ${exercise.sets} sets of ${exercise.reps} reps`],
           };
           setExerciseDataMap(prev => ({ ...prev, [exercise.name]: fallbackData }));
+        } finally {
+          // Network request complete - exerciseDataMap already has fallback or upgraded data
         }
       }
     };
 
     fetchExerciseData();
-  }, [workout.exercises]);
+  }, [workout.exercises, baseUrl]);
 
   const handleExercisePress = useCallback((exerciseData: ExerciseDBData) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -283,8 +290,8 @@ export default function WorkoutDetailScreen() {
   }, [navigation]);
 
   const muscleImageUrl = workout.muscleGroups.length > 0
-    ? getDualMuscleImageUrl(workout.muscleGroups[0].toLowerCase(), workout.muscleGroups.slice(1).join(",").toLowerCase())
-    : getBaseMuscleImageUrl();
+    ? `${baseUrl}api/dual-muscle-image?primary=${workout.muscleGroups[0].toLowerCase()}&secondary=${workout.muscleGroups.slice(1).join(",").toLowerCase()}`
+    : `${baseUrl}api/muscle-image?base=true`;
 
   const handleClose = useCallback(() => {
     navigation.goBack();
