@@ -389,8 +389,13 @@ function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; 
   // Camera is active
   if (showCamera) {
     return (
-      <View style={styles.cameraContainer}>
-        <CameraView style={styles.camera} facing="front" />
+      <View style={styles.nativeCameraContainer}>
+        <CameraView 
+          style={styles.camera} 
+          facing="front"
+          animateShutter={false}
+          autofocus="on"
+        />
         <View style={styles.cameraOverlay}>
           <Pressable
             onPress={() => {
@@ -733,14 +738,15 @@ const styles = StyleSheet.create({
     ...Typography.small,
     fontWeight: "600",
   },
-  cameraContainer: {
+  nativeCameraContainer: {
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,
     justifyContent: "center",
     alignItems: "center",
   },
   camera: {
-    ...StyleSheet.absoluteFillObject,
+    width: "100%",
+    height: "100%",
   },
   cameraOverlay: {
     position: "absolute",
