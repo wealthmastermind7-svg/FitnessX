@@ -107,10 +107,11 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           { transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <Image
+        <ExpoImage
           source={{ uri: imageUrl }}
           style={styles.muscleImage}
-          resizeMode="contain"
+          contentFit="contain"
+          onError={() => console.log(`Failed to load image for ${muscle}`)}
         />
         <LinearGradient
           colors={["transparent", "rgba(10,14,26,0.95)"]}
