@@ -428,28 +428,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const keyCheck = validateRapidApiKey();
       if (!keyCheck.valid) {
+        console.warn("[Exercises] API key missing:", keyCheck.error);
         return res.status(500).json({ error: keyCheck.error });
       }
 
+      console.log("[Exercises] API key present, length:", RAPIDAPI_KEY?.length || 0);
+
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
+      const url = `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      console.log("[Exercises] Fetching from:", url);
+      console.log("[Exercises] Headers:", { "X-RapidAPI-Host": exerciseDbHeaders["X-RapidAPI-Host"], "X-RapidAPI-Key": "***" });
+
+      const response = await fetch(url, { headers: exerciseDbHeaders });
+
+      console.log("[Exercises] Response status:", response.status);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("ExerciseDB API error:", response.status, errorText);
-        throw new Error("ExerciseDB API error");
+        console.error("[Exercises] ExerciseDB API error:", response.status, errorText);
+        return res.status(response.status).json({ error: `ExerciseDB API error: ${response.status}` });
       }
 
       const data = await response.json();
+      console.log("[Exercises] Success! Returning", Array.isArray(data) ? data.length : "non-array", "items");
       res.json(data);
     } catch (error) {
-      console.error("Error fetching exercises:", error);
-      res.status(500).json({ error: "Failed to fetch exercises" });
+      console.error("[Exercises] Catch block error:", error);
+      res.status(500).json({ error: "Failed to fetch exercises", details: String(error) });
     }
   });
 
