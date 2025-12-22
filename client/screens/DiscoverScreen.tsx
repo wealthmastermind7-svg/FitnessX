@@ -338,7 +338,7 @@ export default function DiscoverScreen() {
                   AI Coach
                 </ThemedText>
                 <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
-                  Get personalized fitness advice powered by GPT-4
+                  Get personalized fitness advice
                 </ThemedText>
               </View>
               <View style={styles.exerciseLibraryPreview}>
