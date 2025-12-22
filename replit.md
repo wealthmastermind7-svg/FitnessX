@@ -10,7 +10,13 @@ Architecture: Local-first with AsyncStorage for user preferences and saved worko
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (Session Dec 22, 2025)
+## Recent Changes (Session Dec 22, 2025 - Late Updates)
+
+### Production Fixes for TestFlight Deployment
+- **Fixed app startup crash in TestFlight**: Added fallback for `EXPO_PUBLIC_DOMAIN` environment variable in `client/lib/query-client.ts`. TestFlight builds don't have access to dynamic env vars that Expo Go provides. Now gracefully falls back to `localhost:5000` when env var is missing.
+- **Enhanced error logging**: Updated `ErrorFallback.tsx` to always log critical errors and stack traces to console, enabling debugging of production issues in TestFlight logs.
+- **API key management**: Added `RAPIDAPI_KEY` as a Replit secret for secure handling of ExerciseDB API authentication.
+- **Backend exercise proxy**: All exercise data (1,300+ exercises) is now fetched through Express backend proxy (`/api/exercises/*` endpoints) for better reliability and HTTPS compliance in production.
 
 ### Major Feature Expansion - Competitor Parity Plus AI Advantage
 Added 6 new major features to match and exceed competitor functionality:
