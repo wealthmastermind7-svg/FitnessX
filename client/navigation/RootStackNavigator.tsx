@@ -6,6 +6,8 @@ import TrainingProgramScreen from "@/screens/TrainingProgramScreen";
 import WorkoutFeedbackScreen from "@/screens/WorkoutFeedbackScreen";
 import ExerciseSubstitutionScreen from "@/screens/ExerciseSubstitutionScreen";
 import RecoveryAdvisorScreen from "@/screens/RecoveryAdvisorScreen";
+import ExerciseDetailScreen from "@/screens/ExerciseDetailScreen";
+import ExerciseBrowserScreen from "@/screens/ExerciseBrowserScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -27,6 +29,17 @@ export type Exercise = {
   muscleGroup: string;
 };
 
+export type ExerciseDBExercise = {
+  id: string;
+  name: string;
+  bodyPart: string;
+  target: string;
+  secondaryMuscles: string[];
+  equipment: string;
+  gifUrl: string;
+  instructions: string[];
+};
+
 export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
@@ -34,6 +47,8 @@ export type RootStackParamList = {
   WorkoutFeedback: undefined;
   ExerciseSubstitution: undefined;
   RecoveryAdvisor: undefined;
+  ExerciseBrowser: undefined;
+  ExerciseDetail: { exercise: ExerciseDBExercise };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -90,6 +105,22 @@ export default function RootStackNavigator() {
         component={RecoveryAdvisorScreen}
         options={{
           presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ExerciseBrowser"
+        component={ExerciseBrowserScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="ExerciseDetail"
+        component={ExerciseDetailScreen}
+        options={{
+          presentation: "card",
           headerShown: false,
         }}
       />

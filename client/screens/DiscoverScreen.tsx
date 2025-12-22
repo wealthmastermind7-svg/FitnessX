@@ -23,6 +23,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
+import { Image as ExpoImage } from "expo-image";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -254,6 +255,54 @@ export default function DiscoverScreen() {
           </ScrollView>
         </View>
 
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate("ExerciseBrowser");
+          }}
+          style={({ pressed }) => [
+            styles.exerciseLibraryCard,
+            pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+          ]}
+        >
+          <LinearGradient
+            colors={["#1A1F2E", "#252B3D"] as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.exerciseLibraryGradient}
+          >
+            <View style={styles.exerciseLibraryContent}>
+              <View style={styles.exerciseLibraryText}>
+                <View style={styles.exerciseLibraryBadge}>
+                  <Feather name="play-circle" size={14} color={Colors.dark.accent} />
+                  <ThemedText style={styles.exerciseLibraryBadgeText}>
+                    Animated Demos
+                  </ThemedText>
+                </View>
+                <ThemedText style={styles.exerciseLibraryTitle}>
+                  Exercise Library
+                </ThemedText>
+                <ThemedText style={styles.exerciseLibrarySubtitle}>
+                  Browse 1,300+ exercises with animated GIF demonstrations
+                </ThemedText>
+              </View>
+              <View style={styles.exerciseLibraryPreview}>
+                <View style={styles.previewStack}>
+                  <View style={[styles.previewCard, styles.previewCard1]}>
+                    <Feather name="activity" size={24} color={Colors.dark.accent} />
+                  </View>
+                  <View style={[styles.previewCard, styles.previewCard2]}>
+                    <Feather name="zap" size={20} color="#9D4EDD" />
+                  </View>
+                </View>
+              </View>
+            </View>
+            <View style={styles.exerciseLibraryArrow}>
+              <Feather name="arrow-right" size={20} color={Colors.dark.accent} />
+            </View>
+          </LinearGradient>
+        </Pressable>
+
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
@@ -388,5 +437,87 @@ const styles = StyleSheet.create({
   muscleName: {
     ...Typography.h3,
     color: Colors.dark.text,
+  },
+  exerciseLibraryCard: {
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  exerciseLibraryGradient: {
+    padding: Spacing.lg,
+  },
+  exerciseLibraryContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  exerciseLibraryText: {
+    flex: 1,
+    marginRight: Spacing.md,
+  },
+  exerciseLibraryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: Colors.dark.accent + "20",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    alignSelf: "flex-start",
+    marginBottom: Spacing.sm,
+  },
+  exerciseLibraryBadgeText: {
+    ...Typography.small,
+    color: Colors.dark.accent,
+    fontWeight: "600",
+  },
+  exerciseLibraryTitle: {
+    ...Typography.h2,
+    color: Colors.dark.text,
+    marginBottom: Spacing.xs,
+  },
+  exerciseLibrarySubtitle: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+  },
+  exerciseLibraryPreview: {
+    width: 80,
+    height: 80,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  previewStack: {
+    width: 60,
+    height: 60,
+    position: "relative",
+  },
+  previewCard: {
+    position: "absolute",
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  previewCard1: {
+    top: 0,
+    left: 0,
+    zIndex: 2,
+  },
+  previewCard2: {
+    bottom: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: "#9D4EDD20",
+  },
+  exerciseLibraryArrow: {
+    position: "absolute",
+    right: Spacing.lg,
+    bottom: Spacing.lg,
   },
 });

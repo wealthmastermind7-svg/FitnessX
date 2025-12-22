@@ -33,6 +33,18 @@ interface Workout {
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
 const RAPIDAPI_HOST = "muscle-group-image-generator.p.rapidapi.com";
+const EXERCISEDB_HOST = "exercisedb.p.rapidapi.com";
+
+interface ExerciseDBExercise {
+  id: string;
+  name: string;
+  bodyPart: string;
+  target: string;
+  secondaryMuscles: string[];
+  equipment: string;
+  gifUrl: string;
+  instructions: string[];
+}
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/generate-workout", async (req, res) => {
@@ -307,6 +319,238 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating recovery advice:", error);
       res.status(500).json({ error: "Failed to generate recovery advice" });
+    }
+  });
+
+  // ExerciseDB API Endpoints - Exercise Browsing with Animated GIFs
+  const exerciseDbHeaders = {
+    "X-RapidAPI-Key": RAPIDAPI_KEY || "",
+    "X-RapidAPI-Host": EXERCISEDB_HOST,
+  };
+
+  // Helper to validate API key before making ExerciseDB requests
+  const validateRapidApiKey = () => {
+    if (!RAPIDAPI_KEY) {
+      return { valid: false, error: "ExerciseDB API key not configured" };
+    }
+    return { valid: true, error: null };
+  };
+
+  // Get all exercises with pagination
+  app.get("/api/exercises", async (req, res) => {
+    try {
+      const keyCheck = validateRapidApiKey();
+      if (!keyCheck.valid) {
+        return res.status(500).json({ error: keyCheck.error });
+      }
+
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("ExerciseDB API error:", response.status, errorText);
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching exercises:", error);
+      res.status(500).json({ error: "Failed to fetch exercises" });
+    }
+  });
+
+  // Get body part list
+  app.get("/api/exercises/bodyPartList", async (req, res) => {
+    try {
+      const keyCheck = validateRapidApiKey();
+      if (!keyCheck.valid) {
+        return res.status(500).json({ error: keyCheck.error });
+      }
+
+      const response = await fetch(
+        "https://exercisedb.p.rapidapi.com/exercises/bodyPartList",
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching body parts:", error);
+      res.status(500).json({ error: "Failed to fetch body parts" });
+    }
+  });
+
+  // Get target muscle list
+  app.get("/api/exercises/targetList", async (req, res) => {
+    try {
+      const response = await fetch(
+        "https://exercisedb.p.rapidapi.com/exercises/targetList",
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching targets:", error);
+      res.status(500).json({ error: "Failed to fetch target muscles" });
+    }
+  });
+
+  // Get equipment list
+  app.get("/api/exercises/equipmentList", async (req, res) => {
+    try {
+      const response = await fetch(
+        "https://exercisedb.p.rapidapi.com/exercises/equipmentList",
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching equipment:", error);
+      res.status(500).json({ error: "Failed to fetch equipment list" });
+    }
+  });
+
+  // Get exercises by body part
+  app.get("/api/exercises/bodyPart/:bodyPart", async (req, res) => {
+    try {
+      const keyCheck = validateRapidApiKey();
+      if (!keyCheck.valid) {
+        return res.status(500).json({ error: keyCheck.error });
+      }
+
+      const { bodyPart } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${encodeURIComponent(bodyPart)}?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching exercises by body part:", error);
+      res.status(500).json({ error: "Failed to fetch exercises" });
+    }
+  });
+
+  // Get exercises by target muscle
+  app.get("/api/exercises/target/:target", async (req, res) => {
+    try {
+      const { target } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/target/${encodeURIComponent(target)}?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching exercises by target:", error);
+      res.status(500).json({ error: "Failed to fetch exercises" });
+    }
+  });
+
+  // Get exercises by equipment
+  app.get("/api/exercises/equipment/:equipment", async (req, res) => {
+    try {
+      const { equipment } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/equipment/${encodeURIComponent(equipment)}?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching exercises by equipment:", error);
+      res.status(500).json({ error: "Failed to fetch exercises" });
+    }
+  });
+
+  // Get single exercise by ID
+  app.get("/api/exercises/exercise/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/exercise/${encodeURIComponent(id)}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching exercise:", error);
+      res.status(500).json({ error: "Failed to fetch exercise" });
+    }
+  });
+
+  // Search exercises by name
+  app.get("/api/exercises/name/:name", async (req, res) => {
+    try {
+      const { name } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      const offset = parseInt(req.query.offset as string) || 0;
+
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`,
+        { headers: exerciseDbHeaders }
+      );
+
+      if (!response.ok) {
+        throw new Error("ExerciseDB API error");
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error searching exercises:", error);
+      res.status(500).json({ error: "Failed to search exercises" });
     }
   });
 
