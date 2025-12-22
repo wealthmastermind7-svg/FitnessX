@@ -84,7 +84,7 @@ Return ONLY valid JSON in this exact schema (no markdown, no code blocks):
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.4,
-      max_tokens: 2000,
+      max_tokens: 4000,
     });
 
     const content = response.choices[0].message.content;
@@ -92,12 +92,23 @@ Return ONLY valid JSON in this exact schema (no markdown, no code blocks):
       throw new Error("No content in response");
     }
 
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
+    // Try to extract JSON by finding the first { and matching closing }
+    const startIdx = content.indexOf("{");
+    if (startIdx === -1) {
       throw new Error("No JSON found in response");
     }
 
-    const program = JSON.parse(jsonMatch[0]) as TrainingProgram;
+    let jsonStr = "";
+    let braceCount = 0;
+    for (let i = startIdx; i < content.length; i++) {
+      const char = content[i];
+      if (char === "{") braceCount++;
+      if (char === "}") braceCount--;
+      jsonStr += char;
+      if (braceCount === 0 && i > startIdx) break;
+    }
+
+    const program = JSON.parse(jsonStr) as TrainingProgram;
     return program;
   } catch (error) {
     console.error("Error generating training program:", error);
