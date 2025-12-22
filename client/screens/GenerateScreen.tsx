@@ -99,44 +99,6 @@ export default function GenerateScreen() {
   const buttonScale = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
 
-  const handleGenerateProgram = useCallback(async () => {
-    if (selectedMuscles.length === 0) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-      return;
-    }
-
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setIsGenerating(true);
-
-    try {
-      const response = await fetch(`${baseUrl}api/ai/program`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          weeks: 8,
-          experience: difficulty.toLowerCase(),
-          equipment: selectedEquipment.includes("Any") ? ["any"] : selectedEquipment.map(e => e.toLowerCase()),
-          targetMuscles: selectedMuscles,
-          sessionsPerWeek: 4,
-          sessionLength,
-        }),
-      });
-
-      if (response.ok) {
-        const program = await response.json();
-        await AsyncStorage.setItem("lastProgram", JSON.stringify(program));
-        navigation.navigate("TrainingProgram", { program });
-      } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
-    } catch (error) {
-      console.error("Error generating AI program:", error);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-    } finally {
-      setIsGenerating(false);
-    }
-  }, [selectedMuscles, selectedEquipment, difficulty, sessionLength, navigation, baseUrl]);
-
   const muscleImageUrl = selectedMuscles.length > 0
     ? `${baseUrl}api/muscle-image?muscles=${selectedMuscles.join(",").toLowerCase()}&color=255,107,107`
     : `${baseUrl}api/muscle-image?base=true`;
@@ -376,31 +338,6 @@ export default function GenerateScreen() {
           </LinearGradient>
         </Pressable>
       </Animated.View>
-
-      <Pressable
-        onPressIn={handleButtonPressIn}
-        onPressOut={handleButtonPressOut}
-        onPress={handleGenerateProgram}
-        disabled={isGenerating || selectedMuscles.length === 0}
-        style={[
-          styles.premiumButton,
-          {
-            bottom: tabBarHeight + Spacing.xl + Spacing.buttonHeight + Spacing.lg,
-          },
-        ]}
-      >
-        <LinearGradient
-          colors={["#9D4EDD", "#5A189A"] as any}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.premiumGradient}
-        >
-          <Feather name="star" size={18} color="#FFF" style={{ marginRight: Spacing.sm }} />
-          <ThemedText style={styles.premiumButtonText}>
-            {isGenerating ? "Creating..." : "8-Week Program"}
-          </ThemedText>
-        </LinearGradient>
-      </Pressable>
     </ThemedView>
   );
 }
@@ -529,24 +466,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   floatingButtonText: {
-    ...Typography.body,
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  premiumButton: {
-    position: "absolute",
-    left: Spacing.lg,
-    right: Spacing.lg,
-  },
-  premiumGradient: {
-    height: Spacing.buttonHeight,
-    borderRadius: BorderRadius.md,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-  },
-  premiumButtonText: {
     ...Typography.body,
     color: "#FFF",
     fontWeight: "600",
