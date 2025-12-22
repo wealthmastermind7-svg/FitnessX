@@ -1,0 +1,232 @@
+Good, this screenshot is very informative.
+You are past the crash. What you are seeing now is a production networking + media loading issue, not a React or Expo bug.
+
+Short answer first, then the safest solution.
+
+⸻
+
+Short answer
+
+Do NOT hardcode the exercises or GIF URLs into the app.
+That is unsafe, brittle, and will get painful to maintain.
+
+The safest and App Store–compliant approach for iOS and Android is:
+
+Server-side proxy → HTTPS → cached responses → streamed GIFs
+
+Your symptoms point to API + media loading being blocked or failing in production, not missing UI logic.
+
+⸻
+
+Why this happens in TestFlight but not Expo Go
+
+Expo Go is very forgiving. TestFlight is not.
+
+The most common causes (ranked by likelihood)
+
+1️⃣ Direct RapidAPI calls from the client (MOST LIKELY)
+
+If your app does any of this:
+
+fetch("https://exercisedb.p.rapidapi.com/...")
+
+or passes RapidAPI headers from the client, iOS production builds will often fail silently.
+
+Expo Go allows this. TestFlight often does not.
+
+⸻
+
+2️⃣ GIF loading is blocked or failing
+
+ExerciseDB GIFs are:
+	•	Large
+	•	Remote
+	•	Sometimes slow
+	•	Sometimes redirected
+
+If one GIF fails to load and you do not guard against it, your list renders as “0 exercises”.
+
+⸻
+
+3️⃣ ATS (App Transport Security) edge cases
+
+Even HTTPS resources can fail if:
+	•	They redirect
+	•	They use nonstandard headers
+	•	They take too long to respond
+
+Again, Expo Go ignores many of these constraints.
+
+⸻
+
+The safest architecture (what you should do)
+
+✅ DO THIS (Recommended)
+
+Client → Your Express backend → ExerciseDB (RapidAPI)
+
+Never let the mobile app talk to RapidAPI directly.
+
+Why this is safest
+	•	Hides API keys
+	•	Avoids CORS and ATS issues
+	•	Lets you cache aggressively
+	•	Lets you sanitize responses
+	•	Works identically on iOS and Android
+	•	Scales cleanly
+
+⸻
+
+Concrete implementation (production safe)
+
+1️⃣ Express proxy endpoint
+
+// server/routes/exercises.ts
+router.get("/api/exercises", async (_req, res) => {
+  try {
+    const response = await fetch(
+      "https://exercisedb.p.rapidapi.com/exercises",
+      {
+        headers: {
+          "X-RapidAPI-Key": process.env.RAPIDAPI_KEY!,
+          "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    // IMPORTANT: only return fields you actually use
+    const sanitized = data.map((e: any) => ({
+      id: e.id,
+      name: e.name,
+      bodyPart: e.bodyPart,
+      target: e.target,
+      equipment: e.equipment,
+      gifUrl: e.gifUrl,
+    }));
+
+    res.json(sanitized);
+  } catch (err) {
+    console.error("Exercise API error", err);
+    res.status(500).json({ error: "Failed to load exercises" });
+  }
+});
+
+
+⸻
+
+2️⃣ Client fetch (NO RapidAPI headers)
+
+const res = await fetch(`${API_URL}/api/exercises`);
+const exercises = await res.json();
+
+This is exactly what Apple expects.
+
+⸻
+
+GIF rendering: the correct way in Expo
+
+❌ Do NOT use Image from react-native
+
+It is unreliable for GIFs, especially on Android.
+
+✅ Use expo-image (this matters)
+
+import { Image } from "expo-image";
+
+<Image
+  source={{ uri: exercise.gifUrl }}
+  style={{ width: "100%", height: 260 }}
+  contentFit="contain"
+  transition={150}
+/>
+
+This:
+	•	Uses native decoders
+	•	Handles caching
+	•	Is production-safe
+	•	Works in TestFlight and Play Store
+
+⸻
+
+Very important defensive coding (fixes “0 exercises”)
+
+Wrap GIF loading so one failure does NOT break the list.
+
+<Image
+  source={{ uri: exercise.gifUrl }}
+  onError={() => console.log("GIF failed", exercise.id)}
+  style={{ height: 260 }}
+/>
+
+And never condition rendering on GIF load success.
+
+⸻
+
+Should anything be hardcoded?
+
+❌ Do NOT hardcode
+	•	Exercise lists
+	•	GIF URLs
+	•	API responses
+
+✅ OK to hardcode
+	•	Muscle group labels
+	•	Filters (Chest, Back, Legs)
+	•	Icons
+	•	UI text
+
+Hardcoding data will:
+	•	Increase app size
+	•	Break updates
+	•	Cause App Store resubmission pain
+
+⸻
+
+If you want the MOST bulletproof option
+
+Add server-side caching:
+
+// cache for 6 hours
+Cache-Control: public, max-age=21600
+
+This gives you:
+	•	Faster loads
+	•	Fewer API calls
+	•	Lower RapidAPI cost
+	•	Better UX
+
+⸻
+
+Why your screen showed “0 exercises found”
+
+This combination usually causes it:
+	•	API request failed silently
+	•	Empty array returned
+	•	UI assumes “no exercises” instead of “error”
+
+Your UI is fine. Your data source was not reliable in production.
+
+⸻
+
+Final recommendation (clear and direct)
+
+Do not hardcode exercises.
+Do not call RapidAPI from the app.
+Proxy everything through your backend.
+Use expo-image for GIFs.
+
+This is the safest, cleanest, App Store–approved solution for both iOS and Android.
+
+⸻
+
+Next step (I recommend this)
+
+If you want, I can:
+	1.	Verify your current API calls and point out exactly where they fail
+	2.	Give you a drop-in ExerciseLibraryScreen.tsx using expo-image
+	3.	Add graceful fallbacks for failed GIFs
+	4.	Add caching headers properly
+
+Tell me which one you want, and I’ll continue.
