@@ -360,48 +360,6 @@ export default function DiscoverScreen() {
               style={styles.featureCard}
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("WorkoutDiary");
-              }}
-            >
-              <View style={[styles.featureIcon, { backgroundColor: Colors.dark.accent + "20" }]}>
-                <Feather name="edit-3" size={24} color={Colors.dark.accent} />
-              </View>
-              <ThemedText style={styles.featureTitle}>Workout Diary</ThemedText>
-              <ThemedText style={styles.featureSubtitle}>Log your sessions</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.featureCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("Progress");
-              }}
-            >
-              <View style={[styles.featureIcon, { backgroundColor: "#4ECDC420" }]}>
-                <Feather name="trending-up" size={24} color="#4ECDC4" />
-              </View>
-              <ThemedText style={styles.featureTitle}>Progress</ThemedText>
-              <ThemedText style={styles.featureSubtitle}>Track your gains</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.featureCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("Nutrition");
-              }}
-            >
-              <View style={[styles.featureIcon, { backgroundColor: "#FFB34720" }]}>
-                <Feather name="coffee" size={24} color="#FFB347" />
-              </View>
-              <ThemedText style={styles.featureTitle}>Nutrition</ThemedText>
-              <ThemedText style={styles.featureSubtitle}>Plan your meals</ThemedText>
-            </Pressable>
-
-            <Pressable
-              style={styles.featureCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
                 navigation.navigate("ExerciseBrowser");
               }}
             >
