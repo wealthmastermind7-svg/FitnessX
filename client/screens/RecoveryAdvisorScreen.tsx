@@ -126,7 +126,7 @@ export default function RecoveryAdvisorScreen() {
           ]}
           showsVerticalScrollIndicator={false}
         >
-          <Card
+          <View
             style={[
               styles.recommendationCard,
               {
@@ -159,7 +159,7 @@ export default function RecoveryAdvisorScreen() {
                 {advice.recommendation.toUpperCase()}
               </ThemedText>
             </View>
-          </Card>
+          </View>
 
           <Card style={styles.reasoningCard}>
             <ThemedText style={styles.reasoningTitle}>Why?</ThemedText>

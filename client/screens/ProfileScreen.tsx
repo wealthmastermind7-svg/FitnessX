@@ -141,7 +141,7 @@ export default function ProfileScreen() {
           { text: "Cancel", style: "cancel" },
           {
             text: "Save",
-            onPress: (name) => {
+            onPress: (name?: string) => {
               if (name && name.trim()) {
                 saveProfile({ ...profile, displayName: name.trim() });
               }
