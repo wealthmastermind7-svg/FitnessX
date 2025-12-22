@@ -242,6 +242,27 @@ export default function ExerciseBrowserScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.goBack();
+          }}
+          style={styles.headerButton}
+        >
+          <Feather name="x" size={24} color={Colors.dark.text} />
+        </Pressable>
+        <ThemedText style={styles.headerTitle}>Exercise Library</ThemedText>
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.navigate("Main");
+          }}
+          style={styles.headerButton}
+        >
+          <Feather name="home" size={24} color={Colors.dark.text} />
+        </Pressable>
+      </View>
       <FlatList
         data={exercises || []}
         renderItem={renderExerciseCard}
@@ -250,7 +271,7 @@ export default function ExerciseBrowserScreen() {
         ListEmptyComponent={ListEmpty}
         contentContainerStyle={[
           styles.listContent,
-          { paddingTop: insets.top + Spacing.md, paddingBottom: insets.bottom + Spacing.xl },
+          { paddingBottom: insets.bottom + Spacing.xl },
         ]}
         showsVerticalScrollIndicator={false}
         refreshControl={
@@ -258,7 +279,7 @@ export default function ExerciseBrowserScreen() {
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor={Colors.dark.accent}
-            progressViewOffset={insets.top}
+            progressViewOffset={0}
           />
         }
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -272,8 +293,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
+  headerButton: {
+    padding: Spacing.sm,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
+    ...Typography.h3,
+    color: Colors.dark.text,
+    flex: 1,
+    textAlign: "center",
+  },
   listContent: {
     paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.md,
   },
   searchContainer: {
     flexDirection: "row",
