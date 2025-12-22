@@ -121,6 +121,33 @@ export function getExerciseImageUrl(exerciseId: string, resolution: number = 180
 }
 
 /**
+ * Build muscle image URL for visualization
+ */
+export function getMuscleImageUrl(muscles: string, color: string = "255,107,107"): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}/api/muscle-image?muscles=${encodeURIComponent(muscles)}&color=${color}`;
+}
+
+/**
+ * Build dual muscle image URL for workout detail
+ */
+export function getDualMuscleImageUrl(primary: string, secondary: string = ""): string {
+  const baseUrl = getBaseUrl();
+  if (secondary) {
+    return `${baseUrl}/api/dual-muscle-image?primary=${encodeURIComponent(primary)}&secondary=${encodeURIComponent(secondary)}`;
+  }
+  return `${baseUrl}/api/muscle-image?muscles=${encodeURIComponent(primary)}&color=255,107,107`;
+}
+
+/**
+ * Build base muscle image URL (placeholder)
+ */
+export function getBaseMuscleImageUrl(): string {
+  const baseUrl = getBaseUrl();
+  return `${baseUrl}/api/muscle-image?base=true`;
+}
+
+/**
  * Build full-size GIF URL for exercise detail
  */
 export function getExerciseGifUrl(exerciseId: string): string {

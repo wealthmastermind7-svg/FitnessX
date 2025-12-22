@@ -21,7 +21,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import KeyboardAwareScrollViewCompat from "@/components/KeyboardAwareScrollViewCompat";
 import { Colors, Spacing, BorderRadius, Typography, Shadows, Gradients } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { api, getMuscleImageUrl, getBaseMuscleImageUrl } from "@/lib/api";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -97,11 +97,10 @@ export default function GenerateScreen() {
   const [sessionLength, setSessionLength] = useState(45);
   
   const buttonScale = useRef(new Animated.Value(1)).current;
-  const baseUrl = getApiUrl();
 
   const muscleImageUrl = selectedMuscles.length > 0
-    ? `${baseUrl}api/muscle-image?muscles=${selectedMuscles.join(",").toLowerCase()}&color=255,107,107`
-    : `${baseUrl}api/muscle-image?base=true`;
+    ? getMuscleImageUrl(selectedMuscles.join(",").toLowerCase())
+    : getBaseMuscleImageUrl();
 
   const toggleMuscle = useCallback((muscle: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -136,26 +135,18 @@ export default function GenerateScreen() {
     setIsGenerating(true);
 
     try {
-      const response = await fetch(`${baseUrl}api/generate-workout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          muscleGroups: selectedMuscles,
-          equipment: selectedEquipment.includes("Any") ? ["any"] : selectedEquipment.map(e => e.toLowerCase()),
-          description: description || `A ${difficulty.toLowerCase()} workout targeting ${selectedMuscles.join(", ")}`,
-        }),
+      const workout = await api.workouts.generate({
+        muscleGroups: selectedMuscles,
+        equipment: selectedEquipment.includes("Any") ? ["any"] : selectedEquipment.map(e => e.toLowerCase()),
+        description: description || `A ${difficulty.toLowerCase()} workout targeting ${selectedMuscles.join(", ")}`,
       });
-
-      if (response.ok) {
-        const workout = await response.json();
-        navigation.navigate("WorkoutDetail", { workout });
-      }
+      navigation.navigate("WorkoutDetail", { workout });
     } catch (error) {
       console.error("Error generating workout:", error);
     } finally {
       setIsGenerating(false);
     }
-  }, [selectedMuscles, selectedEquipment, difficulty, description, navigation, baseUrl]);
+  }, [selectedMuscles, selectedEquipment, difficulty, description, navigation]);
 
   const handleButtonPressIn = () => {
     Animated.spring(buttonScale, {

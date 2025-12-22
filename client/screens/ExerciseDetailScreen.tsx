@@ -19,8 +19,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getApiUrl, apiRequest } from "@/lib/query-client";
-import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import { api, ExerciseDBExercise, getExerciseImageUrl } from "@/lib/api";
+import { apiRequest } from "@/lib/query-client";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { getFormRuleForExercise } from "@/lib/pose-analysis";
 
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
@@ -43,7 +44,6 @@ export default function ExerciseDetailScreen() {
   const initialExercise = route.params?.exercise as ExerciseDBExercise;
   const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
   const initialIndex = route.params?.exerciseIndex ?? 0;
-  const baseUrl = getApiUrl();
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showAIInsights, setShowAIInsights] = useState(false);
@@ -71,13 +71,9 @@ export default function ExerciseDetailScreen() {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       setLoadingAltExercise(altName);
       
-      // Search for the alternative exercise by name
-      const url = new URL(`api/exercises/name/${encodeURIComponent(altName)}`, baseUrl);
-      const response = await fetch(url.toString());
-      const exerciseList = await response.json() as ExerciseDBExercise[];
+      const exerciseList = await api.exercises.search(altName);
       
       if (exerciseList && exerciseList.length > 0) {
-        // Navigate to the alternative exercise with its full details
         navigation.navigate("ExerciseDetail", {
           exercise: exerciseList[0],
           exercises: exerciseList,
@@ -183,13 +179,12 @@ export default function ExerciseDetailScreen() {
           ) : (
             <>
               <Image
-                source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
+                source={{ uri: getExerciseImageUrl(exercise.id, 720) }}
                 style={styles.gifImage}
                 contentFit="contain"
                 transition={300}
                 onError={(error) => {
-                  const gifUrl = `${baseUrl}api/exercises/image/${exercise.id}?resolution=720`;
-                  console.error(`[ExerciseDetail] GIF LOAD FAILED for ${exercise.id}:`, gifUrl, error);
+                  console.error(`[ExerciseDetail] GIF LOAD FAILED for ${exercise.id}:`, error);
                 }}
                 onLoadStart={() => {
                   console.log(`[ExerciseDetail] GIF loading START: ${exercise.id}`);

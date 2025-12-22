@@ -17,7 +17,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { apiRequest, getApiUrl } from "@/lib/query-client";
+import { api } from "@/lib/api";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -73,21 +73,26 @@ export default function NutritionScreen({ navigation }: any) {
   const [selectedDay, setSelectedDay] = useState(new Date());
   const [mealSuggestions, setMealSuggestions] = useState<NutritionData[]>([]);
 
-  // Fetch meal suggestions from RapidAPI nutrition endpoint
   const { data: suggestions = [] } = useQuery({
     queryKey: ["/api/nutrition/suggestions"],
     queryFn: async () => {
       try {
-        const baseUrl = getApiUrl();
-        const url = new URL("/api/nutrition/suggestions", baseUrl);
-        const res = await fetch(url.toString());
-        return res.json() as Promise<NutritionData[]>;
+        const data = await api.nutrition.suggestions();
+        return data.map(item => ({
+          name: item.name,
+          quantity: 100,
+          unit: "g",
+          calories: item.calories,
+          protein: item.protein,
+          carbs: item.carbs,
+          fats: item.fats,
+        })) as NutritionData[];
       } catch (error) {
         console.error("Failed to fetch suggestions:", error);
         return [];
       }
     },
-    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+    staleTime: 1000 * 60 * 60,
   });
 
   useEffect(() => {
@@ -149,22 +154,10 @@ export default function NutritionScreen({ navigation }: any) {
     }
   };
 
-  // Mutation to analyze meal nutrition via RapidAPI
   const analyzeMealMutation = useMutation({
     mutationFn: async (meal: Partial<Meal>) => {
       if (!meal.name || !meal.calories) throw new Error("Missing meal data");
-      const baseUrl = getApiUrl();
-      const url = new URL("/api/nutrition/analyze", baseUrl);
-      const res = await fetch(url.toString(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mealName: meal.name,
-          quantity: 100,
-          unit: "g",
-        }),
-      });
-      return res.json();
+      return api.nutrition.analyze(meal.name);
     },
     onSuccess: (data, meal) => {
       const newMealFull: Meal = {

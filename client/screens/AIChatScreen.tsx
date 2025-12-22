@@ -19,7 +19,7 @@ import { Image as ExpoImage } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getApiUrl, apiRequest } from "@/lib/query-client";
+import { api, getExerciseImageUrl, ExerciseDBExercise as APIExercise } from "@/lib/api";
 
 interface Exercise {
   id: string;
@@ -90,24 +90,13 @@ export default function AIChatScreen({ navigation }: any) {
     }, 100);
 
     try {
-      const baseUrl = getApiUrl();
-      const response = await fetch(`${baseUrl}api/ai/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          message: text.trim(),
-          history: messages.slice(-6).map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to get response");
-      }
-
-      const data = await response.json();
+      const data = await api.ai.chat(
+        text.trim(),
+        messages.slice(-6).map((m) => ({
+          role: m.role,
+          content: m.content,
+        }))
+      ) as { response: string; exercises?: Exercise[] };
 
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -248,7 +237,7 @@ export default function AIChatScreen({ navigation }: any) {
                         }}
                       >
                         <ExpoImage
-                          source={{ uri: `${getApiUrl()}api/exercises/image/${exercise.id}` }}
+                          source={{ uri: getExerciseImageUrl(exercise.id) }}
                           style={styles.exerciseGif}
                           contentFit="cover"
                         />

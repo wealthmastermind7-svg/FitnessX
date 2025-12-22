@@ -17,7 +17,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import KeyboardAwareScrollViewCompat from "@/components/KeyboardAwareScrollViewCompat";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { apiPost } from "@/lib/api";
 
 interface Exercise {
   name: string;
@@ -36,7 +36,6 @@ interface Feedback {
 export default function WorkoutFeedbackScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
-  const baseUrl = getApiUrl();
 
   const [exercises, setExercises] = useState<Exercise[]>([
     { name: "", targetSets: 3, completedSets: 3, reps: "8-10", rpe: 8 },
@@ -80,27 +79,17 @@ export default function WorkoutFeedbackScreen() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${baseUrl}api/ai/feedback`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          exercisesCompleted: exercises.filter((e) => e.name.trim()),
-          totalDuration: parseInt(totalDuration) || 45,
-          musclesFocused: musclesFocused
-            .split(",")
-            .map((m) => m.trim())
-            .filter((m) => m),
-          difficulty,
-        }),
+      const data = await apiPost<Feedback>("/api/ai/feedback", {
+        exercisesCompleted: exercises.filter((e) => e.name.trim()),
+        totalDuration: parseInt(totalDuration) || 45,
+        musclesFocused: musclesFocused
+          .split(",")
+          .map((m) => m.trim())
+          .filter((m) => m),
+        difficulty,
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setFeedback(data);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      } else {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      }
+      setFeedback(data);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error) {
       console.error("Error getting feedback:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);

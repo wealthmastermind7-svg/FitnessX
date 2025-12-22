@@ -22,8 +22,8 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
-import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import { api, getExerciseImageUrl, ExerciseDBExercise } from "@/lib/api";
+import { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
 
@@ -58,7 +58,6 @@ export default function ExerciseBrowserScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
-  const baseUrl = getApiUrl();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
@@ -84,20 +83,12 @@ export default function ExerciseBrowserScreen() {
   } = useQuery<ExerciseDBExercise[]>({
     queryKey,
     queryFn: async () => {
-      let url: string;
       if (searchQuery.trim()) {
-        url = `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
+        return api.exercises.search(searchQuery.trim());
       } else if (selectedBodyPart !== "all") {
-        url = `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
-      } else {
-        url = `${baseUrl}api/exercises?limit=100`;
+        return api.exercises.getByBodyPart(selectedBodyPart);
       }
-      
-      const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) {
-        throw new Error(`Failed to fetch exercises: ${res.status}`);
-      }
-      return res.json();
+      return api.exercises.list();
     },
     staleTime: 5 * 60 * 1000,
     retry: 2,
@@ -125,12 +116,8 @@ export default function ExerciseBrowserScreen() {
     setSearchQuery("");
   };
 
-  const getExerciseImageUrl = (exerciseId: string, resolution: string = "360") => {
-    return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
-  };
-
   const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => {
-    const imageUrl = getExerciseImageUrl(item.id, "180");
+    const imageUrl = getExerciseImageUrl(item.id, 180);
     console.log(`[ExerciseBrowserScreen] Loading image for ${item.id}: ${imageUrl}`);
     return (
       <Pressable
