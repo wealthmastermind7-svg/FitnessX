@@ -112,23 +112,32 @@ export default function ExerciseBrowserScreen() {
     return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
   };
 
-  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => (
-    <Pressable
-      onPress={() => handleExercisePress(item, index)}
-      style={({ pressed }) => [
-        styles.exerciseCard,
-        pressed && styles.exerciseCardPressed,
-      ]}
-    >
+  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => {
+    const imageUrl = getExerciseImageUrl(item.id, "180");
+    console.log(`[ExerciseBrowserScreen] Loading image for ${item.id}: ${imageUrl}`);
+    return (
+      <Pressable
+        onPress={() => handleExercisePress(item, index)}
+        style={({ pressed }) => [
+          styles.exerciseCard,
+          pressed && styles.exerciseCardPressed,
+        ]}
+      >
       <View style={styles.exerciseImageContainer}>
         <Image
-          source={{ uri: getExerciseImageUrl(item.id, "180") }}
+          source={{ uri: imageUrl }}
           style={styles.exerciseImage}
           contentFit="cover"
           transition={200}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
           onError={(error) => {
-            console.log("Image load error for exercise:", item.id, error);
+            console.error(`[ExerciseBrowserScreen] Image load FAILED for ${item.id}:`, imageUrl, error);
+          }}
+          onLoadStart={() => {
+            console.log(`[ExerciseBrowserScreen] Image loading START: ${item.id}`);
+          }}
+          onLoad={() => {
+            console.log(`[ExerciseBrowserScreen] Image loaded SUCCESS: ${item.id}`);
           }}
         />
         <View style={styles.exerciseOverlay}>
@@ -154,7 +163,8 @@ export default function ExerciseBrowserScreen() {
       </View>
       <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
     </Pressable>
-  );
+    );
+  };
 
   const ListHeader = () => (
     <View>

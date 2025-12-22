@@ -181,16 +181,25 @@ export default function ExerciseDetailScreen() {
               </LinearGradient>
             </View>
           ) : (
-            <Image
-              source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
-              style={styles.gifImage}
-              contentFit="contain"
-              transition={300}
-              onError={(error) => {
-                console.log("GIF load error for exercise:", exercise.id, error);
-              }}
-              placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
-            />
+            <>
+              <Image
+                source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
+                style={styles.gifImage}
+                contentFit="contain"
+                transition={300}
+                onError={(error) => {
+                  const gifUrl = `${baseUrl}api/exercises/image/${exercise.id}?resolution=720`;
+                  console.error(`[ExerciseDetail] GIF LOAD FAILED for ${exercise.id}:`, gifUrl, error);
+                }}
+                onLoadStart={() => {
+                  console.log(`[ExerciseDetail] GIF loading START: ${exercise.id}`);
+                }}
+                onLoad={() => {
+                  console.log(`[ExerciseDetail] GIF loaded SUCCESS: ${exercise.id}`);
+                }}
+                placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+              />
+            </>
           )}
           <View style={styles.gifOverlay}>
             <View style={styles.muscleHighlight}>
