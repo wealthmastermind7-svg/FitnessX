@@ -59,6 +59,14 @@ const POPULAR_WORKOUTS = [
     muscleGroups: ["Chest", "Shoulders", "Triceps"],
     equipment: ["any"],
     difficulty: "Intermediate",
+    exercises: [
+      { name: "Bench Press", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Chest" },
+      { name: "Incline Dumbbell Press", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Chest" },
+      { name: "Overhead Press", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Shoulders" },
+      { name: "Lateral Raises", sets: 3, reps: "12-15", restSeconds: 45, muscleGroup: "Shoulders" },
+      { name: "Tricep Pushdowns", sets: 3, reps: "12-15", restSeconds: 60, muscleGroup: "Triceps" },
+      { name: "Skull Crushers", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Triceps" },
+    ],
   },
   {
     id: "2",
@@ -67,6 +75,14 @@ const POPULAR_WORKOUTS = [
     muscleGroups: ["Back", "Biceps"],
     equipment: ["any"],
     difficulty: "Intermediate",
+    exercises: [
+      { name: "Barbell Rows", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Back" },
+      { name: "Lat Pulldown", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Back" },
+      { name: "Seated Cable Row", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Back" },
+      { name: "Face Pulls", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Back" },
+      { name: "Barbell Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Biceps" },
+      { name: "Hammer Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Biceps" },
+    ],
   },
   {
     id: "3",
@@ -75,6 +91,14 @@ const POPULAR_WORKOUTS = [
     muscleGroups: ["Quads", "Hamstrings", "Glutes", "Calves"],
     equipment: ["any"],
     difficulty: "Advanced",
+    exercises: [
+      { name: "Squats", sets: 4, reps: "8-10", restSeconds: 120, muscleGroup: "Quads" },
+      { name: "Leg Press", sets: 3, reps: "10-12", restSeconds: 90, muscleGroup: "Quads" },
+      { name: "Romanian Deadlifts", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Hamstrings" },
+      { name: "Leg Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Hamstrings" },
+      { name: "Hip Thrusts", sets: 4, reps: "10-12", restSeconds: 90, muscleGroup: "Glutes" },
+      { name: "Standing Calf Raises", sets: 4, reps: "15-20", restSeconds: 45, muscleGroup: "Calves" },
+    ],
   },
 ];
 
@@ -216,28 +240,20 @@ export default function DiscoverScreen() {
     queryKey: ["/api/workouts"],
   });
 
-  const handleWorkoutPress = useCallback(async (workoutTemplate: typeof POPULAR_WORKOUTS[0]) => {
+  const handleWorkoutPress = useCallback((workoutTemplate: typeof POPULAR_WORKOUTS[0]) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     
-    try {
-      const baseUrl = getApiUrl();
-      const response = await fetch(`${baseUrl}api/generate-workout`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          muscleGroups: workoutTemplate.muscleGroups,
-          equipment: workoutTemplate.equipment,
-          description: workoutTemplate.description,
-        }),
-      });
-      
-      if (response.ok) {
-        const workout = await response.json();
-        navigation.navigate("WorkoutDetail", { workout });
-      }
-    } catch (error) {
-      console.error("Error generating workout:", error);
-    }
+    const workout = {
+      id: workoutTemplate.id,
+      name: workoutTemplate.name,
+      description: workoutTemplate.description,
+      muscleGroups: workoutTemplate.muscleGroups,
+      equipment: workoutTemplate.equipment,
+      exercises: workoutTemplate.exercises,
+      difficulty: workoutTemplate.difficulty,
+    };
+    
+    navigation.navigate("WorkoutDetail", { workout });
   }, [navigation]);
 
   const parallaxTransform = scrollY.interpolate({
