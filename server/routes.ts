@@ -145,6 +145,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
         const buffer = await response.arrayBuffer();
         res.set("Content-Type", "image/png");
+        res.set("Cache-Control", "public, max-age=86400");
         res.send(Buffer.from(buffer));
         return;
       }
@@ -172,6 +173,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const buffer = await response.arrayBuffer();
       res.set("Content-Type", "image/png");
+      res.set("Cache-Control", "public, max-age=86400");
       res.send(Buffer.from(buffer));
     } catch (error) {
       console.error("Error fetching muscle image:", error);
@@ -204,6 +206,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const buffer = await response.arrayBuffer();
       res.set("Content-Type", "image/png");
+      res.set("Cache-Control", "public, max-age=86400");
       res.send(Buffer.from(buffer));
     } catch (error) {
       console.error("Error fetching dual muscle image:", error);
