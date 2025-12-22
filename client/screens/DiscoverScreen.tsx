@@ -398,47 +398,6 @@ export default function DiscoverScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Community & Coaches</ThemedText>
-          </View>
-          <View style={styles.socialRow}>
-            <Pressable
-              style={styles.socialCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("Community");
-              }}
-            >
-              <LinearGradient
-                colors={["#1A1F2E", "#252B3D"] as any}
-                style={styles.socialCardGradient}
-              >
-                <Feather name="users" size={28} color={Colors.dark.accent} />
-                <ThemedText style={styles.socialCardTitle}>Community</ThemedText>
-                <ThemedText style={styles.socialCardSubtitle}>Connect with athletes</ThemedText>
-              </LinearGradient>
-            </Pressable>
-
-            <Pressable
-              style={styles.socialCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("Coaches");
-              }}
-            >
-              <LinearGradient
-                colors={["#1A1F2E", "#252B3D"] as any}
-                style={styles.socialCardGradient}
-              >
-                <Feather name="award" size={28} color="#FFB347" />
-                <ThemedText style={styles.socialCardTitle}>Coaches</ThemedText>
-                <ThemedText style={styles.socialCardSubtitle}>Hire a pro trainer</ThemedText>
-              </LinearGradient>
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
           </View>
           <View style={styles.muscleGrid}>
