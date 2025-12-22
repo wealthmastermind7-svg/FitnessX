@@ -40,7 +40,7 @@ Added 6 new major features to match and exceed competitor functionality:
 - `client/screens/NutritionScreen.tsx` - Meal planning with macro calculations
 - `client/screens/CommunityScreen.tsx` - Social feed with posts, likes, comments
 - `client/screens/CoachesScreen.tsx` - Coach marketplace with profiles and hiring
-- `client/screens/AIChatScreen.tsx` - AI-powered conversational fitness coach
+- `client/screens/AIChatScreen.tsx` - AI-powered conversational fitness coach with exercise GIF integration
 - `client/screens/ExerciseBrowserScreen.tsx` - Browse and search 1,300+ exercises with filters
 - `client/screens/ExerciseDetailScreen.tsx` - Full exercise details with animated demos and AI alternatives
 
