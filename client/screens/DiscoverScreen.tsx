@@ -46,6 +46,7 @@ const getMuscleApiName = (displayName: string): string => {
     "Legs": "quadriceps",
     "Core": "abs",
     "Cardio": "chest",
+    "Calves": "soleus",
   };
   return muscleMap[displayName] || displayName.toLowerCase();
 };
