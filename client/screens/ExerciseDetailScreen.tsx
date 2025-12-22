@@ -14,6 +14,7 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@tanstack/react-query";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useQuery } from "@tanstack/react-query";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -46,11 +47,34 @@ export default function ExerciseDetailScreen() {
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showAIInsights, setShowAIInsights] = useState(false);
+  const [loadingExerciseName, setLoadingExerciseName] = useState<string | null>(null);
 
   const exercise = exercises[currentIndex];
 
-  const handleAlternativePress = useCallback((alternativeName: string) => {
+  const handleAlternativePress = useCallback(async (alternativeName: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setLoadingExerciseName(alternativeName);
+    
+    try {
+      const response = await fetch(
+        `${baseUrl}api/exercises/name/${encodeURIComponent(alternativeName)}`
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        const realExercise = Array.isArray(data) ? data[0] : data;
+        
+        if (realExercise) {
+          navigation.push("ExerciseDetail", { exercise: realExercise });
+          setLoadingExerciseName(null);
+          return;
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch exercise:", alternativeName, error);
+    }
+    
+    // Fallback if API fails
     const fallbackExercise: ExerciseDBExercise = {
       id: `alternative-${alternativeName}`,
       name: alternativeName,
@@ -61,7 +85,8 @@ export default function ExerciseDetailScreen() {
       instructions: [`Perform this exercise with proper form`],
     };
     navigation.push("ExerciseDetail", { exercise: fallbackExercise });
-  }, [exercise, navigation]);
+    setLoadingExerciseName(null);
+  }, [exercise, navigation, baseUrl]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -282,17 +307,27 @@ export default function ExerciseDetailScreen() {
                 (alt: { name: string; difficulty: string; why: string }, idx: number) => (
                   <Pressable 
                     key={idx} 
-                    style={styles.alternativeItem}
+                    style={[
+                      styles.alternativeItem,
+                      loadingExerciseName === alt.name && styles.alternativeItemLoading
+                    ]}
                     onPress={() => handleAlternativePress(alt.name)}
+                    disabled={loadingExerciseName !== null}
                   >
                     <View style={styles.alternativeHeader}>
                       <ThemedText style={styles.alternativeName}>
                         {alt.name}
                       </ThemedText>
-                      <View style={styles.difficultyBadge}>
-                        <ThemedText style={styles.difficultyText}>
-                          {alt.difficulty}
-                        </ThemedText>
+                      <View style={styles.alternativeActions}>
+                        {loadingExerciseName === alt.name ? (
+                          <ActivityIndicator size="small" color="#9D4EDD" />
+                        ) : (
+                          <View style={styles.difficultyBadge}>
+                            <ThemedText style={styles.difficultyText}>
+                              {alt.difficulty}
+                            </ThemedText>
+                          </View>
+                        )}
                       </View>
                     </View>
                     <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
@@ -583,6 +618,13 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.dark.border,
     paddingHorizontal: Spacing.sm,
     marginHorizontal: -Spacing.sm,
+  },
+  alternativeItemLoading: {
+    opacity: 0.6,
+  },
+  alternativeActions: {
+    flexDirection: "row",
+    alignItems: "center",
   },
   alternativeHeader: {
     flexDirection: "row",
