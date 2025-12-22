@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   StyleSheet,
@@ -13,6 +13,7 @@ import { Image } from "expo-image";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@tanstack/react-query";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -22,6 +23,7 @@ import { getApiUrl, apiRequest } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 interface AIAlternative {
   name: string;
@@ -35,7 +37,7 @@ interface AISubstitutionsResponse {
 
 export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteParams>();
   const initialExercise = route.params?.exercise as ExerciseDBExercise;
   const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
@@ -46,6 +48,20 @@ export default function ExerciseDetailScreen() {
   const [showAIInsights, setShowAIInsights] = useState(false);
 
   const exercise = exercises[currentIndex];
+
+  const handleAlternativePress = useCallback((alternativeName: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const fallbackExercise: ExerciseDBExercise = {
+      id: `alternative-${alternativeName}`,
+      name: alternativeName,
+      target: exercise.target,
+      bodyPart: exercise.bodyPart,
+      equipment: exercise.equipment || "bodyweight",
+      secondaryMuscles: exercise.secondaryMuscles || [],
+      instructions: [`Perform this exercise with proper form`],
+    };
+    navigation.push("ExerciseDetail", { exercise: fallbackExercise });
+  }, [exercise, navigation]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -264,7 +280,11 @@ export default function ExerciseDetailScreen() {
             ) : aiInsightsMutation.data?.exercises ? (
               aiInsightsMutation.data.exercises.map(
                 (alt: { name: string; difficulty: string; why: string }, idx: number) => (
-                  <View key={idx} style={styles.alternativeItem}>
+                  <Pressable 
+                    key={idx} 
+                    style={styles.alternativeItem}
+                    onPress={() => handleAlternativePress(alt.name)}
+                  >
                     <View style={styles.alternativeHeader}>
                       <ThemedText style={styles.alternativeName}>
                         {alt.name}
@@ -276,7 +296,7 @@ export default function ExerciseDetailScreen() {
                       </View>
                     </View>
                     <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
-                  </View>
+                  </Pressable>
                 )
               )
             ) : aiInsightsMutation.isError ? (
@@ -561,6 +581,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.dark.border,
+    paddingHorizontal: Spacing.sm,
+    marginHorizontal: -Spacing.sm,
   },
   alternativeHeader: {
     flexDirection: "row",
