@@ -298,6 +298,34 @@ export default function GenerateScreen() {
         </View>
 
         <View style={styles.section}>
+          <ThemedText style={styles.sectionLabel}>SESSION LENGTH</ThemedText>
+          <View style={styles.difficultyContainer}>
+            {[30, 45, 60, 90].map((mins) => (
+              <Pressable
+                key={mins}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  setSessionLength(mins);
+                }}
+                style={[
+                  styles.difficultyOption,
+                  sessionLength === mins && styles.difficultyOptionSelected,
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    styles.difficultyText,
+                    sessionLength === mins && styles.difficultyTextSelected,
+                  ]}
+                >
+                  {mins}m
+                </ThemedText>
+              </Pressable>
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionLabel}>NOTES (OPTIONAL)</ThemedText>
           <TextInput
             style={styles.textInput}
