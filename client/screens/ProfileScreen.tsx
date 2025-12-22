@@ -317,6 +317,76 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Health Tracking</ThemedText>
+          
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("Nutrition");
+            }}
+            style={styles.premiumButton}
+          >
+            <LinearGradient
+              colors={["#FF6B6B", "#E55A5A"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="coffee" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>Nutrition</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>Track meals and macros</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("Progress");
+            }}
+            style={[styles.premiumButton, { marginTop: Spacing.md }]}
+          >
+            <LinearGradient
+              colors={["#4ECDC4", "#45B7AF"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="trending-up" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>Progress</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>View your fitness analytics</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("WorkoutDiary");
+            }}
+            style={[styles.premiumButton, { marginTop: Spacing.md }]}
+          >
+            <LinearGradient
+              colors={["#FFB347", "#FFA500"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.premiumGradient}
+            >
+              <Feather name="calendar" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.premiumTitle}>Workout Diary</ThemedText>
+                <ThemedText style={styles.premiumSubtitle}>Log your workouts</ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Premium Features</ThemedText>
           
           <Pressable

@@ -10,7 +10,16 @@ Architecture: Local-first with AsyncStorage for user preferences and saved worko
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (Session Dec 22, 2025 - Late Updates)
+## Recent Changes (Session Dec 22, 2025 - Final Updates)
+
+### Nutrition Feature Activation (Dec 22 - Final)
+- **Integrated RapidAPI Nutrition API**: Connected NutritionScreen with real AI Workout Planner nutrition analysis API
+- **Backend nutrition endpoints**: 
+  - `POST /api/nutrition/analyze` - Analyzes meal nutrition (calories, protein, carbs, fats)
+  - `GET /api/nutrition/suggestions` - Fetches meal suggestions with fallback defaults
+- **Frontend integration**: Updated NutritionScreen to use React Query for fetching suggestions and analyzing meals via backend proxy
+- **Profile screen activation**: Added "Health Tracking" section with buttons to Nutrition, Progress, and Workout Diary screens
+- **Graceful fallbacks**: Both endpoints have built-in fallbacks if RapidAPI is unavailable, using sensible macro calculations
 
 ### Production Fixes for TestFlight Deployment
 - **Fixed app startup crash in TestFlight**: Added fallback for `EXPO_PUBLIC_DOMAIN` environment variable in `client/lib/query-client.ts`. TestFlight builds don't have access to dynamic env vars that Expo Go provides. Now gracefully falls back to `localhost:5000` when env var is missing.
@@ -113,6 +122,7 @@ shared/           # Shared types and schemas
 - **OpenAI API**: GPT-4o-mini for AI training programs, feedback, substitutions, and recovery advice (requires `OPENAI_API_KEY` secret from Replit)
 - **ExerciseDB API**: 1,300+ exercises with animated GIFs (requires `RAPIDAPI_KEY` environment variable)
 - **RapidAPI Muscle Group Image Generator**: Workout visualization (requires `RAPIDAPI_KEY` environment variable)
+- **RapidAPI AI Workout Planner**: Nutrition analysis and meal suggestions (requires `RAPIDAPI_KEY` environment variable)
 
 ### Database
 - **PostgreSQL**: Database configured via `DATABASE_URL` environment variable (Drizzle ORM handles migrations)
@@ -147,6 +157,10 @@ shared/           # Shared types and schemas
 - `GET /api/exercises/equipment/:equipment` - Filter exercises by equipment
 - `GET /api/exercises/name/:name` - Search exercises by name
 - `GET /api/exercises/image/:id` - Proxy for exercise GIF images (streams from ExerciseDB with auth)
+
+**Nutrition Endpoints**
+- `POST /api/nutrition/analyze` - Analyze meal nutrition data (RapidAPI AI Workout Planner)
+- `GET /api/nutrition/suggestions` - Get meal suggestions (RapidAPI AI Workout Planner)
 
 **Other Endpoints**
 - `POST /api/muscle-image` - Generate muscle group visualization (RapidAPI)
