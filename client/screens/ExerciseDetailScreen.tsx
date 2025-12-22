@@ -159,6 +159,10 @@ export default function ExerciseDetailScreen() {
               style={styles.gifImage}
               contentFit="contain"
               transition={300}
+              onError={(error) => {
+                console.log("GIF load error for exercise:", exercise.id, error);
+              }}
+              placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
             />
           )}
           <View style={styles.gifOverlay}>

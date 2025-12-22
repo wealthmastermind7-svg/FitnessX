@@ -12,6 +12,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
+### TestFlight Production Ready (Dec 22 - Final)
+- **Backend API Proxy**: All ExerciseDB requests now go through Express backend (secure, no client API keys)
+- **Image Handling**: Using expo-image with onError handlers and blur hash placeholders (graceful fallbacks)
+- **Caching**: 24-hour cache headers on GIF responses for performance optimization
+- **Error Handling**: Detailed logging and graceful degradation if images fail
+- **No Hardcoded URLs**: All domain and API URLs use dynamic configuration via getApiUrl()
+- **Production-Safe**: Ready for TestFlight and App Store deployment
+
 ### Form Coach - AI Pose Detection (Dec 22)
 - **TensorFlow.js MoveNet Integration**: Real-time pose detection for exercise form analysis
 - **FormCoachScreen**: 
