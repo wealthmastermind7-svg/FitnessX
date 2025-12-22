@@ -73,6 +73,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [imageLoaded, setImageLoaded] = React.useState(false);
   const baseUrl = getApiUrl();
   const imageUrl = `${baseUrl}api/muscle-image?muscles=${muscle.toLowerCase()}&color=255,107,107`;
 
@@ -95,6 +96,18 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
     navigation.navigate("ExerciseBrowser", { filterByMuscle: muscle });
   };
 
+  // Gradient colors for fallback background
+  const gradientColors = [
+    ["#FF6B6B", "#FF8C8C"],
+    ["#4ECDC4", "#6FE4DD"],
+    ["#9D4EDD", "#B480E8"],
+    ["#FFB347", "#FFD9A4"],
+    ["#FF6B9D", "#FF8FB3"],
+    ["#6BCB77", "#9AED9A"],
+  ];
+  
+  const gradientColor = gradientColors[index % gradientColors.length];
+
   return (
     <Pressable
       onPressIn={handlePressIn}
@@ -107,11 +120,23 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           { transform: [{ scale: scaleAnim }] },
         ]}
       >
+        {!imageLoaded && (
+          <LinearGradient
+            colors={gradientColor as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.muscleImage}
+          />
+        )}
         <ExpoImage
           source={{ uri: imageUrl }}
-          style={styles.muscleImage}
+          style={[styles.muscleImage, { opacity: imageLoaded ? 1 : 0 }]}
           contentFit="contain"
-          onError={() => console.log(`Failed to load image for ${muscle}`)}
+          onLoad={() => setImageLoaded(true)}
+          onError={() => {
+            console.log(`Failed to load image for ${muscle}`);
+            setImageLoaded(false);
+          }}
         />
         <LinearGradient
           colors={["transparent", "rgba(10,14,26,0.95)"]}
