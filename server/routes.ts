@@ -423,7 +423,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     return { valid: true, error: null };
   };
 
-  // Get all exercises with pagination
+  // Get all exercises with pagination (fetches multiple batches since API limits to 10 per request)
   app.get("/api/exercises", async (req, res) => {
     try {
       const keyCheck = validateRapidApiKey();
@@ -431,22 +431,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: keyCheck.error });
       }
 
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
+      
+      // ExerciseDB API returns max 10 per request, so fetch multiple batches
+      const batchSize = 10;
+      const numBatches = Math.ceil(limit / batchSize);
+      const allExercises: ExerciseDBExercise[] = [];
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      for (let i = 0; i < numBatches; i++) {
+        const batchOffset = offset + (i * batchSize);
+        const response = await fetch(
+          `https://exercisedb.p.rapidapi.com/exercises?limit=10&offset=${batchOffset}`,
+          { headers: exerciseDbHeaders }
+        );
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("ExerciseDB API error:", response.status, errorText);
-        throw new Error("ExerciseDB API error");
+        if (!response.ok) {
+          if (allExercises.length > 0) break; // Return what we have
+          const errorText = await response.text();
+          console.error("ExerciseDB API error:", response.status, errorText);
+          throw new Error("ExerciseDB API error");
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) break; // No more results
+        allExercises.push(...data);
+        if (allExercises.length >= limit) break; // Got enough
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(allExercises.slice(0, limit));
     } catch (error) {
       console.error("Error fetching exercises:", error);
       res.status(500).json({ error: "Failed to fetch exercises" });
@@ -518,7 +531,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get exercises by body part
+  // Get exercises by body part (fetches multiple batches since API limits to 10 per request)
   app.get("/api/exercises/bodyPart/:bodyPart", async (req, res) => {
     try {
       const keyCheck = validateRapidApiKey();
@@ -527,68 +540,104 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { bodyPart } = req.params;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${encodeURIComponent(bodyPart)}?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      const batchSize = 10;
+      const numBatches = Math.ceil(limit / batchSize);
+      const allExercises: ExerciseDBExercise[] = [];
 
-      if (!response.ok) {
-        throw new Error("ExerciseDB API error");
+      for (let i = 0; i < numBatches; i++) {
+        const batchOffset = offset + (i * batchSize);
+        const response = await fetch(
+          `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${encodeURIComponent(bodyPart)}?limit=10&offset=${batchOffset}`,
+          { headers: exerciseDbHeaders }
+        );
+
+        if (!response.ok) {
+          if (allExercises.length > 0) break;
+          throw new Error("ExerciseDB API error");
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) break;
+        allExercises.push(...data);
+        if (allExercises.length >= limit) break;
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(allExercises.slice(0, limit));
     } catch (error) {
       console.error("Error fetching exercises by body part:", error);
       res.status(500).json({ error: "Failed to fetch exercises" });
     }
   });
 
-  // Get exercises by target muscle
+  // Get exercises by target muscle (fetches multiple batches since API limits to 10 per request)
   app.get("/api/exercises/target/:target", async (req, res) => {
     try {
       const { target } = req.params;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/target/${encodeURIComponent(target)}?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      const batchSize = 10;
+      const numBatches = Math.ceil(limit / batchSize);
+      const allExercises: ExerciseDBExercise[] = [];
 
-      if (!response.ok) {
-        throw new Error("ExerciseDB API error");
+      for (let i = 0; i < numBatches; i++) {
+        const batchOffset = offset + (i * batchSize);
+        const response = await fetch(
+          `https://exercisedb.p.rapidapi.com/exercises/target/${encodeURIComponent(target)}?limit=10&offset=${batchOffset}`,
+          { headers: exerciseDbHeaders }
+        );
+
+        if (!response.ok) {
+          if (allExercises.length > 0) break;
+          throw new Error("ExerciseDB API error");
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) break;
+        allExercises.push(...data);
+        if (allExercises.length >= limit) break;
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(allExercises.slice(0, limit));
     } catch (error) {
       console.error("Error fetching exercises by target:", error);
       res.status(500).json({ error: "Failed to fetch exercises" });
     }
   });
 
-  // Get exercises by equipment
+  // Get exercises by equipment (fetches multiple batches since API limits to 10 per request)
   app.get("/api/exercises/equipment/:equipment", async (req, res) => {
     try {
       const { equipment } = req.params;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/equipment/${encodeURIComponent(equipment)}?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      const batchSize = 10;
+      const numBatches = Math.ceil(limit / batchSize);
+      const allExercises: ExerciseDBExercise[] = [];
 
-      if (!response.ok) {
-        throw new Error("ExerciseDB API error");
+      for (let i = 0; i < numBatches; i++) {
+        const batchOffset = offset + (i * batchSize);
+        const response = await fetch(
+          `https://exercisedb.p.rapidapi.com/exercises/equipment/${encodeURIComponent(equipment)}?limit=10&offset=${batchOffset}`,
+          { headers: exerciseDbHeaders }
+        );
+
+        if (!response.ok) {
+          if (allExercises.length > 0) break;
+          throw new Error("ExerciseDB API error");
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) break;
+        allExercises.push(...data);
+        if (allExercises.length >= limit) break;
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(allExercises.slice(0, limit));
     } catch (error) {
       console.error("Error fetching exercises by equipment:", error);
       res.status(500).json({ error: "Failed to fetch exercises" });
@@ -617,24 +666,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Search exercises by name
+  // Search exercises by name (fetches multiple batches since API limits to 10 per request)
   app.get("/api/exercises/name/:name", async (req, res) => {
     try {
       const { name } = req.params;
-      const limit = parseInt(req.query.limit as string) || 20;
+      const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      const batchSize = 10;
+      const numBatches = Math.ceil(limit / batchSize);
+      const allExercises: ExerciseDBExercise[] = [];
 
-      if (!response.ok) {
-        throw new Error("ExerciseDB API error");
+      for (let i = 0; i < numBatches; i++) {
+        const batchOffset = offset + (i * batchSize);
+        const response = await fetch(
+          `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=10&offset=${batchOffset}`,
+          { headers: exerciseDbHeaders }
+        );
+
+        if (!response.ok) {
+          if (allExercises.length > 0) break;
+          throw new Error("ExerciseDB API error");
+        }
+
+        const data = await response.json();
+        if (!Array.isArray(data) || data.length === 0) break;
+        allExercises.push(...data);
+        if (allExercises.length >= limit) break;
       }
 
-      const data = await response.json();
-      res.json(data);
+      res.json(allExercises.slice(0, limit));
     } catch (error) {
       console.error("Error searching exercises:", error);
       res.status(500).json({ error: "Failed to search exercises" });

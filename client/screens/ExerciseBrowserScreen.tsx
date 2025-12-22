@@ -56,12 +56,12 @@ export default function ExerciseBrowserScreen() {
 
   const fetchUrl = useMemo(() => {
     if (searchQuery.trim()) {
-      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=50`;
+      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
     }
     if (selectedBodyPart !== "all") {
-      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=50`;
+      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
     }
-    return `${baseUrl}api/exercises?limit=50`;
+    return `${baseUrl}api/exercises?limit=100`;
   }, [baseUrl, searchQuery, selectedBodyPart]);
 
   const {
