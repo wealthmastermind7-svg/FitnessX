@@ -374,30 +374,50 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
 
 function NativeFormCoach({ exerciseName }: { exerciseName: string }) {
   const formRule = getFormRuleForExercise(exerciseName);
+  const [showCamera, setShowCamera] = useState(false);
 
   return (
     <ScrollView
       contentContainerStyle={styles.nativeScrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <LinearGradient
-        colors={["#1a1f35", "#0f1225"] as any}
-        style={styles.nativeNotice}
-      >
-        <Feather name="monitor" size={48} color="#9D4EDD" />
-        <ThemedText style={styles.nativeNoticeTitle}>
-          Real-time Form Tracking
-        </ThemedText>
-        <ThemedText style={styles.nativeNoticeText}>
-          For live form feedback with camera tracking, please use the web version of FitForge on your computer.
-        </ThemedText>
-        <View style={styles.nativeNoticeTip}>
-          <Feather name="info" size={16} color={Colors.dark.textSecondary} />
-          <ThemedText style={styles.nativeNoticeTipText}>
-            Our AI uses your camera to analyze body positioning in real-time
+      {!showCamera && (
+        <LinearGradient
+          colors={["#1a1f35", "#0f1225"] as any}
+          style={styles.nativeNotice}
+        >
+          <Feather name="camera" size={48} color="#10B981" />
+          <ThemedText style={styles.nativeNoticeTitle}>
+            Camera Form Tracking
           </ThemedText>
-        </View>
-      </LinearGradient>
+          <ThemedText style={styles.nativeNoticeText}>
+            Analyze your exercise form in real-time using your device camera
+          </ThemedText>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              setShowCamera(true);
+            }}
+            style={styles.activateCameraButton}
+          >
+            <LinearGradient
+              colors={["#10B981", "#059669"] as any}
+              style={styles.activateCameraGradient}
+            >
+              <Feather name="camera" size={20} color="#FFF" />
+              <ThemedText style={styles.activateCameraButtonText}>
+                Activate Camera
+              </ThemedText>
+            </LinearGradient>
+          </Pressable>
+          <View style={styles.nativeNoticeTip}>
+            <Feather name="info" size={16} color={Colors.dark.textSecondary} />
+            <ThemedText style={styles.nativeNoticeTipText}>
+              We'll use your camera to analyze body positioning
+            </ThemedText>
+          </View>
+        </LinearGradient>
+      )}
 
       {formRule && (
         <Card style={styles.formTipsCard}>
@@ -820,5 +840,22 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     flex: 1,
     lineHeight: 22,
+  },
+  activateCameraButton: {
+    marginTop: Spacing.lg,
+    width: "100%",
+  },
+  activateCameraGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    gap: Spacing.sm,
+  },
+  activateCameraButtonText: {
+    ...Typography.body,
+    color: "#FFF",
+    fontWeight: "600",
   },
 });

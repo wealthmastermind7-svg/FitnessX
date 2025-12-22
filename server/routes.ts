@@ -627,24 +627,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Search exercises by name
   app.get("/api/exercises/name/:name", async (req, res) => {
     try {
+      const keyCheck = validateRapidApiKey();
+      if (!keyCheck.valid) {
+        console.warn("[Search] API key missing:", keyCheck.error);
+        return res.status(500).json({ error: keyCheck.error });
+      }
+
       const { name } = req.params;
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
+      const url = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`;
 
-      const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=${limit}&offset=${offset}`,
-        { headers: exerciseDbHeaders }
-      );
+      console.log("[Search] Query:", name, "limit:", limit);
+      console.log("[Search] Fetching from:", url);
+
+      const response = await fetch(url, { headers: exerciseDbHeaders });
+
+      console.log("[Search] Response status:", response.status);
 
       if (!response.ok) {
-        throw new Error("ExerciseDB API error");
+        const errorText = await response.text();
+        console.error("[Search] ExerciseDB error:", response.status, errorText);
+        return res.status(response.status).json({ error: `ExerciseDB API error: ${response.status}` });
       }
 
       const data = await response.json();
+      console.log("[Search] Success! Returning", Array.isArray(data) ? data.length : "non-array", "items");
       res.json(data);
     } catch (error) {
-      console.error("Error searching exercises:", error);
-      res.status(500).json({ error: "Failed to search exercises" });
+      console.error("[Search] Error:", error);
+      res.status(500).json({ error: "Failed to search exercises", details: String(error) });
     }
   });
 

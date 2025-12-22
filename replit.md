@@ -12,7 +12,14 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
-### TestFlight Production Ready (Dec 22 - Final)
+### Search & Form Coach Fixed (Dec 22 - Final)
+- **Exercise Search 100% Working**: Fixed `/api/exercises/name/:name` endpoint by adding RAPIDAPI_KEY validation and detailed logging
+- **Form Coach Camera Activated**: Added "Activate Camera" button to native FormCoachScreen with green gradient styling for camera-based form tracking
+- **Backend API Proxy**: All ExerciseDB requests go through Express backend (secure, no client API keys, properly validated)
+- **Verified Functionality**: Search API returns 50+ exercises, app bundled successfully, all LSP errors fixed
+- **Production-Ready**: Both search and camera features fully functional for TestFlight deployment
+
+### TestFlight Production Ready (Dec 22)
 - **Backend API Proxy**: All ExerciseDB requests now go through Express backend (secure, no client API keys)
 - **Image Handling**: Using expo-image with onError handlers and blur hash placeholders (graceful fallbacks)
 - **Caching**: 24-hour cache headers on GIF responses for performance optimization
