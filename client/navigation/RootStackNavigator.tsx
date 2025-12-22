@@ -14,6 +14,7 @@ import NutritionScreen from "@/screens/NutritionScreen";
 import CommunityScreen from "@/screens/CommunityScreen";
 import CoachesScreen from "@/screens/CoachesScreen";
 import AIChatScreen from "@/screens/AIChatScreen";
+import FormCoachScreen from "@/screens/FormCoachScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -65,6 +66,7 @@ export type RootStackParamList = {
   Community: undefined;
   Coaches: undefined;
   AIChat: undefined;
+  FormCoach: { exerciseName?: string } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -183,6 +185,14 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AIChat"
         component={AIChatScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="FormCoach"
+        component={FormCoachScreen}
         options={{
           presentation: "card",
           headerShown: false,

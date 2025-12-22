@@ -12,6 +12,19 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
+### Form Coach - AI Pose Detection (Dec 22)
+- **TensorFlow.js MoveNet Integration**: Real-time pose detection for exercise form analysis
+- **FormCoachScreen**: 
+  - Web: Camera-based pose tracking with skeleton overlay, real-time form feedback
+  - Native (Expo Go): Form tips and guidance (camera tracking not available without development build)
+- **Form Analysis Utilities** (`client/lib/pose-analysis.ts`):
+  - Squat form checking (knee angle, depth)
+  - Push-up form checking (body alignment, elbow angle)
+  - Plank form checking (hip alignment)
+  - Lunge form checking (knee position)
+- **ExerciseDetailScreen**: Added green "Form Coach" button for supported exercises
+- **Platform-aware messaging**: Different subtitle text on web vs native to set correct expectations
+
 ### Nutrition Feature Activation (Dec 22 - Final)
 - **Integrated RapidAPI Nutrition API**: Connected NutritionScreen with real AI Workout Planner nutrition analysis API
 - **Backend nutrition endpoints**: 
@@ -44,6 +57,8 @@ Added 6 new major features to match and exceed competitor functionality:
 - **DiscoverScreen**: Complete redesign with feature hub cards, AI coach banner, community/coaches section
 
 ### New Files (Dec 22)
+- `client/screens/FormCoachScreen.tsx` - AI pose detection for exercise form feedback (web-only real-time tracking)
+- `client/lib/pose-analysis.ts` - Form analysis utilities with keypoint-based exercise checks
 - `client/screens/WorkoutDiaryScreen.tsx` - Workout logging with calendar and history
 - `client/screens/ProgressScreen.tsx` - Weight/measurements charts and progress tracking
 - `client/screens/NutritionScreen.tsx` - Meal planning with macro calculations
@@ -135,6 +150,8 @@ shared/           # Shared types and schemas
 - **expo-linear-gradient**: Gradient backgrounds
 - **expo-haptics**: Touch feedback
 - **@react-native-async-storage/async-storage**: Local data persistence
+- **@tensorflow/tfjs-core**: TensorFlow.js core for pose detection
+- **@tensorflow-models/pose-detection**: MoveNet model for body keypoint detection
 
 ### Environment Variables Required
 - `DATABASE_URL`: PostgreSQL connection string

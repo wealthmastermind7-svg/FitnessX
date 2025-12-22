@@ -5,12 +5,13 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
-import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import { useNavigation, useRoute, RouteProp, NavigationProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useMutation } from "@tanstack/react-query";
 
@@ -20,6 +21,7 @@ import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl, apiRequest } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import { getFormRuleForExercise } from "@/lib/pose-analysis";
 
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
 
@@ -35,7 +37,7 @@ interface AISubstitutionsResponse {
 
 export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const route = useRoute<RouteParams>();
   const initialExercise = route.params?.exercise as ExerciseDBExercise;
   const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
@@ -46,6 +48,7 @@ export default function ExerciseDetailScreen() {
   const [showAIInsights, setShowAIInsights] = useState(false);
 
   const exercise = exercises[currentIndex];
+  const formRule = getFormRuleForExercise(exercise.name);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -244,6 +247,36 @@ export default function ExerciseDetailScreen() {
             <Feather name="arrow-right" size={20} color="#FFF" />
           </LinearGradient>
         </Pressable>
+
+        {formRule ? (
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              navigation.navigate("FormCoach", { exerciseName: exercise.name });
+            }}
+            style={styles.formCoachButton}
+          >
+            <LinearGradient
+              colors={["#10B981", "#059669"] as any}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.aiButtonGradient}
+            >
+              <Feather name="video" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+              <View style={{ flex: 1 }}>
+                <ThemedText style={styles.aiButtonTitle}>
+                  Form Coach
+                </ThemedText>
+                <ThemedText style={styles.aiButtonSubtitle}>
+                  {Platform.OS === "web" 
+                    ? "Real-time AI form tracking with camera" 
+                    : "Exercise form tips and guidance"}
+                </ThemedText>
+              </View>
+              <Feather name="arrow-right" size={20} color="#FFF" />
+            </LinearGradient>
+          </Pressable>
+        ) : null}
 
         {showAIInsights && (
           <Card style={styles.aiInsightsCard}>
@@ -522,6 +555,11 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
   },
   aiButton: {
+    marginBottom: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  formCoachButton: {
     marginBottom: Spacing.lg,
     borderRadius: BorderRadius.lg,
     overflow: "hidden",

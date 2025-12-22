@@ -7,6 +7,8 @@ import {
   Platform,
   ScrollView,
 } from "react-native";
+
+const isWebBrowser = Platform.OS === "web" && typeof window !== "undefined" && typeof navigator !== "undefined" && typeof document !== "undefined";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -17,7 +19,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { RootStackParamList } from "@/navigation/RootStackNavigator";
 import {
   FormFeedback,
   ExerciseFormRule,
@@ -25,7 +26,11 @@ import {
   SKELETON_CONNECTIONS,
 } from "@/lib/pose-analysis";
 
-type RouteParams = RouteProp<RootStackParamList, "FormCoach">;
+type FormCoachParams = {
+  exerciseName?: string;
+};
+
+type RouteParams = RouteProp<{ FormCoach: FormCoachParams }, "FormCoach">;
 
 type Pose = {
   keypoints: Array<{
@@ -51,13 +56,41 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
   const [feedback, setFeedback] = useState<FormFeedback | null>(null);
   const [pose, setPose] = useState<Pose | null>(null);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isSupported, setIsSupported] = useState(false);
+  const videoRef = useRef<any>(null);
+  const canvasRef = useRef<any>(null);
   const animationRef = useRef<number | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   const formRule = getFormRuleForExercise(exerciseName);
 
   useEffect(() => {
+    if (!isWebBrowser) {
+      setCameraError("Form tracking is only available in a web browser");
+      setIsLoading(false);
+      return;
+    }
+    
+    try {
+      const hasMediaDevices = typeof navigator !== "undefined" && 
+        "mediaDevices" in navigator && 
+        typeof navigator.mediaDevices?.getUserMedia === "function";
+      
+      if (hasMediaDevices) {
+        setIsSupported(true);
+      } else {
+        setCameraError("Your browser does not support camera access");
+        setIsLoading(false);
+      }
+    } catch {
+      setCameraError("Camera access is not available");
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isSupported) return;
+    
     let mounted = true;
 
     async function initTensorFlow() {
@@ -86,7 +119,7 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
       } catch (error) {
         console.error("TensorFlow init error:", error);
         if (mounted) {
-          setCameraError("Failed to initialize pose detection");
+          setCameraError("Failed to initialize AI model. Please try a different browser.");
           setIsLoading(false);
         }
       }
@@ -97,10 +130,10 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [isSupported]);
 
   useEffect(() => {
-    if (!isTfReady) return;
+    if (!isTfReady || !isSupported) return;
 
     async function setupCamera() {
       try {
@@ -108,15 +141,18 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
           video: { facingMode: "user", width: 640, height: 480 },
           audio: false,
         });
+        
+        streamRef.current = stream;
 
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play();
+        if (videoRef.current && isWebBrowser) {
+          const videoElement = videoRef.current as HTMLVideoElement;
+          videoElement.srcObject = stream;
+          await videoElement.play();
           setIsLoading(false);
         }
       } catch (error) {
         console.error("Camera error:", error);
-        setCameraError("Camera access denied. Please enable camera permissions.");
+        setCameraError("Camera access denied. Please enable camera permissions in your browser settings.");
         setIsLoading(false);
       }
     }
@@ -124,18 +160,18 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
     setupCamera();
 
     return () => {
-      if (videoRef.current?.srcObject) {
-        const tracks = (videoRef.current.srcObject as MediaStream).getTracks();
-        tracks.forEach((track) => track.stop());
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
       }
-      if (animationRef.current) {
+      if (animationRef.current && isWebBrowser) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isTfReady]);
+  }, [isTfReady, isSupported]);
 
   const detectPose = useCallback(async () => {
-    if (!detector || !videoRef.current || !canvasRef.current) return;
+    if (!detector || !videoRef.current || !canvasRef.current || !isWebBrowser) return;
 
     try {
       const poses = await detector.estimatePoses(videoRef.current);
@@ -159,20 +195,22 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
   }, [detector, formRule]);
 
   useEffect(() => {
-    if (detector && !isLoading && !cameraError) {
+    if (detector && !isLoading && !cameraError && isSupported) {
       detectPose();
     }
 
     return () => {
-      if (animationRef.current) {
+      if (animationRef.current && isWebBrowser) {
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [detector, isLoading, cameraError, detectPose]);
+  }, [detector, isLoading, cameraError, detectPose, isSupported]);
 
   const drawSkeleton = (detectedPose: Pose) => {
-    const canvas = canvasRef.current;
-    const video = videoRef.current;
+    if (!isWebBrowser) return;
+    
+    const canvas = canvasRef.current as HTMLCanvasElement | null;
+    const video = videoRef.current as HTMLVideoElement | null;
     if (!canvas || !video) return;
 
     const ctx = canvas.getContext("2d");
@@ -220,6 +258,17 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
       <View style={styles.errorContainer}>
         <Feather name="camera-off" size={48} color={Colors.dark.textSecondary} />
         <ThemedText style={styles.errorText}>{cameraError}</ThemedText>
+      </View>
+    );
+  }
+
+  if (!isWebBrowser) {
+    return (
+      <View style={styles.errorContainer}>
+        <Feather name="monitor" size={48} color={Colors.dark.textSecondary} />
+        <ThemedText style={styles.errorText}>
+          Real-time form tracking requires a web browser with camera support
+        </ThemedText>
       </View>
     );
   }
