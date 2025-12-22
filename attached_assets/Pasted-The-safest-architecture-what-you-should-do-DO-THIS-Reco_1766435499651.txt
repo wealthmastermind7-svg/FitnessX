@@ -1,0 +1,262 @@
+The safest architecture (what you should do)
+
+
+
+
+
+
+
+✅ DO THIS (Recommended)
+
+
+
+
+
+Client → Your Express backend → ExerciseDB (RapidAPI)
+
+
+
+Never let the mobile app talk to RapidAPI directly.
+
+
+
+
+
+Why this is safest
+
+
+
+
+
+Hides API keys
+Avoids CORS and ATS issues
+Lets you cache aggressively
+Lets you sanitize responses
+Works identically on iOS and Android
+Scales cleanly
+
+
+
+
+
+
+
+
+
+Concrete implementation (production safe)
+
+
+
+
+
+
+
+1️⃣ Express proxy endpoint
+
+
+
+// server/routes/exercises.ts
+router.get("/api/exercises", async (_req, res) => {
+  try {
+    const response = await fetch(
+      "https://exercisedb.p.rapidapi.com/exercises",
+      {
+        headers: {
+          "X-RapidAPI-Key": process.env.RAPIDAPI_KEY!,
+          "X-RapidAPI-Host": "exercisedb.p.rapidapi.com",
+        },
+      }
+    );
+
+    const data = await response.json();
+
+    // IMPORTANT: only return fields you actually use
+    const sanitized = data.map((e: any) => ({
+      id: e.id,
+      name: e.name,
+      bodyPart: e.bodyPart,
+      target: e.target,
+      equipment: e.equipment,
+      gifUrl: e.gifUrl,
+    }));
+
+    res.json(sanitized);
+  } catch (err) {
+    console.error("Exercise API error", err);
+    res.status(500).json({ error: "Failed to load exercises" });
+  }
+});
+
+
+
+
+
+
+
+2️⃣ Client fetch (NO RapidAPI headers)
+
+
+
+const res = await fetch(`${API_URL}/api/exercises`);
+const exercises = await res.json();
+This is exactly what Apple expects.
+
+
+
+
+
+
+
+
+GIF rendering: the correct way in Expo
+
+
+
+
+
+
+
+❌ Do NOT use 
+
+Image
+
+ from 
+
+react-native
+
+
+
+
+
+It is unreliable for GIFs, especially on Android.
+
+
+
+
+
+✅ Use 
+
+expo-image
+
+ (this matters)
+
+
+
+import { Image } from "expo-image";
+
+<Image
+  source={{ uri: exercise.gifUrl }}
+  style={{ width: "100%", height: 260 }}
+  contentFit="contain"
+  transition={150}
+/>
+This:
+
+
+
+Uses native decoders
+Handles caching
+Is production-safe
+Works in TestFlight and Play Store
+
+
+
+
+
+
+
+
+
+Very important defensive coding (fixes “0 exercises”)
+
+
+
+
+
+Wrap GIF loading so one failure does NOT break the list.
+
+<Image
+  source={{ uri: exercise.gifUrl }}
+  onError={() => console.log("GIF failed", exercise.id)}
+  style={{ height: 260 }}
+/>
+And never condition rendering on GIF load success.
+
+
+
+
+
+
+
+
+Should anything be hardcoded?
+
+
+
+
+
+
+
+❌ Do NOT hardcode
+
+
+
+
+
+Exercise lists
+GIF URLs
+API responses
+
+
+
+
+
+
+✅ OK to hardcode
+
+
+
+
+
+Muscle group labels
+Filters (Chest, Back, Legs)
+Icons
+UI text
+
+
+
+
+Hardcoding data will:
+
+
+
+Increase app size
+Break updates
+Cause App Store resubmission pain
+
+
+
+
+
+
+
+
+
+If you want the MOST bulletproof option
+
+
+
+
+
+Add server-side caching:
+
+// cache for 6 hours
+Cache-Control: public, max-age=21600
+This gives you:
+
+
+
+Faster loads
+Fewer API calls
+Lower RapidAPI cost
+Better UX
