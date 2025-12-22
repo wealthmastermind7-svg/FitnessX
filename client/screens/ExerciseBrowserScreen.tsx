@@ -66,15 +66,15 @@ export default function ExerciseBrowserScreen() {
   );
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchUrl = useMemo(() => {
+  const queryKey = useMemo(() => {
     if (searchQuery.trim()) {
-      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
+      return ["/api/exercises/name", searchQuery.trim()];
     }
     if (selectedBodyPart !== "all") {
-      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
+      return ["/api/exercises/bodyPart", selectedBodyPart];
     }
-    return `${baseUrl}api/exercises?limit=100`;
-  }, [baseUrl, searchQuery, selectedBodyPart]);
+    return ["/api/exercises"];
+  }, [searchQuery, selectedBodyPart]);
 
   const {
     data: exercises,
@@ -82,8 +82,25 @@ export default function ExerciseBrowserScreen() {
     refetch,
     error,
   } = useQuery<ExerciseDBExercise[]>({
-    queryKey: [fetchUrl],
+    queryKey,
+    queryFn: async () => {
+      let url: string;
+      if (searchQuery.trim()) {
+        url = `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
+      } else if (selectedBodyPart !== "all") {
+        url = `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
+      } else {
+        url = `${baseUrl}api/exercises?limit=100`;
+      }
+      
+      const res = await fetch(url, { credentials: "include" });
+      if (!res.ok) {
+        throw new Error(`Failed to fetch exercises: ${res.status}`);
+      }
+      return res.json();
+    },
     staleTime: 5 * 60 * 1000,
+    retry: 2,
   });
 
   const onRefresh = useCallback(async () => {

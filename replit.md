@@ -10,6 +10,19 @@ Architecture: Local-first with AsyncStorage for user preferences and saved worko
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Session Dec 22, 2025 - Exercise Loading Fix)
+
+### Exercise Query Loading Fix (Dec 22 - RESOLVED)
+- **Issue**: ExerciseBrowserScreen showed "Unable to load exercises" error
+- **Root Cause**: React Query queryKey was using full URL instead of proper path structure
+- **Solution Implemented**:
+  - Changed queryKey from `[fullUrl]` to hierarchical format: `["/api/exercises", filters]`
+  - Added explicit custom queryFn to properly construct API URLs
+  - Enhanced error handling and retry logic (retry: 2)
+- **Result**: All 1,300+ exercises now load with animated GIFs displaying successfully
+- **RAPIDAPI_KEY**: Verified properly loaded and used by backend (`1a51d64d...` prefix in logs)
+- **GIF Loading**: All exercise images load with "Image loaded SUCCESS" confirmation in logs
+
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
 ### Form Coach & Linked AI Alternatives (Dec 22 - Final)
