@@ -12,10 +12,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
-### Form Coach Works for All 1,300+ Exercises (Dec 22 - Final)
+### Form Coach & Linked AI Alternatives (Dec 22 - Final)
 - **Universal Exercise Support**: Form Coach now works for all 1,300+ exercises in the database (not just hardcoded 4)
 - **Smart Form Feedback**: Specific AI form checking for 4 supported exercises (Squat, Push-up, Plank, Lunge); general form guidance for all others
-- **Exercise Search 100% Working**: Fixed `/api/exercises/name/:name` endpoint by adding RAPIDAPI_KEY validation
+- **AI Alternatives Linked to GIFs**: Click any AI alternative exercise to view its full details and animated GIF demo
+- **Clickable Alternatives**: Each suggested alternative is now a pressable button that fetches and displays the full exercise with GIF
 - **Camera Activated Natively**: Added "Activate Camera" button with green gradient on all exercises
 - **Production-Ready**: All 1,300+ exercises can be tracked with camera; users select any exercise from library and activate form tracking
 

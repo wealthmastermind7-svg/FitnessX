@@ -29,6 +29,7 @@ interface AIAlternative {
   name: string;
   difficulty: string;
   why: string;
+  id?: string;
 }
 
 interface AISubstitutionsResponse {
@@ -46,6 +47,7 @@ export default function ExerciseDetailScreen() {
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showAIInsights, setShowAIInsights] = useState(false);
+  const [loadingAltExercise, setLoadingAltExercise] = useState<string | null>(null);
 
   const exercise = exercises[currentIndex];
   const formRule = getFormRuleForExercise(exercise.name);
@@ -61,6 +63,31 @@ export default function ExerciseDetailScreen() {
     if (currentIndex < exercises.length - 1) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setCurrentIndex(currentIndex + 1);
+    }
+  };
+
+  const handleAlternativePress = async (altName: string) => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setLoadingAltExercise(altName);
+      
+      // Search for the alternative exercise by name
+      const url = new URL(`api/exercises/name/${encodeURIComponent(altName)}`, baseUrl);
+      const response = await fetch(url.toString());
+      const exerciseList = await response.json() as ExerciseDBExercise[];
+      
+      if (exerciseList && exerciseList.length > 0) {
+        // Navigate to the alternative exercise with its full details
+        navigation.navigate("ExerciseDetail", {
+          exercise: exerciseList[0],
+          exercises: exerciseList,
+          exerciseIndex: 0,
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching alternative exercise:", error);
+    } finally {
+      setLoadingAltExercise(null);
     }
   };
 
@@ -299,19 +326,35 @@ export default function ExerciseDetailScreen() {
             ) : aiInsightsMutation.data?.exercises ? (
               aiInsightsMutation.data.exercises.map(
                 (alt: { name: string; difficulty: string; why: string }, idx: number) => (
-                  <View key={idx} style={styles.alternativeItem}>
-                    <View style={styles.alternativeHeader}>
-                      <ThemedText style={styles.alternativeName}>
-                        {alt.name}
-                      </ThemedText>
-                      <View style={styles.difficultyBadge}>
-                        <ThemedText style={styles.difficultyText}>
-                          {alt.difficulty}
-                        </ThemedText>
+                  <Pressable
+                    key={idx}
+                    onPress={() => handleAlternativePress(alt.name)}
+                    disabled={loadingAltExercise === alt.name}
+                    style={styles.alternativeItemPressable}
+                  >
+                    <View style={styles.alternativeItem}>
+                      <View style={styles.alternativeHeader}>
+                        <View style={{ flex: 1 }}>
+                          <ThemedText style={styles.alternativeName}>
+                            {alt.name}
+                          </ThemedText>
+                        </View>
+                        {loadingAltExercise === alt.name ? (
+                          <ActivityIndicator size="small" color="#9D4EDD" />
+                        ) : (
+                          <>
+                            <View style={styles.difficultyBadge}>
+                              <ThemedText style={styles.difficultyText}>
+                                {alt.difficulty}
+                              </ThemedText>
+                            </View>
+                            <Feather name="arrow-right" size={16} color="#9D4EDD" style={{ marginLeft: Spacing.md }} />
+                          </>
+                        )}
                       </View>
+                      <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
                     </View>
-                    <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
-                  </View>
+                  </Pressable>
                 )
               )
             ) : aiInsightsMutation.isError ? (
@@ -586,6 +629,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     borderWidth: 1,
     borderColor: "#9D4EDD40",
+  },
+  alternativeItemPressable: {
+    marginBottom: Spacing.sm,
   },
   loadingContainer: {
     flexDirection: "row",
