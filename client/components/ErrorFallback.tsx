@@ -23,6 +23,14 @@ export function ErrorFallback({ error, resetError }: ErrorFallbackProps) {
   const { theme } = useTheme();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Always log error for debugging
+  React.useEffect(() => {
+    console.error("CRITICAL APP ERROR:", error);
+    if (error.stack) {
+      console.error("Stack trace:", error.stack);
+    }
+  }, [error]);
+
   const handleRestart = async () => {
     try {
       await reloadAppAsync();
