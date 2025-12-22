@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Platform,
   ScrollView,
+  Text,
 } from "react-native";
 
 const isWebBrowser = Platform.OS === "web" && typeof window !== "undefined" && typeof navigator !== "undefined" && typeof document !== "undefined";
@@ -14,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -370,8 +372,16 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
 function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; hasFormRule: boolean }) {
   const formRule = getFormRuleForExercise(exerciseName);
   const [showCamera, setShowCamera] = useState(false);
+  const [permission, requestPermission] = useCameraPermissions();
 
-  const handleActivateCamera = () => {
+  const handleActivateCamera = async () => {
+    if (!permission?.granted) {
+      const result = await requestPermission();
+      if (!result.granted) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        return;
+      }
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setShowCamera(true);
   };
@@ -380,10 +390,7 @@ function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; 
   if (showCamera) {
     return (
       <View style={styles.cameraContainer}>
-        <LinearGradient
-          colors={["#0a5f4f", "#164e45"] as any}
-          style={styles.camera}
-        />
+        <CameraView style={styles.camera} facing="front" />
         <View style={styles.cameraOverlay}>
           <Pressable
             onPress={() => {
