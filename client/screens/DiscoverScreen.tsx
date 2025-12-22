@@ -47,7 +47,7 @@ const getMuscleApiName = (displayName: string): string => {
   const muscleMap: Record<string, string> = {
     "Quads": "quadriceps",
     "Hamstrings": "hamstring",
-    "Glutes": "glutes",
+    "Glutes": "glute",
     "Calves": "calf",
     "Obliques": "oblique",
   };
