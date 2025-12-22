@@ -136,7 +136,7 @@ export default function ExerciseDetailScreen() {
       >
         <View style={styles.gifContainer}>
           <Image
-            source={{ uri: exercise.gifUrl }}
+            source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
             style={styles.gifImage}
             contentFit="contain"
             transition={300}

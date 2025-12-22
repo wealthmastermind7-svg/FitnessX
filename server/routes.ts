@@ -554,6 +554,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Proxy endpoint for exercise GIF images (keeps API key secure on server)
+  app.get("/api/exercises/image/:id", async (req, res) => {
+    try {
+      const keyCheck = validateRapidApiKey();
+      if (!keyCheck.valid) {
+        return res.status(500).json({ error: keyCheck.error });
+      }
+
+      const { id } = req.params;
+      const resolution = (req.query.resolution as string) || "360";
+      
+      // Validate resolution
+      const validResolutions = ["180", "360", "720", "1080"];
+      const safeResolution = validResolutions.includes(resolution) ? resolution : "360";
+
+      const imageUrl = `https://exercisedb.p.rapidapi.com/image?exerciseId=${encodeURIComponent(id)}&resolution=${safeResolution}`;
+      
+      const response = await fetch(imageUrl, {
+        headers: exerciseDbHeaders,
+      });
+
+      if (!response.ok) {
+        console.error("ExerciseDB image error:", response.status);
+        return res.status(response.status).json({ error: "Failed to fetch exercise image" });
+      }
+
+      // Set appropriate headers for GIF streaming
+      res.setHeader("Content-Type", "image/gif");
+      res.setHeader("Cache-Control", "public, max-age=86400"); // Cache for 24 hours
+      
+      // Stream the response body to the client
+      const arrayBuffer = await response.arrayBuffer();
+      res.send(Buffer.from(arrayBuffer));
+    } catch (error) {
+      console.error("Error fetching exercise image:", error);
+      res.status(500).json({ error: "Failed to fetch exercise image" });
+    }
+  });
+
   const httpServer = createServer(app);
 
   return httpServer;

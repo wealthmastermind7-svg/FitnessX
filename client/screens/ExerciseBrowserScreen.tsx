@@ -90,6 +90,10 @@ export default function ExerciseBrowserScreen() {
     setSearchQuery("");
   };
 
+  const getExerciseImageUrl = (exerciseId: string, resolution: string = "360") => {
+    return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
+  };
+
   const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => (
     <Pressable
       onPress={() => handleExercisePress(item, index)}
@@ -100,7 +104,7 @@ export default function ExerciseBrowserScreen() {
     >
       <View style={styles.exerciseImageContainer}>
         <Image
-          source={{ uri: item.gifUrl }}
+          source={{ uri: getExerciseImageUrl(item.id, "180") }}
           style={styles.exerciseImage}
           contentFit="cover"
           transition={200}

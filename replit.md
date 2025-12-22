@@ -123,6 +123,7 @@ shared/           # Shared types and schemas
 - `GET /api/exercises/target/:target` - Filter exercises by target muscle
 - `GET /api/exercises/equipment/:equipment` - Filter exercises by equipment
 - `GET /api/exercises/name/:name` - Search exercises by name
+- `GET /api/exercises/image/:id` - Proxy for exercise GIF images (streams from ExerciseDB with auth)
 
 **Other Endpoints**
 - `POST /api/muscle-image` - Generate muscle group visualization (RapidAPI)
