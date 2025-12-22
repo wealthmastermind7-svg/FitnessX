@@ -75,9 +75,13 @@ export default function ExerciseBrowserScreen() {
     setRefreshing(false);
   }, [refetch]);
 
-  const handleExercisePress = (exercise: ExerciseDBExercise) => {
+  const handleExercisePress = (exercise: ExerciseDBExercise, index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate("ExerciseDetail", { exercise });
+    navigation.navigate("ExerciseDetail", { 
+      exercise, 
+      exercises,
+      exerciseIndex: index 
+    });
   };
 
   const handleBodyPartSelect = (bodyPart: string) => {
@@ -86,9 +90,9 @@ export default function ExerciseBrowserScreen() {
     setSearchQuery("");
   };
 
-  const renderExerciseCard = ({ item }: { item: ExerciseDBExercise }) => (
+  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => (
     <Pressable
-      onPress={() => handleExercisePress(item)}
+      onPress={() => handleExercisePress(item, index)}
       style={({ pressed }) => [
         styles.exerciseCard,
         pressed && styles.exerciseCardPressed,

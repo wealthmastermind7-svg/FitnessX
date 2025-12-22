@@ -37,10 +37,29 @@ export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute<RouteParams>();
-  const exercise = route.params?.exercise as ExerciseDBExercise;
+  const initialExercise = route.params?.exercise as ExerciseDBExercise;
+  const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
+  const initialIndex = route.params?.exerciseIndex ?? 0;
   const baseUrl = getApiUrl();
 
+  const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [showAIInsights, setShowAIInsights] = useState(false);
+
+  const exercise = exercises[currentIndex];
+
+  const handlePrevious = () => {
+    if (currentIndex > 0) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (currentIndex < exercises.length - 1) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      setCurrentIndex(currentIndex + 1);
+    }
+  };
 
   const aiInsightsMutation = useMutation({
     mutationFn: async (): Promise<AISubstitutionsResponse> => {
@@ -72,10 +91,40 @@ export default function ExerciseDetailScreen() {
         >
           <Feather name="arrow-left" size={24} color={Colors.dark.text} />
         </Pressable>
-        <ThemedText style={styles.headerTitle} numberOfLines={1}>
-          {exercise.name}
-        </ThemedText>
-        <View style={{ width: 40 }} />
+        <View style={styles.headerCenter}>
+          <ThemedText style={styles.headerTitle} numberOfLines={1}>
+            {exercise.name}
+          </ThemedText>
+          {exercises.length > 1 && (
+            <ThemedText style={styles.exerciseCounter}>
+              {currentIndex + 1} of {exercises.length}
+            </ThemedText>
+          )}
+        </View>
+        <View style={styles.headerRight}>
+          <Pressable
+            onPress={handlePrevious}
+            disabled={currentIndex === 0}
+            style={[styles.navButton, currentIndex === 0 && styles.navButtonDisabled]}
+          >
+            <Feather 
+              name="chevron-left" 
+              size={24} 
+              color={currentIndex === 0 ? Colors.dark.textSecondary : Colors.dark.text} 
+            />
+          </Pressable>
+          <Pressable
+            onPress={handleNext}
+            disabled={currentIndex === exercises.length - 1}
+            style={[styles.navButton, currentIndex === exercises.length - 1 && styles.navButtonDisabled]}
+          >
+            <Feather 
+              name="chevron-right" 
+              size={24} 
+              color={currentIndex === exercises.length - 1 ? Colors.dark.textSecondary : Colors.dark.text} 
+            />
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView
@@ -267,12 +316,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  headerTitle: {
+  headerCenter: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  headerTitle: {
     ...Typography.h3,
     color: Colors.dark.text,
     textAlign: "center",
     textTransform: "capitalize",
+  },
+  exerciseCounter: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
+  },
+  headerRight: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  navButton: {
+    width: 40,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  navButtonDisabled: {
+    opacity: 0.4,
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,

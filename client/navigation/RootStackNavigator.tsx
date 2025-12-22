@@ -48,7 +48,11 @@ export type RootStackParamList = {
   ExerciseSubstitution: undefined;
   RecoveryAdvisor: undefined;
   ExerciseBrowser: undefined;
-  ExerciseDetail: { exercise: ExerciseDBExercise };
+  ExerciseDetail: { 
+    exercise: ExerciseDBExercise;
+    exercises?: ExerciseDBExercise[];
+    exerciseIndex?: number;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
