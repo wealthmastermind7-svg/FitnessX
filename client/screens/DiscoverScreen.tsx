@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -42,6 +42,22 @@ const MUSCLE_GROUPS = [
   "Calves",
 ];
 
+// Fallback gradient colors for each muscle group
+const MUSCLE_GROUP_GRADIENTS: Record<string, [string, string]> = {
+  "Chest": ["#FF6B6B", "#FF4444"],
+  "Back": ["#9D4EDD", "#5A189A"],
+  "Shoulders": ["#4ECDC4", "#2BA39C"],
+  "Biceps": ["#FFD93D", "#FFC107"],
+  "Triceps": ["#6BCB77", "#4CAF50"],
+  "Forearms": ["#FF6B9D", "#FF4081"],
+  "Abs": ["#FF8C42", "#E65100"],
+  "Obliques": ["#95E1D3", "#5DBB93"],
+  "Quads": ["#87CEEB", "#4A90E2"],
+  "Hamstrings": ["#DA70D6", "#9C27B0"],
+  "Glutes": ["#F48FB1", "#E91E63"],
+  "Calves": ["#8A2BE2", "#6A0DAD"],
+};
+
 const POPULAR_WORKOUTS = [
   {
     id: "1",
@@ -73,8 +89,10 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [imageError, setImageError] = useState(false);
   const baseUrl = getApiUrl();
   const imageUrl = `${baseUrl}api/muscle-image?muscles=${muscle.toLowerCase()}&color=255,107,107`;
+  const gradientColors = MUSCLE_GROUP_GRADIENTS[muscle] || ["#FF6B6B", "#FF4444"];
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -107,11 +125,25 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           { transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <Image
-          source={{ uri: imageUrl }}
+        {/* Background gradient - always show as fallback */}
+        <LinearGradient
+          colors={gradientColors as [string, string]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
           style={styles.muscleImage}
-          resizeMode="contain"
         />
+
+        {/* Try to load image on top - won't show if it fails */}
+        {!imageError && (
+          <Image
+            source={{ uri: imageUrl }}
+            style={styles.muscleImage}
+            resizeMode="contain"
+            onError={() => setImageError(true)}
+          />
+        )}
+
+        {/* Gradient overlay with text */}
         <LinearGradient
           colors={["transparent", "rgba(10,14,26,0.95)"]}
           style={styles.muscleGradient}
