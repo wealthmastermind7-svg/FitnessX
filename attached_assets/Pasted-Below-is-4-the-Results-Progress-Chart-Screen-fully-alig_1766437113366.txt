@@ -1,0 +1,355 @@
+Below is **4) the Results & Progress Chart Screen**, fully aligned with what you already built.
+
+This gives you the **“wow” moment** users expect after scanning and is the **main retention and monetisation driver**.
+
+I will give you:
+
+1. Screen purpose and UX
+2. Data model for scans
+3. Results screen UI
+4. Progress charts
+5. Comparison logic
+6. How this connects to Premium
+
+Everything is **Expo-safe**, **App Store-safe**, and **low risk**.
+
+---
+
+# 4. AI BODY PROGRESS – RESULTS & PROGRESS SCREEN
+
+## 1. Purpose of This Screen
+
+This screen must:
+
+* Reward the user immediately
+* Make progress feel tangible
+* Encourage repeat scans
+* Justify premium upgrade
+
+**This screen sells the subscription, not the scan itself.**
+
+---
+
+## 2. Data Model (Local + Backend)
+
+### Scan Record Interface
+
+```ts
+export interface BodyScan {
+  id: string;
+  createdAt: string;
+  shoulderWidthCm: number;
+  hipWidthCm: number;
+  waistRatio: number;
+  postureScore: number;
+}
+```
+
+You will store:
+
+* Locally (AsyncStorage) for instant UX
+* In backend (Postgres) for history
+
+---
+
+## 3. Results Screen Layout
+
+### Screen Structure
+
+```
+Header
+  ├── Posture Score (Hero)
+  ├── Key Metrics Cards
+  ├── Change Since Last Scan
+  ├── Progress Charts
+  └── CTA (Scan Again / Upgrade)
+```
+
+---
+
+## 4. Results Screen Code
+
+### `BodyScanResultsScreen.tsx`
+
+```tsx
+import React from "react";
+import { View, Text, StyleSheet, ScrollView } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import { BodyScan } from "@/types/bodyScan";
+
+interface Props {
+  currentScan: BodyScan;
+  previousScan?: BodyScan;
+  history: BodyScan[];
+}
+
+export default function BodyScanResultsScreen({
+  currentScan,
+  previousScan,
+  history,
+}: Props) {
+  const delta = previousScan
+    ? {
+        shoulders:
+          currentScan.shoulderWidthCm - previousScan.shoulderWidthCm,
+        hips: currentScan.hipWidthCm - previousScan.hipWidthCm,
+        posture:
+          currentScan.postureScore - previousScan.postureScore,
+      }
+    : null;
+
+  return (
+    <ScrollView style={styles.container}>
+      {/* HERO SCORE */}
+      <View style={styles.hero}>
+        <Text style={styles.heroLabel}>POSTURE SCORE</Text>
+        <Text style={styles.heroValue}>
+          {Math.round(currentScan.postureScore)}
+        </Text>
+        <Text style={styles.heroSub}>out of 100</Text>
+      </View>
+
+      {/* METRICS */}
+      <View style={styles.metrics}>
+        <Metric
+          label="Shoulder Width"
+          value={`${currentScan.shoulderWidthCm.toFixed(1)} cm`}
+          delta={delta?.shoulders}
+        />
+        <Metric
+          label="Hip Width"
+          value={`${currentScan.hipWidthCm.toFixed(1)} cm`}
+          delta={delta?.hips}
+        />
+        <Metric
+          label="Waist Ratio"
+          value={currentScan.waistRatio.toFixed(3)}
+        />
+      </View>
+
+      {/* CHART */}
+      {history.length > 1 && (
+        <ProgressChart history={history} />
+      )}
+
+      {/* CTA */}
+      <View style={styles.cta}>
+        <Text style={styles.ctaText}>
+          Track changes weekly for best accuracy
+        </Text>
+      </View>
+    </ScrollView>
+  );
+}
+```
+
+---
+
+## 5. Metric Card Component
+
+```tsx
+function Metric({
+  label,
+  value,
+  delta,
+}: {
+  label: string;
+  value: string;
+  delta?: number;
+}) {
+  const deltaColor =
+    delta === undefined
+      ? "#AAA"
+      : delta >= 0
+      ? "#4CAF50"
+      : "#FF5252";
+
+  return (
+    <View style={styles.metricCard}>
+      <Text style={styles.metricLabel}>{label}</Text>
+      <Text style={styles.metricValue}>{value}</Text>
+      {delta !== undefined && (
+        <Text style={{ color: deltaColor }}>
+          {delta >= 0 ? "+" : ""}
+          {delta.toFixed(1)}
+        </Text>
+      )}
+    </View>
+  );
+}
+```
+
+---
+
+## 6. Progress Chart (Key Retention Driver)
+
+### Chart Component
+
+```tsx
+function ProgressChart({ history }: { history: BodyScan[] }) {
+  return (
+    <View style={styles.chartContainer}>
+      <Text style={styles.chartTitle}>
+        Shoulder Width Progress
+      </Text>
+      <LineChart
+        data={{
+          labels: history.map((_, i) => `#${i + 1}`),
+          datasets: [
+            {
+              data: history.map(
+                (s) => s.shoulderWidthCm
+              ),
+            },
+          ],
+        }}
+        width={340}
+        height={220}
+        chartConfig={{
+          backgroundColor: "#0A0E1A",
+          backgroundGradientFrom: "#0A0E1A",
+          backgroundGradientTo: "#0A0E1A",
+          decimalPlaces: 1,
+          color: () => "#FF6B6B",
+          labelColor: () => "#AAA",
+        }}
+        bezier
+        style={{ borderRadius: 16 }}
+      />
+    </View>
+  );
+}
+```
+
+---
+
+## 7. Styling (Cinematic FitForge Theme)
+
+```ts
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#0A0E1A",
+    flex: 1,
+  },
+  hero: {
+    alignItems: "center",
+    padding: 30,
+  },
+  heroLabel: {
+    color: "#AAA",
+    fontSize: 14,
+  },
+  heroValue: {
+    fontSize: 64,
+    fontWeight: "bold",
+    color: "#FF6B6B",
+  },
+  heroSub: {
+    color: "#AAA",
+  },
+  metrics: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginVertical: 20,
+  },
+  metricCard: {
+    backgroundColor: "#13182A",
+    padding: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    width: 110,
+  },
+  metricLabel: {
+    color: "#AAA",
+    fontSize: 12,
+  },
+  metricValue: {
+    color: "#FFF",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  chartContainer: {
+    marginTop: 30,
+    alignItems: "center",
+  },
+  chartTitle: {
+    color: "#FFF",
+    marginBottom: 12,
+    fontSize: 16,
+  },
+  cta: {
+    marginTop: 30,
+    padding: 20,
+    alignItems: "center",
+  },
+  ctaText: {
+    color: "#AAA",
+  },
+});
+```
+
+---
+
+## 8. Premium Hook (Important)
+
+This screen enables **clean monetisation**:
+
+### Free Users
+
+* See latest scan only
+* No charts
+* No deltas
+
+### Pro
+
+* Progress charts
+* Delta metrics
+* Weekly reminders
+
+### Elite
+
+* Unlimited scans
+* AI commentary
+* Workout adaptation
+
+This is where you place:
+
+> “Unlock Progress History”
+> “Upgrade to Pro”
+
+---
+
+## 9. App Store Safety (Passes Review)
+
+* “Estimated measurements”
+* No fat %
+* No medical language
+* On-device processing
+* No image storage
+
+This is **safe**.
+
+---
+
+## 10. What You Now Have
+
+You now have:
+
+* A compelling AI scan experience
+* Clear visual payoff
+* Retention mechanics
+* Subscription justification
+
+This is **exactly** how modern fitness apps win.
+
+---
+
+## Next (Highly Recommended)
+
+Next best steps, in order of impact:
+
+5. **Premium Paywall Copy & Pricing**
+6. **GPT-powered Progress Insights**
+7. **Weekly Scan Reminders (Retention)**
+
+Tell me the number and I’ll continue.
