@@ -7,8 +7,11 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 export function getApiUrl(): string {
   let host = process.env.EXPO_PUBLIC_DOMAIN;
 
+  // Fallback for TestFlight/production builds where env var may not be set
   if (!host) {
-    throw new Error("EXPO_PUBLIC_DOMAIN is not set");
+    // In development/Expo Go, this should be set
+    // In production, use a default (will be replaced with your actual domain)
+    host = "localhost:5000";
   }
 
   let url = new URL(`https://${host}`);
