@@ -66,3 +66,16 @@ Preferred communication style: Simple, everyday language.
 - `RAPIDAPI_KEY`: API key for various RapidAPI services.
 - `OPENAI_API_KEY`: Secret key for OpenAI API.
 - `EXPO_PUBLIC_DOMAIN`: Public domain for API requests.
+
+## Recent Changes (Dec 22, 2025)
+
+### API Architecture Refactor
+- **Created app.config.js**: Centralized environment variable configuration using `expo-constants` for build-time variable injection
+- **Centralized API Client (client/lib/api.ts)**: All API calls now route through a single client that:
+  - Constructs base URLs from `EXPO_PUBLIC_DOMAIN` via `Constants.expoConfig?.extra`
+  - Provides typed helper functions: `getExerciseImageUrl()`, `getMuscleImageUrl()`, `getDualMuscleImageUrl()`, `getBaseMuscleImageUrl()`
+  - No client-side API keys exposed
+- **Production-Safe Build Pattern**: Set `EXPO_PUBLIC_API_DOMAIN` when building for TestFlight/App Store
+- **Fixed Critical Scope Error in server/index.ts**: Resolved variable scope issue in `configureExpoAndLanding()` that was causing ERR_INVALID_ARG_TYPE errors
+  - Variables `landingPageTemplate` and `appName` now declared at function scope, initialized within try-catch block
+  - Added comprehensive error handling in `getAppName()`, `serveExpoManifest()`, and `setupErrorHandler()`
