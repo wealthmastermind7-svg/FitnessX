@@ -242,19 +242,77 @@ export default function ProfileScreen() {
               onPress={handleNameChange}
             />
             <View style={styles.settingsDivider} />
-            <SettingsRow
-              icon="bar-chart-2"
-              label="Experience Level"
-              value={profile.experienceLevel}
-              onPress={handleExperienceChange}
-            />
+            
+            <View style={styles.settingRowContainer}>
+              <View style={styles.settingsRowLeft}>
+                <View style={styles.settingsIconContainer}>
+                  <Feather name="bar-chart-2" size={20} color={Colors.dark.accent} />
+                </View>
+                <ThemedText style={styles.settingsLabel}>Experience Level</ThemedText>
+              </View>
+              <View style={styles.buttonTabContainer}>
+                {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                  <Pressable
+                    key={level}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      saveProfile({ ...profile, experienceLevel: level });
+                    }}
+                    style={[
+                      styles.buttonTab,
+                      profile.experienceLevel === level && styles.buttonTabActive,
+                    ]}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.buttonTabText,
+                        profile.experienceLevel === level && styles.buttonTabTextActive,
+                      ]}
+                    >
+                      {level.slice(0, 3)}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+
             <View style={styles.settingsDivider} />
-            <SettingsRow
-              icon="globe"
-              label="Units"
-              value={profile.preferredUnits === "metric" ? "Metric (kg)" : "Imperial (lbs)"}
-              onPress={toggleUnits}
-            />
+            
+            <View style={styles.settingRowContainer}>
+              <View style={styles.settingsRowLeft}>
+                <View style={styles.settingsIconContainer}>
+                  <Feather name="globe" size={20} color={Colors.dark.accent} />
+                </View>
+                <ThemedText style={styles.settingsLabel}>Units</ThemedText>
+              </View>
+              <View style={styles.buttonTabContainer}>
+                {[
+                  { label: "kg", value: "metric" },
+                  { label: "lbs", value: "imperial" },
+                ].map((unit) => (
+                  <Pressable
+                    key={unit.value}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      saveProfile({ ...profile, preferredUnits: unit.value as "metric" | "imperial" });
+                    }}
+                    style={[
+                      styles.buttonTab,
+                      profile.preferredUnits === unit.value && styles.buttonTabActive,
+                    ]}
+                  >
+                    <ThemedText
+                      style={[
+                        styles.buttonTabText,
+                        profile.preferredUnits === unit.value && styles.buttonTabTextActive,
+                      ]}
+                    >
+                      {unit.label}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
           </View>
         </View>
 
@@ -457,6 +515,38 @@ const styles = StyleSheet.create({
     height: 1,
     backgroundColor: Colors.dark.border,
     marginLeft: Spacing.md + 36 + Spacing.md,
+  },
+  settingRowContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+  },
+  buttonTabContainer: {
+    flexDirection: "row",
+    gap: Spacing.xs,
+  },
+  buttonTab: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    backgroundColor: Colors.dark.border,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  buttonTabActive: {
+    backgroundColor: Colors.dark.accent,
+    borderColor: Colors.dark.accent,
+  },
+  buttonTabText: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    fontWeight: "500",
+  },
+  buttonTabTextActive: {
+    color: "#FFF",
+    fontWeight: "600",
   },
   footer: {
     alignItems: "center",
