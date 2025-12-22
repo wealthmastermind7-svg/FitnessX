@@ -110,6 +110,8 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
   const baseUrl = getApiUrl();
   const apiMuscleName = getMuscleApiName(muscle);
   const imageUrl = `${baseUrl}api/muscle-image?muscles=${apiMuscleName}&color=255,107,107`;
+  const useStaticImage = muscle === "Calves";
+  const calfImageUri = require("../assets/calf-muscles.png");
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -163,7 +165,7 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           />
         )}
         <ExpoImage
-          source={{ uri: imageUrl }}
+          source={useStaticImage ? calfImageUri : { uri: imageUrl }}
           style={[styles.muscleImage, { opacity: imageLoaded ? 1 : 0 }]}
           contentFit="contain"
           onLoad={() => setImageLoaded(true)}
