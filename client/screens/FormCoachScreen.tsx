@@ -42,12 +42,7 @@ type Pose = {
   score?: number;
 };
 
-const SUPPORTED_EXERCISES = [
-  { name: "Squat", icon: "target" },
-  { name: "Push-up", icon: "arrow-down" },
-  { name: "Plank", icon: "minus" },
-  { name: "Lunge", icon: "chevrons-down" },
-];
+const EXERCISES_WITH_FORM_RULES = ["squat", "push-up", "plank", "lunge"];
 
 function WebFormCoach({ exerciseName }: { exerciseName: string }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -372,7 +367,7 @@ function WebFormCoach({ exerciseName }: { exerciseName: string }) {
   );
 }
 
-function NativeFormCoach({ exerciseName }: { exerciseName: string }) {
+function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; hasFormRule: boolean }) {
   const formRule = getFormRuleForExercise(exerciseName);
   const [showCamera, setShowCamera] = useState(false);
 
@@ -391,7 +386,9 @@ function NativeFormCoach({ exerciseName }: { exerciseName: string }) {
             Camera Form Tracking
           </ThemedText>
           <ThemedText style={styles.nativeNoticeText}>
-            Analyze your exercise form in real-time using your device camera
+            {hasFormRule 
+              ? "Analyze your exercise form in real-time with AI feedback"
+              : "Record your exercise form and review it later"}
           </ThemedText>
           <Pressable
             onPress={() => {
@@ -419,7 +416,7 @@ function NativeFormCoach({ exerciseName }: { exerciseName: string }) {
         </LinearGradient>
       )}
 
-      {formRule && (
+      {hasFormRule && formRule && (
         <Card style={styles.formTipsCard}>
           <View style={styles.formTipsHeader}>
             <Feather name="target" size={20} color={Colors.dark.accent} />
@@ -482,13 +479,10 @@ export default function FormCoachScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const route = useRoute<RouteParams>();
-  const exerciseParam = route.params?.exerciseName;
-
-  const [selectedExercise, setSelectedExercise] = useState<string>(
-    exerciseParam || "Squat"
-  );
+  const exerciseParam = route.params?.exerciseName || "Exercise";
 
   const isWeb = Platform.OS === "web";
+  const hasFormRule = EXERCISES_WITH_FORM_RULES.includes(exerciseParam.toLowerCase());
 
   return (
     <ThemedView style={styles.container}>
@@ -504,56 +498,18 @@ export default function FormCoachScreen() {
         </Pressable>
         <View style={styles.headerCenter}>
           <ThemedText style={styles.headerTitle}>Form Coach</ThemedText>
-          <ThemedText style={styles.headerSubtitle}>
-            {isWeb ? "AI-Powered Form Tracking" : "Exercise Form Guide"}
+          <ThemedText style={styles.headerSubtitle} numberOfLines={1}>
+            {exerciseParam}
           </ThemedText>
         </View>
         <View style={styles.headerRight} />
       </View>
 
-      <View style={styles.exerciseSelector}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.exerciseSelectorContent}
-        >
-          {SUPPORTED_EXERCISES.map((ex) => (
-            <Pressable
-              key={ex.name}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                setSelectedExercise(ex.name);
-              }}
-              style={[
-                styles.exerciseChip,
-                selectedExercise === ex.name && styles.exerciseChipActive,
-              ]}
-            >
-              <Feather
-                name={ex.icon as any}
-                size={16}
-                color={
-                  selectedExercise === ex.name ? "#FFF" : Colors.dark.textSecondary
-                }
-              />
-              <ThemedText
-                style={[
-                  styles.exerciseChipText,
-                  selectedExercise === ex.name && styles.exerciseChipTextActive,
-                ]}
-              >
-                {ex.name}
-              </ThemedText>
-            </Pressable>
-          ))}
-        </ScrollView>
-      </View>
-
       <View style={[styles.content, { paddingBottom: insets.bottom + Spacing.lg }]}>
         {isWeb ? (
-          <WebFormCoach exerciseName={selectedExercise} />
+          <WebFormCoach exerciseName={exerciseParam} />
         ) : (
-          <NativeFormCoach exerciseName={selectedExercise} />
+          <NativeFormCoach exerciseName={exerciseParam} hasFormRule={hasFormRule} />
         )}
       </View>
     </ThemedView>
