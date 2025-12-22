@@ -252,35 +252,33 @@ export default function ExerciseDetailScreen() {
           </LinearGradient>
         </Pressable>
 
-        {formRule ? (
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              navigation.navigate("FormCoach", { exerciseName: exercise.name });
-            }}
-            style={styles.formCoachButton}
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            navigation.navigate("FormCoach", { exerciseName: exercise.name });
+          }}
+          style={styles.formCoachButton}
+        >
+          <LinearGradient
+            colors={["#10B981", "#059669"] as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.aiButtonGradient}
           >
-            <LinearGradient
-              colors={["#10B981", "#059669"] as any}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.aiButtonGradient}
-            >
-              <Feather name="video" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
-              <View style={{ flex: 1 }}>
-                <ThemedText style={styles.aiButtonTitle}>
-                  Form Coach
-                </ThemedText>
-                <ThemedText style={styles.aiButtonSubtitle}>
-                  {Platform.OS === "web" 
-                    ? "Real-time AI form tracking with camera" 
-                    : "Exercise form tips and guidance"}
-                </ThemedText>
-              </View>
-              <Feather name="arrow-right" size={20} color="#FFF" />
-            </LinearGradient>
-          </Pressable>
-        ) : null}
+            <Feather name="video" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
+            <View style={{ flex: 1 }}>
+              <ThemedText style={styles.aiButtonTitle}>
+                Form Coach
+              </ThemedText>
+              <ThemedText style={styles.aiButtonSubtitle}>
+                {Platform.OS === "web" 
+                  ? "Real-time AI form tracking with camera" 
+                  : "Exercise form tips and guidance"}
+              </ThemedText>
+            </View>
+            <Feather name="arrow-right" size={20} color="#FFF" />
+          </LinearGradient>
+        </Pressable>
 
         {showAIInsights && (
           <Card style={styles.aiInsightsCard}>
