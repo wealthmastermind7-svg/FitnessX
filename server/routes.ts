@@ -37,6 +37,11 @@ const RAPIDAPI_HOST = "muscle-group-image-generator.p.rapidapi.com";
 const EXERCISEDB_HOST = "exercisedb.p.rapidapi.com";
 const NUTRITION_HOST = "ai-workout-planner-exercise-fitness-nutrition-guide.p.rapidapi.com";
 
+// Log on startup to verify key is loaded
+if (process.env.NODE_ENV === "development") {
+  console.log("[Server] RAPIDAPI_KEY loaded:", RAPIDAPI_KEY ? `${RAPIDAPI_KEY.slice(0, 8)}...` : "NOT FOUND");
+}
+
 interface ExerciseDBExercise {
   id: string;
   name: string;
@@ -386,8 +391,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const searchUrl = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=1`;
           const exerciseResponse = await fetch(searchUrl, {
             headers: {
-              "X-RapidAPI-Key": RAPIDAPI_KEY || "",
-              "X-RapidAPI-Host": EXERCISEDB_HOST,
+              "x-rapidapi-key": RAPIDAPI_KEY || "",
+              "x-rapidapi-host": EXERCISEDB_HOST,
             },
           });
 
@@ -411,8 +416,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // ExerciseDB API Endpoints - Exercise Browsing with Animated GIFs
   const exerciseDbHeaders = {
-    "X-RapidAPI-Key": RAPIDAPI_KEY || "",
-    "X-RapidAPI-Host": EXERCISEDB_HOST,
+    "x-rapidapi-key": RAPIDAPI_KEY || "",
+    "x-rapidapi-host": EXERCISEDB_HOST,
   };
 
   // Helper to validate API key before making ExerciseDB requests
@@ -439,7 +444,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const url = `https://exercisedb.p.rapidapi.com/exercises?limit=${limit}&offset=${offset}`;
 
       console.log("[Exercises] Fetching from:", url);
-      console.log("[Exercises] Headers:", { "X-RapidAPI-Host": exerciseDbHeaders["X-RapidAPI-Host"], "X-RapidAPI-Key": "***" });
+      console.log("[Exercises] Headers:", { "x-rapidapi-host": exerciseDbHeaders["x-rapidapi-host"], "x-rapidapi-key": "***" });
 
       const response = await fetch(url, { headers: exerciseDbHeaders });
 
