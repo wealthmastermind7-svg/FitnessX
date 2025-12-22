@@ -56,25 +56,77 @@ export default function ExerciseDetailScreen() {
     setLoadingExerciseName(alternativeName);
     
     try {
-      const response = await fetch(
+      // Try exact name match first
+      let response = await fetch(
         `${baseUrl}api/exercises/name/${encodeURIComponent(alternativeName)}`
       );
       
       if (response.ok) {
         const data = await response.json();
-        const realExercise = Array.isArray(data) ? data[0] : data;
+        const realExercise = Array.isArray(data) && data.length > 0 ? data[0] : null;
         
-        if (realExercise) {
+        if (realExercise && realExercise.gifUrl) {
+          console.log("Found exercise by exact name:", alternativeName);
           navigation.push("ExerciseDetail", { exercise: realExercise });
           setLoadingExerciseName(null);
           return;
+        }
+      }
+      
+      // Try searching by target muscle (more reliable than name)
+      if (exercise.target) {
+        response = await fetch(
+          `${baseUrl}api/exercises/target/${encodeURIComponent(exercise.target)}?limit=10`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            // Find first exercise with same equipment or any with gif
+            const matchingExercise = data.find((ex: ExerciseDBExercise) => 
+              ex.equipment === exercise.equipment && ex.gifUrl
+            ) || data.find((ex: ExerciseDBExercise) => ex.gifUrl);
+            
+            if (matchingExercise) {
+              console.log("Found exercise by target muscle:", exercise.target, matchingExercise.name);
+              navigation.push("ExerciseDetail", { exercise: matchingExercise });
+              setLoadingExerciseName(null);
+              return;
+            }
+          }
+        }
+      }
+      
+      // Last resort: search by the last word (e.g., "Row" from "Barbell Pendlay Row")
+      const words = alternativeName.split(" ");
+      const lastWord = words[words.length - 1];
+      
+      if (lastWord && lastWord.length > 3) {
+        response = await fetch(
+          `${baseUrl}api/exercises/name/${encodeURIComponent(lastWord)}?limit=5`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data) && data.length > 0) {
+            const matchingExercise = data.find((ex: ExerciseDBExercise) => ex.gifUrl) || null;
+            
+            if (matchingExercise) {
+              console.log("Found exercise by partial name:", lastWord, matchingExercise.name);
+              navigation.push("ExerciseDetail", { exercise: matchingExercise });
+              setLoadingExerciseName(null);
+              return;
+            }
+          }
         }
       }
     } catch (error) {
       console.error("Failed to fetch exercise:", alternativeName, error);
     }
     
-    // Fallback if API fails
+    console.log("No real exercise found for:", alternativeName, "- using fallback");
+    
+    // Fallback if API fails - use a similar exercise from the same muscle group
     const fallbackExercise: ExerciseDBExercise = {
       id: `alternative-${alternativeName}`,
       name: alternativeName,
@@ -82,7 +134,8 @@ export default function ExerciseDetailScreen() {
       bodyPart: exercise.bodyPart,
       equipment: exercise.equipment || "bodyweight",
       secondaryMuscles: exercise.secondaryMuscles || [],
-      instructions: [`Perform this exercise with proper form`],
+      instructions: [`This exercise targets your ${exercise.target}`, `Perform with proper form and controlled movements`],
+      gifUrl: "",
     };
     navigation.push("ExerciseDetail", { exercise: fallbackExercise });
     setLoadingExerciseName(null);
