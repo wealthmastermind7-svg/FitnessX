@@ -284,11 +284,7 @@ export default function WorkoutDetailScreen() {
     fetchExerciseData();
   }, [workout.exercises, baseUrl]);
 
-  const handleExercisePress = useCallback((exerciseData: ExerciseDBData | undefined) => {
-    if (!exerciseData) {
-      console.warn("Exercise data not yet loaded, please try again");
-      return;
-    }
+  const handleExercisePress = useCallback((exerciseData: ExerciseDBData) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("ExerciseDetail", { exercise: exerciseData });
   }, [navigation]);
@@ -424,7 +420,16 @@ export default function WorkoutDetailScreen() {
           <ThemedText style={styles.exercisesTitle}>Exercises</ThemedText>
 
           {workout.exercises.map((exercise, index) => {
-            const exerciseData = exerciseDataMap[exercise.name];
+            const exerciseData = exerciseDataMap[exercise.name] || {
+              id: `fallback-${index}`,
+              name: exercise.name,
+              bodyPart: exercise.muscleGroup || "chest",
+              target: exercise.muscleGroup || "chest",
+              equipment: "any",
+              gifUrl: "",
+              instructions: [`Perform ${exercise.sets} sets of ${exercise.reps} reps`],
+              secondaryMuscles: [],
+            };
             return (
               <ExerciseCard 
                 key={`${exercise.name}-${index}`}
