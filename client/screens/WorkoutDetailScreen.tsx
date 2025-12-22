@@ -1,14 +1,15 @@
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback, useState } from "react";
 import {
   View,
   StyleSheet,
   Animated,
   Pressable,
-  Image,
   Dimensions,
 } from "react-native";
+import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
+import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
@@ -20,13 +21,36 @@ import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constant
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Exercise } from "@/navigation/RootStackNavigator";
 
+interface ExerciseDBData {
+  id: string;
+  name: string;
+  gifUrl: string;
+  bodyPart: string;
+  target: string;
+  equipment: string;
+  instructions: string[];
+  secondaryMuscles: string[];
+}
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 type WorkoutDetailRouteProp = RouteProp<RootStackParamList, "WorkoutDetail">;
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function ExerciseCard({ exercise, index }: { exercise: Exercise; index: number }) {
+function ExerciseCard({ 
+  exercise, 
+  index,
+  exerciseData,
+  onPress 
+}: { 
+  exercise: Exercise; 
+  index: number;
+  exerciseData: ExerciseDBData;
+  onPress: () => void;
+}) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
+  const baseUrl = getApiUrl();
 
   useEffect(() => {
     Animated.parallel([
@@ -44,45 +68,226 @@ function ExerciseCard({ exercise, index }: { exercise: Exercise; index: number }
     ]).start();
   }, [index]);
 
+  const gifUrl = `${baseUrl}api/exercises/image/${exerciseData.id}`;
+
   return (
-    <Animated.View
-      style={[
-        styles.exerciseCard,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY }],
-        },
-      ]}
-    >
-      <View style={styles.exerciseInfo}>
-        <ThemedText style={styles.exerciseName}>{exercise.name}</ThemedText>
-        <ThemedText style={styles.exerciseMuscle}>{exercise.muscleGroup}</ThemedText>
-      </View>
-      <View style={styles.exerciseDetails}>
-        <View style={styles.exerciseStat}>
-          <ThemedText style={styles.exerciseStatValue}>{exercise.sets}</ThemedText>
-          <ThemedText style={styles.exerciseStatLabel}>Sets</ThemedText>
+    <Pressable onPress={onPress}>
+      <Animated.View
+        style={[
+          styles.exerciseCard,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY }],
+          },
+        ]}
+      >
+        <View style={styles.exerciseCardContent}>
+          <View style={styles.gifContainer}>
+            <Image
+              source={{ uri: gifUrl }}
+              style={styles.exerciseGif}
+              contentFit="cover"
+            />
+          </View>
+          <View style={styles.exerciseInfo}>
+            <ThemedText style={styles.exerciseName}>{exercise.name}</ThemedText>
+            <ThemedText style={styles.exerciseMuscle}>{exercise.muscleGroup}</ThemedText>
+            {exerciseData ? (
+              <View style={styles.exerciseTags}>
+                <View style={styles.exerciseTag}>
+                  <ThemedText style={styles.exerciseTagText}>{exerciseData.target}</ThemedText>
+                </View>
+                <View style={styles.exerciseTag}>
+                  <ThemedText style={styles.exerciseTagText}>{exerciseData.equipment}</ThemedText>
+                </View>
+              </View>
+            ) : null}
+          </View>
+          <View style={styles.chevronContainer}>
+            <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
+          </View>
         </View>
-        <View style={styles.exerciseStat}>
-          <ThemedText style={styles.exerciseStatValue}>{exercise.reps}</ThemedText>
-          <ThemedText style={styles.exerciseStatLabel}>Reps</ThemedText>
+        <View style={styles.exerciseDetails}>
+          <View style={styles.exerciseStat}>
+            <ThemedText style={styles.exerciseStatValue}>{exercise.sets}</ThemedText>
+            <ThemedText style={styles.exerciseStatLabel}>Sets</ThemedText>
+          </View>
+          <View style={styles.exerciseStat}>
+            <ThemedText style={styles.exerciseStatValue}>{exercise.reps}</ThemedText>
+            <ThemedText style={styles.exerciseStatLabel}>Reps</ThemedText>
+          </View>
+          <View style={styles.exerciseStat}>
+            <ThemedText style={styles.exerciseStatValue}>{exercise.restSeconds}s</ThemedText>
+            <ThemedText style={styles.exerciseStatLabel}>Rest</ThemedText>
+          </View>
         </View>
-        <View style={styles.exerciseStat}>
-          <ThemedText style={styles.exerciseStatValue}>{exercise.restSeconds}s</ThemedText>
-          <ThemedText style={styles.exerciseStatLabel}>Rest</ThemedText>
-        </View>
-      </View>
-    </Animated.View>
+      </Animated.View>
+    </Pressable>
   );
+}
+
+const muscleToBodyPart: Record<string, string> = {
+  chest: "chest",
+  back: "back",
+  shoulders: "shoulders",
+  arms: "upper arms",
+  biceps: "upper arms",
+  triceps: "upper arms",
+  forearms: "lower arms",
+  legs: "upper legs",
+  quadriceps: "upper legs",
+  hamstrings: "upper legs",
+  glutes: "upper legs",
+  calves: "lower legs",
+  core: "waist",
+  abs: "waist",
+  cardio: "cardio",
+};
+
+const fallbackExercises: Record<string, ExerciseDBData> = {
+  chest: { id: "0025", name: "bench press", gifUrl: "", bodyPart: "chest", target: "pectorals", equipment: "barbell", instructions: [], secondaryMuscles: [] },
+  back: { id: "0027", name: "bent over row", gifUrl: "", bodyPart: "back", target: "lats", equipment: "barbell", instructions: [], secondaryMuscles: [] },
+  shoulders: { id: "0405", name: "shoulder press", gifUrl: "", bodyPart: "shoulders", target: "deltoids", equipment: "dumbbell", instructions: [], secondaryMuscles: [] },
+  "upper arms": { id: "0294", name: "bicep curl", gifUrl: "", bodyPart: "upper arms", target: "biceps", equipment: "dumbbell", instructions: [], secondaryMuscles: [] },
+  "lower arms": { id: "0294", name: "wrist curl", gifUrl: "", bodyPart: "lower arms", target: "forearms", equipment: "dumbbell", instructions: [], secondaryMuscles: [] },
+  "upper legs": { id: "0043", name: "squat", gifUrl: "", bodyPart: "upper legs", target: "quads", equipment: "barbell", instructions: [], secondaryMuscles: [] },
+  "lower legs": { id: "0483", name: "calf raise", gifUrl: "", bodyPart: "lower legs", target: "calves", equipment: "body weight", instructions: [], secondaryMuscles: [] },
+  waist: { id: "0002", name: "crunch", gifUrl: "", bodyPart: "waist", target: "abs", equipment: "body weight", instructions: [], secondaryMuscles: [] },
+  cardio: { id: "1160", name: "jumping jacks", gifUrl: "", bodyPart: "cardio", target: "cardiovascular system", equipment: "body weight", instructions: [], secondaryMuscles: [] },
+};
+
+function buildInitialFallbacks(exercises: Exercise[]): Record<string, ExerciseDBData> {
+  const result: Record<string, ExerciseDBData> = {};
+  exercises.forEach(e => {
+    const bodyPart = muscleToBodyPart[e.muscleGroup?.toLowerCase() || "chest"] || "chest";
+    const fallback = fallbackExercises[bodyPart] || fallbackExercises.chest;
+    result[e.name] = {
+      ...fallback,
+      name: e.name,
+      instructions: [`Perform ${e.sets} sets of ${e.reps} reps`, `Rest ${e.restSeconds} seconds between sets`],
+    };
+  });
+  return result;
 }
 
 export default function WorkoutDetailScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const route = useRoute<WorkoutDetailRouteProp>();
   const { workout } = route.params;
   const scrollY = useRef(new Animated.Value(0)).current;
   const baseUrl = getApiUrl();
+  
+  const [exerciseDataMap, setExerciseDataMap] = useState<Record<string, ExerciseDBData>>(() => 
+    buildInitialFallbacks(workout.exercises)
+  );
+
+  useEffect(() => {
+    const normalizeExerciseName = (name: string): string[] => {
+      const base = name.toLowerCase().trim();
+      const variants: string[] = [base];
+      
+      const singular = base
+        .replace(/presses$/i, 'press')
+        .replace(/raises$/i, 'raise')
+        .replace(/curls$/i, 'curl')
+        .replace(/rows$/i, 'row')
+        .replace(/flyes$/i, 'fly')
+        .replace(/flies$/i, 'fly')
+        .replace(/extensions$/i, 'extension')
+        .replace(/pulldowns$/i, 'pulldown')
+        .replace(/pull-downs$/i, 'pulldown')
+        .replace(/pushups$/i, 'push up')
+        .replace(/push-ups$/i, 'push up')
+        .replace(/situps$/i, 'sit up')
+        .replace(/sit-ups$/i, 'sit up')
+        .replace(/s$/, '');
+      if (singular !== base) variants.push(singular);
+      
+      const normalized = base
+        .replace(/-/g, ' ')
+        .replace(/dumbbell /i, '')
+        .replace(/barbell /i, '')
+        .replace(/cable /i, '')
+        .replace(/machine /i, '');
+      if (normalized !== base) variants.push(normalized);
+      
+      const withoutParens = base.replace(/\s*\([^)]*\)/g, '').trim();
+      if (withoutParens !== base) variants.push(withoutParens);
+      
+      const words = base.split(/[\s-]+/).filter(w => w.length > 3 && !['with', 'and', 'the'].includes(w));
+      if (words.length >= 2) {
+        variants.push(words.slice(0, 2).join(' '));
+      }
+      if (words.length > 0) {
+        variants.push(words[words.length - 1]);
+      }
+      
+      return [...new Set(variants)];
+    };
+
+    const fetchExerciseData = async () => {
+      for (const exercise of workout.exercises) {
+        try {
+          const nameVariants = normalizeExerciseName(exercise.name);
+          let foundExercise: ExerciseDBData | null = null;
+          
+          for (const variant of nameVariants) {
+            if (foundExercise) break;
+            const searchName = encodeURIComponent(variant);
+            const response = await fetch(`${baseUrl}api/exercises/name/${searchName}`);
+            if (response.ok) {
+              const exercises: ExerciseDBData[] = await response.json();
+              if (exercises.length > 0) {
+                foundExercise = exercises[0];
+              }
+            }
+          }
+          
+          if (!foundExercise && exercise.muscleGroup) {
+            const bodyPart = muscleToBodyPart[exercise.muscleGroup.toLowerCase()] || "chest";
+            try {
+              const bodyPartResponse = await fetch(`${baseUrl}api/exercises/bodyPart/${encodeURIComponent(bodyPart)}`);
+              if (bodyPartResponse.ok) {
+                const bodyPartExercises: ExerciseDBData[] = await bodyPartResponse.json();
+                if (bodyPartExercises.length > 0) {
+                  const randomIndex = Math.floor(Math.random() * Math.min(bodyPartExercises.length, 10));
+                  foundExercise = {
+                    ...bodyPartExercises[randomIndex],
+                    name: exercise.name,
+                  };
+                }
+              }
+            } catch {
+              // Body part fetch failed, keep initial fallback
+            }
+          }
+          
+          if (foundExercise) {
+            setExerciseDataMap(prev => ({ ...prev, [exercise.name]: foundExercise as ExerciseDBData }));
+          }
+        } catch (error) {
+          console.error(`Error fetching exercise data for ${exercise.name}:`, error);
+          const fallback = fallbackExercises.chest;
+          const fallbackData = {
+            ...fallback,
+            name: exercise.name,
+            instructions: [`Perform ${exercise.sets} sets of ${exercise.reps} reps`],
+          };
+          setExerciseDataMap(prev => ({ ...prev, [exercise.name]: fallbackData }));
+        } finally {
+          // Network request complete - exerciseDataMap already has fallback or upgraded data
+        }
+      }
+    };
+
+    fetchExerciseData();
+  }, [workout.exercises, baseUrl]);
+
+  const handleExercisePress = useCallback((exerciseData: ExerciseDBData) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    navigation.navigate("ExerciseDetail", { exercise: exerciseData });
+  }, [navigation]);
 
   const muscleImageUrl = workout.muscleGroups.length > 0
     ? `${baseUrl}api/dual-muscle-image?primary=${workout.muscleGroups[0].toLowerCase()}&secondary=${workout.muscleGroups.slice(1).join(",").toLowerCase()}`
@@ -215,7 +420,13 @@ export default function WorkoutDetailScreen() {
           <ThemedText style={styles.exercisesTitle}>Exercises</ThemedText>
 
           {workout.exercises.map((exercise, index) => (
-            <ExerciseCard key={index} exercise={exercise} index={index} />
+            <ExerciseCard 
+              key={index} 
+              exercise={exercise} 
+              index={index}
+              exerciseData={exerciseDataMap[exercise.name]}
+              onPress={() => handleExercisePress(exerciseDataMap[exercise.name])}
+            />
           ))}
 
           <Pressable onPress={handleSave} style={styles.saveButton}>
@@ -332,21 +543,69 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
-  exerciseInfo: {
+  exerciseCardContent: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: Spacing.md,
   },
+  gifContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    backgroundColor: Colors.dark.backgroundSecondary,
+  },
+  exerciseGif: {
+    width: 70,
+    height: 70,
+  },
+  gifPlaceholder: {
+    width: 70,
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundSecondary,
+  },
+  exerciseInfo: {
+    flex: 1,
+    marginLeft: Spacing.md,
+  },
   exerciseName: {
-    ...Typography.h3,
+    ...Typography.body,
     color: Colors.dark.text,
-    marginBottom: Spacing.xs,
+    fontWeight: "600",
+    marginBottom: 2,
   },
   exerciseMuscle: {
     ...Typography.small,
     color: Colors.dark.accent,
+    marginBottom: Spacing.xs,
+  },
+  exerciseTags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 4,
+  },
+  exerciseTag: {
+    backgroundColor: Colors.dark.accent + "20",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  exerciseTagText: {
+    fontSize: 10,
+    color: Colors.dark.accent,
+    textTransform: "capitalize",
+  },
+  chevronContainer: {
+    paddingLeft: Spacing.sm,
   },
   exerciseDetails: {
     flexDirection: "row",
     gap: Spacing.lg,
+    paddingTop: Spacing.sm,
+    borderTopWidth: 1,
+    borderTopColor: Colors.dark.border,
   },
   exerciseStat: {
     alignItems: "center",

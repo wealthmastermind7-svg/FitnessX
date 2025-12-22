@@ -135,12 +135,29 @@ export default function ExerciseDetailScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.gifContainer}>
-          <Image
-            source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
-            style={styles.gifImage}
-            contentFit="contain"
-            transition={300}
-          />
+          {exercise.id.startsWith("stub-") ? (
+            <View style={styles.gifPlaceholder}>
+              <LinearGradient
+                colors={["#1a1f35", "#0f1225"] as any}
+                style={styles.gifPlaceholderGradient}
+              >
+                <Feather name="activity" size={64} color={Colors.dark.textSecondary} />
+                <ThemedText style={styles.placeholderText}>
+                  Exercise Demonstration
+                </ThemedText>
+                <ThemedText style={styles.placeholderSubtext}>
+                  Animation not available
+                </ThemedText>
+              </LinearGradient>
+            </View>
+          ) : (
+            <Image
+              source={{ uri: `${baseUrl}api/exercises/image/${exercise.id}?resolution=720` }}
+              style={styles.gifImage}
+              contentFit="contain"
+              transition={300}
+            />
+          )}
           <View style={styles.gifOverlay}>
             <View style={styles.muscleHighlight}>
               <Feather name="target" size={16} color="#FFF" />
@@ -362,6 +379,26 @@ const styles = StyleSheet.create({
   gifImage: {
     width: "100%",
     height: "100%",
+  },
+  gifPlaceholder: {
+    width: "100%",
+    height: "100%",
+  },
+  gifPlaceholderGradient: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  placeholderText: {
+    ...Typography.h3,
+    color: Colors.dark.textSecondary,
+    marginTop: Spacing.md,
+  },
+  placeholderSubtext: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: Spacing.xs,
+    opacity: 0.7,
   },
   gifOverlay: {
     position: "absolute",
