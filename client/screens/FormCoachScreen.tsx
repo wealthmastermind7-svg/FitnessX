@@ -371,6 +371,43 @@ function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; 
   const formRule = getFormRuleForExercise(exerciseName);
   const [showCamera, setShowCamera] = useState(false);
 
+  const handleActivateCamera = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setShowCamera(true);
+  };
+
+  // Camera is active
+  if (showCamera) {
+    return (
+      <View style={styles.cameraContainer}>
+        <LinearGradient
+          colors={["#0a5f4f", "#164e45"] as any}
+          style={styles.camera}
+        />
+        <View style={styles.cameraOverlay}>
+          <Pressable
+            onPress={() => {
+              setShowCamera(false);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            style={styles.closeButton}
+          >
+            <Feather name="x" size={24} color="#FFF" />
+          </Pressable>
+          <View style={styles.cameraInfo}>
+            <Feather name="camera" size={32} color="#10B981" />
+            <ThemedText style={styles.cameraInfoText}>
+              {exerciseName}
+            </ThemedText>
+            <ThemedText style={styles.cameraStatusText}>
+              Camera Active
+            </ThemedText>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       contentContainerStyle={styles.nativeScrollContent}
@@ -391,10 +428,7 @@ function NativeFormCoach({ exerciseName, hasFormRule }: { exerciseName: string; 
               : "Record your exercise form and review it later"}
           </ThemedText>
           <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              setShowCamera(true);
-            }}
+            onPress={handleActivateCamera}
             style={styles.activateCameraButton}
           >
             <LinearGradient
@@ -691,6 +725,50 @@ const styles = StyleSheet.create({
   confidenceValue: {
     ...Typography.small,
     fontWeight: "600",
+  },
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: Colors.dark.backgroundRoot,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  camera: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  cameraOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+  },
+  closeButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "flex-start",
+  },
+  cameraInfo: {
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  cameraInfoText: {
+    ...Typography.h2,
+    color: "#FFF",
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
+  cameraStatusText: {
+    ...Typography.body,
+    color: "#10B981",
+    fontWeight: "500",
   },
   nativeScrollContent: {
     paddingBottom: Spacing.xl,
