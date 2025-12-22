@@ -225,11 +225,21 @@ export default function ProfileScreen() {
           <ThemedText style={styles.experienceLevel}>{profile.experienceLevel}</ThemedText>
         </View>
 
-        <View style={styles.statsContainer}>
-          <StatCard label="Workouts" value={stats.totalWorkouts} icon="activity" />
-          <StatCard label="Streak" value={`${stats.currentStreak}d`} icon="zap" />
-          <StatCard label="Top Muscle" value={stats.favoriteMuscle} icon="award" />
-        </View>
+        <Pressable
+          onPress={() => {
+            if (stats.totalWorkouts > 0) {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.navigate("SavedWorkouts");
+            }
+          }}
+          disabled={stats.totalWorkouts === 0}
+        >
+          <View style={styles.statsContainer}>
+            <StatCard label="Workouts" value={stats.totalWorkouts} icon="activity" />
+            <StatCard label="Streak" value={`${stats.currentStreak}d`} icon="zap" />
+            <StatCard label="Top Muscle" value={stats.favoriteMuscle} icon="award" />
+          </View>
+        </Pressable>
 
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Settings</ThemedText>

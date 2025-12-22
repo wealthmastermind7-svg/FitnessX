@@ -11,6 +11,7 @@ import ExerciseBrowserScreen from "@/screens/ExerciseBrowserScreen";
 import CommunityScreen from "@/screens/CommunityScreen";
 import CoachesScreen from "@/screens/CoachesScreen";
 import AIChatScreen from "@/screens/AIChatScreen";
+import SavedWorkoutsScreen from "@/screens/SavedWorkoutsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -59,6 +60,7 @@ export type RootStackParamList = {
   Community: undefined;
   Coaches: undefined;
   AIChat: undefined;
+  SavedWorkouts: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -153,6 +155,14 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="AIChat"
         component={AIChatScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="SavedWorkouts"
+        component={SavedWorkoutsScreen}
         options={{
           presentation: "card",
           headerShown: false,
