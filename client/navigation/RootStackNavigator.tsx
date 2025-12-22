@@ -3,9 +3,6 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WorkoutDetailScreen from "@/screens/WorkoutDetailScreen";
 import TrainingProgramScreen from "@/screens/TrainingProgramScreen";
-import WorkoutFeedbackScreen from "@/screens/WorkoutFeedbackScreen";
-import ExerciseSubstitutionScreen from "@/screens/ExerciseSubstitutionScreen";
-import RecoveryAdvisorScreen from "@/screens/RecoveryAdvisorScreen";
 import ExerciseDetailScreen from "@/screens/ExerciseDetailScreen";
 import ExerciseBrowserScreen from "@/screens/ExerciseBrowserScreen";
 import CommunityScreen from "@/screens/CommunityScreen";
@@ -48,9 +45,6 @@ export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
   TrainingProgram: { program: any };
-  WorkoutFeedback: undefined;
-  ExerciseSubstitution: undefined;
-  RecoveryAdvisor: undefined;
   ExerciseBrowser: { filterByMuscle?: string } | undefined;
   ExerciseDetail: { 
     exercise: ExerciseDBExercise;
@@ -91,30 +85,6 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="TrainingProgram"
         component={TrainingProgramScreen}
-        options={{
-          presentation: "modal",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="WorkoutFeedback"
-        component={WorkoutFeedbackScreen}
-        options={{
-          presentation: "modal",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="ExerciseSubstitution"
-        component={ExerciseSubstitutionScreen}
-        options={{
-          presentation: "modal",
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen
-        name="RecoveryAdvisor"
-        component={RecoveryAdvisorScreen}
         options={{
           presentation: "modal",
           headerShown: false,
