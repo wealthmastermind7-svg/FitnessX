@@ -40,18 +40,6 @@ const BODY_PARTS = [
   { id: "cardio", label: "Cardio", icon: "heart" },
 ];
 
-// Map display names from DiscoverScreen to ExerciseDB body part names
-const normalizeBodyPartName = (name: string): string => {
-  const nameMap: Record<string, string> = {
-    "arms": "upper arms",
-    "legs": "upper legs",
-    "calves": "lower legs",
-    "forearms": "lower arms",
-    "core": "waist",
-  };
-  return nameMap[name.toLowerCase()] || name.toLowerCase();
-};
-
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ExerciseBrowserScreen() {
@@ -62,26 +50,22 @@ export default function ExerciseBrowserScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
-    route.params?.filterByMuscle ? normalizeBodyPartName(route.params.filterByMuscle) : "all"
+    route.params?.filterByMuscle?.toLowerCase() || "all"
   );
   const [refreshing, setRefreshing] = useState(false);
-  const [allExercises, setAllExercises] = useState<ExerciseDBExercise[]>([]);
-  const [offset, setOffset] = useState(0);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
 
   const fetchUrl = useMemo(() => {
     if (searchQuery.trim()) {
-      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=10&offset=${offset}`;
+      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=50`;
     }
     if (selectedBodyPart !== "all") {
-      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=10&offset=${offset}`;
+      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=50`;
     }
-    return `${baseUrl}api/exercises?limit=10&offset=${offset}`;
-  }, [baseUrl, searchQuery, selectedBodyPart, offset]);
+    return `${baseUrl}api/exercises?limit=50`;
+  }, [baseUrl, searchQuery, selectedBodyPart]);
 
   const {
-    data: newExercises,
+    data: exercises,
     isLoading,
     refetch,
     error,
@@ -90,43 +74,18 @@ export default function ExerciseBrowserScreen() {
     staleTime: 5 * 60 * 1000,
   });
 
-  // Update allExercises when newExercises change
-  React.useEffect(() => {
-    if (newExercises) {
-      if (offset === 0) {
-        // First load - replace
-        setAllExercises(newExercises);
-        setHasMore(newExercises.length === 10);
-      } else {
-        // Load more - append
-        setAllExercises((prev) => [...prev, ...newExercises]);
-        setHasMore(newExercises.length === 10);
-      }
-      setIsLoadingMore(false);
-    }
-  }, [newExercises, offset]);
-
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    setOffset(0);
-    setAllExercises([]);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     await refetch();
     setRefreshing(false);
   }, [refetch]);
 
-  const handleLoadMore = useCallback(async () => {
-    if (!isLoadingMore && hasMore) {
-      setIsLoadingMore(true);
-      setOffset((prev) => prev + 10);
-    }
-  }, [isLoadingMore, hasMore]);
-
   const handleExercisePress = (exercise: ExerciseDBExercise, index: number) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate("ExerciseDetail", { 
       exercise, 
-      exercises: allExercises,
+      exercises,
       exerciseIndex: index 
     });
   };
@@ -135,8 +94,6 @@ export default function ExerciseBrowserScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedBodyPart(bodyPart);
     setSearchQuery("");
-    setOffset(0);
-    setAllExercises([]);
   };
 
   const getExerciseImageUrl = (exerciseId: string, resolution: string = "360") => {
@@ -198,11 +155,7 @@ export default function ExerciseBrowserScreen() {
           placeholder="Search 1,300+ exercises..."
           placeholderTextColor={Colors.dark.textSecondary}
           value={searchQuery}
-          onChangeText={(text) => {
-            setSearchQuery(text);
-            setOffset(0);
-            setAllExercises([]);
-          }}
+          onChangeText={setSearchQuery}
           returnKeyType="search"
         />
         {searchQuery.length > 0 && (
@@ -210,8 +163,6 @@ export default function ExerciseBrowserScreen() {
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setSearchQuery("");
-              setOffset(0);
-              setAllExercises([]);
             }}
           >
             <Feather name="x" size={20} color={Colors.dark.textSecondary} />
@@ -254,7 +205,7 @@ export default function ExerciseBrowserScreen() {
 
       <View style={styles.resultsHeader}>
         <ThemedText style={styles.resultsCount}>
-          {allExercises?.length || 0} exercises found
+          {exercises?.length || 0} exercises found
         </ThemedText>
         {selectedBodyPart !== "all" && (
           <Pressable
@@ -267,26 +218,6 @@ export default function ExerciseBrowserScreen() {
       </View>
     </View>
   );
-
-  const ListFooter = () => {
-    if (!hasMore) return null;
-    if (allExercises.length === 0 && isLoading) return null;
-    
-    return (
-      <View style={styles.loadMoreContainer}>
-        {isLoadingMore ? (
-          <ActivityIndicator size="small" color={Colors.dark.accent} />
-        ) : (
-          <Pressable 
-            onPress={handleLoadMore}
-            style={styles.loadMoreButton}
-          >
-            <ThemedText style={styles.loadMoreText}>Load More</ThemedText>
-          </Pressable>
-        )}
-      </View>
-    );
-  };
 
   const ListEmpty = () => (
     <View style={styles.emptyContainer}>
@@ -339,12 +270,11 @@ export default function ExerciseBrowserScreen() {
         </Pressable>
       </View>
       <FlatList
-        data={allExercises}
+        data={exercises || []}
         renderItem={renderExerciseCard}
-        keyExtractor={(item, index) => `${item.id}-${index}`}
+        keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeader}
         ListEmptyComponent={ListEmpty}
-        ListFooterComponent={ListFooter}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: insets.bottom + Spacing.xl },
@@ -552,21 +482,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    ...Typography.body,
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  loadMoreContainer: {
-    paddingVertical: Spacing.xl,
-    alignItems: "center",
-  },
-  loadMoreButton: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.md,
-  },
-  loadMoreText: {
     ...Typography.body,
     color: "#FFF",
     fontWeight: "600",

@@ -431,7 +431,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(500).json({ error: keyCheck.error });
       }
 
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
@@ -527,7 +527,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { bodyPart } = req.params;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
@@ -551,7 +551,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exercises/target/:target", async (req, res) => {
     try {
       const { target } = req.params;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
@@ -575,7 +575,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exercises/equipment/:equipment", async (req, res) => {
     try {
       const { equipment } = req.params;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
@@ -621,7 +621,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/exercises/name/:name", async (req, res) => {
     try {
       const { name } = req.params;
-      const limit = parseInt(req.query.limit as string) || 50;
+      const limit = parseInt(req.query.limit as string) || 20;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
