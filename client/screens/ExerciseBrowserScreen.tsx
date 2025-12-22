@@ -127,6 +127,9 @@ export default function ExerciseBrowserScreen() {
           contentFit="cover"
           transition={200}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+          onError={(error) => {
+            console.log("Image load error for exercise:", item.id, error);
+          }}
         />
         <View style={styles.exerciseOverlay}>
           <View style={styles.targetBadge}>
@@ -231,32 +234,42 @@ export default function ExerciseBrowserScreen() {
     </View>
   );
 
-  const ListEmpty = () => (
-    <View style={styles.emptyContainer}>
-      {isLoading ? (
-        <ActivityIndicator size="large" color={Colors.dark.accent} />
-      ) : error ? (
-        <>
-          <Feather name="alert-circle" size={48} color={Colors.dark.textSecondary} />
-          <ThemedText style={styles.emptyTitle}>Unable to load exercises</ThemedText>
-          <ThemedText style={styles.emptySubtitle}>
-            Check your connection and try again
-          </ThemedText>
-          <Pressable onPress={onRefresh} style={styles.retryButton}>
-            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-          </Pressable>
-        </>
-      ) : (
-        <>
-          <Feather name="search" size={48} color={Colors.dark.textSecondary} />
-          <ThemedText style={styles.emptyTitle}>No exercises found</ThemedText>
-          <ThemedText style={styles.emptySubtitle}>
-            Try a different search term or filter
-          </ThemedText>
-        </>
-      )}
-    </View>
-  );
+  const ListEmpty = () => {
+    const errorMessage = error ? String(error).toLowerCase() : "";
+    const isApiKeyError = errorMessage.includes("api key") || errorMessage.includes("rapidapi");
+    
+    return (
+      <View style={styles.emptyContainer}>
+        {isLoading ? (
+          <>
+            <ActivityIndicator size="large" color={Colors.dark.accent} />
+            <ThemedText style={styles.emptySubtitle}>Loading exercises...</ThemedText>
+          </>
+        ) : error ? (
+          <>
+            <Feather name="alert-circle" size={48} color={Colors.dark.textSecondary} />
+            <ThemedText style={styles.emptyTitle}>Unable to load exercises</ThemedText>
+            <ThemedText style={styles.emptySubtitle}>
+              {isApiKeyError 
+                ? "Exercise database is temporarily unavailable. Check your API configuration."
+                : "Check your connection and try again"}
+            </ThemedText>
+            <Pressable onPress={onRefresh} style={styles.retryButton}>
+              <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
+            </Pressable>
+          </>
+        ) : (
+          <>
+            <Feather name="search" size={48} color={Colors.dark.textSecondary} />
+            <ThemedText style={styles.emptyTitle}>No exercises found</ThemedText>
+            <ThemedText style={styles.emptySubtitle}>
+              Try a different search term or filter
+            </ThemedText>
+          </>
+        )}
+      </View>
+    );
+  };
 
   return (
     <ThemedView style={styles.container}>
