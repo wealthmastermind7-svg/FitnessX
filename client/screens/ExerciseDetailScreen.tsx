@@ -130,6 +130,9 @@ export default function ExerciseDetailScreen() {
               style={styles.gifImage}
               contentFit="contain"
               transition={300}
+              onError={(error) => {
+                console.warn(`Failed to load GIF for exercise ${exercise.id}:`, error);
+              }}
             />
           )}
           <View style={styles.gifOverlay}>

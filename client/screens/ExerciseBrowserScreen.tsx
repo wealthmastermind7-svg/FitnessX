@@ -127,6 +127,9 @@ export default function ExerciseBrowserScreen() {
           contentFit="cover"
           transition={200}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+          onError={(error) => {
+            console.warn(`Failed to load GIF for exercise ${item.id}:`, error);
+          }}
         />
         <View style={styles.exerciseOverlay}>
           <View style={styles.targetBadge}>
