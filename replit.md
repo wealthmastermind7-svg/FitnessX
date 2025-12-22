@@ -10,22 +10,36 @@ Architecture: Local-first with AsyncStorage for user preferences and saved worko
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (Session Dec 21, 2025)
+## Recent Changes (Session Dec 22, 2025)
 
-### AI Premium Features Implemented
+### Exercise Browsing Feature
+- **Exercise Library**: 1,300+ exercises from ExerciseDB API with animated GIF demonstrations
+- **ExerciseBrowserScreen**: Search bar, body part filters, pull-to-refresh, exercise cards with GIF thumbnails
+- **ExerciseDetailScreen**: Full-screen animated GIF, step-by-step instructions, AI-powered exercise alternatives
+- **DiscoverScreen**: Added prominent "Exercise Library" card for quick access
+
+### New Files (Dec 22)
+- `client/screens/ExerciseBrowserScreen.tsx` - Browse and search 1,300+ exercises with filters
+- `client/screens/ExerciseDetailScreen.tsx` - Full exercise details with animated demos and AI alternatives
+
+### AI Premium Features (Dec 21)
 - **AI Progressive Training Plans**: 8-week structured programs generated via GPT-4o-mini. Accessed from Generate screen (purple gradient button).
 - **AI Workout Feedback**: Post-workout coaching feedback with strengths, improvement areas, and next-session tips. Accessed from Profile screen (Premium Features section).
+- **AI Exercise Substitutions**: Smart exercise alternatives based on equipment and constraints.
+- **AI Recovery Advisor**: Training readiness analysis and recovery recommendations.
 
-### New Files
+### New Files (Dec 21)
 - `client/screens/TrainingProgramScreen.tsx` - Displays 8-week program with weekly progression
 - `client/screens/WorkoutFeedbackScreen.tsx` - Form to log workouts and receive AI coaching feedback
-- `server/services/ai.ts` - OpenAI integration for both features
+- `client/screens/RecoveryAdvisorScreen.tsx` - AI recovery and training readiness analysis
+- `server/services/ai.ts` - OpenAI integration for all AI features
 
 ### Modified Files
-- `server/routes.ts` - Added `/api/ai/program` and `/api/ai/feedback` endpoints
+- `server/routes.ts` - Added ExerciseDB endpoints and AI endpoints (`/api/exercises/*`, `/api/ai/*`)
 - `client/screens/GenerateScreen.tsx` - Added "8-Week Program" premium button (purple gradient)
-- `client/screens/ProfileScreen.tsx` - Added "AI Workout Feedback" premium button
-- `client/navigation/RootStackNavigator.tsx` - Added navigation to new screens
+- `client/screens/ProfileScreen.tsx` - Added AI premium feature buttons
+- `client/screens/DiscoverScreen.tsx` - Added Exercise Library card
+- `client/navigation/RootStackNavigator.tsx` - Added navigation to all new screens
 
 ## System Architecture
 
@@ -74,7 +88,8 @@ shared/           # Shared types and schemas
 ## External Dependencies
 
 ### Third-Party Services
-- **OpenAI API**: GPT-4o-mini for AI training programs and workout feedback (requires `OPENAI_API_KEY` secret from Replit)
+- **OpenAI API**: GPT-4o-mini for AI training programs, feedback, substitutions, and recovery advice (requires `OPENAI_API_KEY` secret from Replit)
+- **ExerciseDB API**: 1,300+ exercises with animated GIFs (requires `RAPIDAPI_KEY` environment variable)
 - **RapidAPI Muscle Group Image Generator**: Workout visualization (requires `RAPIDAPI_KEY` environment variable)
 
 ### Database
@@ -96,7 +111,19 @@ shared/           # Shared types and schemas
 - `EXPO_PUBLIC_DOMAIN`: Public domain for API requests (auto-set in Replit)
 
 ### API Endpoints
+**AI Endpoints (Premium)**
 - `POST /api/ai/program` - Generate 8-week training program (GPT-4o-mini)
 - `POST /api/ai/feedback` - Generate workout feedback and coaching tips (GPT-4o-mini)
+- `POST /api/ai/substitutions` - Generate exercise alternatives (GPT-4o-mini)
+- `POST /api/ai/recovery` - Analyze training readiness and recovery (GPT-4o-mini)
+
+**ExerciseDB Endpoints**
+- `GET /api/exercises` - Browse all exercises with pagination
+- `GET /api/exercises/bodyPart/:bodyPart` - Filter exercises by body part
+- `GET /api/exercises/target/:target` - Filter exercises by target muscle
+- `GET /api/exercises/equipment/:equipment` - Filter exercises by equipment
+- `GET /api/exercises/name/:name` - Search exercises by name
+
+**Other Endpoints**
 - `POST /api/muscle-image` - Generate muscle group visualization (RapidAPI)
 - `GET /api/workouts` - Retrieve saved workouts
