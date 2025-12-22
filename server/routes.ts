@@ -5,6 +5,7 @@ import {
   generateWorkoutFeedback,
   generateExerciseSubstitutions,
   generateRecoveryAdvice,
+  generateChatResponse,
 } from "./services/ai";
 
 interface WorkoutRequest {
@@ -319,6 +320,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating recovery advice:", error);
       res.status(500).json({ error: "Failed to generate recovery advice" });
+    }
+  });
+
+  app.post("/api/ai/chat", async (req, res) => {
+    try {
+      const { message, history } = req.body;
+
+      if (!message) {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      const response = await generateChatResponse({
+        message,
+        history: history || [],
+      });
+
+      res.json({ response });
+    } catch (error) {
+      console.error("Error generating chat response:", error);
+      res.status(500).json({ error: "Failed to generate response" });
     }
   });
 

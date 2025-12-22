@@ -12,13 +12,29 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 22, 2025)
 
+### Major Feature Expansion - Competitor Parity Plus AI Advantage
+Added 6 new major features to match and exceed competitor functionality:
+
+1. **Workout Diary** (`WorkoutDiaryScreen.tsx`) - Log workouts with exercises, sets, reps, weight tracking, calendar view with completion indicators
+2. **Progress Tracking** (`ProgressScreen.tsx`) - Weight and heart rate charts, body measurements tracking, visual graphs
+3. **Nutrition Planning** (`NutritionScreen.tsx`) - Meal logging with macros (protein, carbs, fats, calories), daily intake goals, quick-add presets
+4. **Social Community Feed** (`CommunityScreen.tsx`) - Posts with likes, dislikes, comments, bookmarks, verified users
+5. **Coach Marketplace** (`CoachesScreen.tsx`) - Browse trainers with ratings, credentials, pricing, detailed profiles
+6. **AI Chat Coach** (`AIChatScreen.tsx`) - Conversational AI fitness advisor powered by GPT-4o-mini with chat history
+
 ### Exercise Browsing Feature
 - **Exercise Library**: 1,300+ exercises from ExerciseDB API with animated GIF demonstrations
 - **ExerciseBrowserScreen**: Search bar, body part filters, pull-to-refresh, exercise cards with GIF thumbnails
 - **ExerciseDetailScreen**: Full-screen animated GIF, step-by-step instructions, AI-powered exercise alternatives
-- **DiscoverScreen**: Added prominent "Exercise Library" card for quick access
+- **DiscoverScreen**: Complete redesign with feature hub cards, AI coach banner, community/coaches section
 
 ### New Files (Dec 22)
+- `client/screens/WorkoutDiaryScreen.tsx` - Workout logging with calendar and history
+- `client/screens/ProgressScreen.tsx` - Weight/measurements charts and progress tracking
+- `client/screens/NutritionScreen.tsx` - Meal planning with macro calculations
+- `client/screens/CommunityScreen.tsx` - Social feed with posts, likes, comments
+- `client/screens/CoachesScreen.tsx` - Coach marketplace with profiles and hiring
+- `client/screens/AIChatScreen.tsx` - AI-powered conversational fitness coach
 - `client/screens/ExerciseBrowserScreen.tsx` - Browse and search 1,300+ exercises with filters
 - `client/screens/ExerciseDetailScreen.tsx` - Full exercise details with animated demos and AI alternatives
 
@@ -116,6 +132,7 @@ shared/           # Shared types and schemas
 - `POST /api/ai/feedback` - Generate workout feedback and coaching tips (GPT-4o-mini)
 - `POST /api/ai/substitutions` - Generate exercise alternatives (GPT-4o-mini)
 - `POST /api/ai/recovery` - Analyze training readiness and recovery (GPT-4o-mini)
+- `POST /api/ai/chat` - Conversational AI fitness coach (GPT-4o-mini)
 
 **ExerciseDB Endpoints**
 - `GET /api/exercises` - Browse all exercises with pagination

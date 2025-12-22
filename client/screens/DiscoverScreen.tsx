@@ -259,50 +259,147 @@ export default function DiscoverScreen() {
         <Pressable
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            navigation.navigate("ExerciseBrowser");
+            navigation.navigate("AIChat");
           }}
           style={({ pressed }) => [
-            styles.exerciseLibraryCard,
+            styles.aiChatCard,
             pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
           ]}
         >
           <LinearGradient
-            colors={["#1A1F2E", "#252B3D"] as any}
+            colors={["#9D4EDD", "#5A189A"] as any}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.exerciseLibraryGradient}
           >
             <View style={styles.exerciseLibraryContent}>
               <View style={styles.exerciseLibraryText}>
-                <View style={styles.exerciseLibraryBadge}>
-                  <Feather name="play-circle" size={14} color={Colors.dark.accent} />
-                  <ThemedText style={styles.exerciseLibraryBadgeText}>
-                    Animated Demos
+                <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                  <Feather name="cpu" size={14} color="#fff" />
+                  <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#fff" }]}>
+                    AI Powered
                   </ThemedText>
                 </View>
                 <ThemedText style={styles.exerciseLibraryTitle}>
-                  Exercise Library
+                  AI Coach
                 </ThemedText>
-                <ThemedText style={styles.exerciseLibrarySubtitle}>
-                  Browse 1,300+ exercises with animated GIF demonstrations
+                <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                  Get personalized fitness advice powered by GPT-4
                 </ThemedText>
               </View>
               <View style={styles.exerciseLibraryPreview}>
-                <View style={styles.previewStack}>
-                  <View style={[styles.previewCard, styles.previewCard1]}>
-                    <Feather name="activity" size={24} color={Colors.dark.accent} />
-                  </View>
-                  <View style={[styles.previewCard, styles.previewCard2]}>
-                    <Feather name="zap" size={20} color="#9D4EDD" />
-                  </View>
-                </View>
+                <Feather name="message-circle" size={40} color="rgba(255,255,255,0.6)" />
               </View>
             </View>
             <View style={styles.exerciseLibraryArrow}>
-              <Feather name="arrow-right" size={20} color={Colors.dark.accent} />
+              <Feather name="arrow-right" size={20} color="#fff" />
             </View>
           </LinearGradient>
         </Pressable>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Your Fitness Hub</ThemedText>
+          </View>
+          <View style={styles.featureGrid}>
+            <Pressable
+              style={styles.featureCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("WorkoutDiary");
+              }}
+            >
+              <View style={[styles.featureIcon, { backgroundColor: Colors.dark.accent + "20" }]}>
+                <Feather name="edit-3" size={24} color={Colors.dark.accent} />
+              </View>
+              <ThemedText style={styles.featureTitle}>Workout Diary</ThemedText>
+              <ThemedText style={styles.featureSubtitle}>Log your sessions</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.featureCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("Progress");
+              }}
+            >
+              <View style={[styles.featureIcon, { backgroundColor: "#4ECDC420" }]}>
+                <Feather name="trending-up" size={24} color="#4ECDC4" />
+              </View>
+              <ThemedText style={styles.featureTitle}>Progress</ThemedText>
+              <ThemedText style={styles.featureSubtitle}>Track your gains</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.featureCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("Nutrition");
+              }}
+            >
+              <View style={[styles.featureIcon, { backgroundColor: "#FFB34720" }]}>
+                <Feather name="coffee" size={24} color="#FFB347" />
+              </View>
+              <ThemedText style={styles.featureTitle}>Nutrition</ThemedText>
+              <ThemedText style={styles.featureSubtitle}>Plan your meals</ThemedText>
+            </Pressable>
+
+            <Pressable
+              style={styles.featureCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("ExerciseBrowser");
+              }}
+            >
+              <View style={[styles.featureIcon, { backgroundColor: "#9D4EDD20" }]}>
+                <Feather name="play-circle" size={24} color="#9D4EDD" />
+              </View>
+              <ThemedText style={styles.featureTitle}>Exercises</ThemedText>
+              <ThemedText style={styles.featureSubtitle}>1,300+ demos</ThemedText>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Community & Coaches</ThemedText>
+          </View>
+          <View style={styles.socialRow}>
+            <Pressable
+              style={styles.socialCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("Community");
+              }}
+            >
+              <LinearGradient
+                colors={["#1A1F2E", "#252B3D"] as any}
+                style={styles.socialCardGradient}
+              >
+                <Feather name="users" size={28} color={Colors.dark.accent} />
+                <ThemedText style={styles.socialCardTitle}>Community</ThemedText>
+                <ThemedText style={styles.socialCardSubtitle}>Connect with athletes</ThemedText>
+              </LinearGradient>
+            </Pressable>
+
+            <Pressable
+              style={styles.socialCard}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+                navigation.navigate("Coaches");
+              }}
+            >
+              <LinearGradient
+                colors={["#1A1F2E", "#252B3D"] as any}
+                style={styles.socialCardGradient}
+              >
+                <Feather name="award" size={28} color="#FFB347" />
+                <ThemedText style={styles.socialCardTitle}>Coaches</ThemedText>
+                <ThemedText style={styles.socialCardSubtitle}>Hire a pro trainer</ThemedText>
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -520,5 +617,69 @@ const styles = StyleSheet.create({
     position: "absolute",
     right: Spacing.lg,
     bottom: Spacing.lg,
+  },
+  aiChatCard: {
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  featureGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+  },
+  featureCard: {
+    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  featureIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+  },
+  featureTitle: {
+    ...Typography.body,
+    color: Colors.dark.text,
+    fontWeight: "600",
+    marginBottom: Spacing.xs,
+  },
+  featureSubtitle: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
+  },
+  socialRow: {
+    flexDirection: "row",
+    gap: Spacing.md,
+  },
+  socialCard: {
+    flex: 1,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  socialCardGradient: {
+    padding: Spacing.lg,
+    alignItems: "center",
+  },
+  socialCardTitle: {
+    ...Typography.body,
+    color: Colors.dark.text,
+    fontWeight: "600",
+    marginTop: Spacing.sm,
+  },
+  socialCardSubtitle: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: Spacing.xs,
   },
 });

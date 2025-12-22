@@ -8,6 +8,12 @@ import ExerciseSubstitutionScreen from "@/screens/ExerciseSubstitutionScreen";
 import RecoveryAdvisorScreen from "@/screens/RecoveryAdvisorScreen";
 import ExerciseDetailScreen from "@/screens/ExerciseDetailScreen";
 import ExerciseBrowserScreen from "@/screens/ExerciseBrowserScreen";
+import WorkoutDiaryScreen from "@/screens/WorkoutDiaryScreen";
+import ProgressScreen from "@/screens/ProgressScreen";
+import NutritionScreen from "@/screens/NutritionScreen";
+import CommunityScreen from "@/screens/CommunityScreen";
+import CoachesScreen from "@/screens/CoachesScreen";
+import AIChatScreen from "@/screens/AIChatScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -53,6 +59,12 @@ export type RootStackParamList = {
     exercises?: ExerciseDBExercise[];
     exerciseIndex?: number;
   };
+  WorkoutDiary: undefined;
+  Progress: undefined;
+  Nutrition: undefined;
+  Community: undefined;
+  Coaches: undefined;
+  AIChat: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -123,6 +135,54 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="ExerciseDetail"
         component={ExerciseDetailScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="WorkoutDiary"
+        component={WorkoutDiaryScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Progress"
+        component={ProgressScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Nutrition"
+        component={NutritionScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Community"
+        component={CommunityScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Coaches"
+        component={CoachesScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="AIChat"
+        component={AIChatScreen}
         options={{
           presentation: "card",
           headerShown: false,

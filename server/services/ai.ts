@@ -325,3 +325,60 @@ Return ONLY valid JSON (no markdown):
     throw error;
   }
 }
+
+export interface ChatMessage {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatInput {
+  message: string;
+  history: ChatMessage[];
+}
+
+export async function generateChatResponse(input: ChatInput): Promise<string> {
+  const systemPrompt = `You are an expert fitness coach and nutritionist with over 15 years of experience helping people achieve their health and fitness goals. You provide personalized, science-based advice on:
+
+- Workout programming and exercise technique
+- Nutrition, meal planning, and macro tracking  
+- Recovery, sleep, and stress management
+- Motivation and habit building
+- Injury prevention and working around limitations
+
+Guidelines:
+- Be friendly, encouraging, and supportive
+- Give specific, actionable advice
+- Explain the "why" behind recommendations
+- Ask clarifying questions when needed
+- Keep responses concise but thorough (2-3 paragraphs max)
+- Never provide medical diagnoses or replace professional medical advice
+- Use natural conversation without bullet points unless specifically helpful`;
+
+  const messages = [
+    { role: "system" as const, content: systemPrompt },
+    ...input.history.map((m) => ({
+      role: m.role as "user" | "assistant",
+      content: m.content,
+    })),
+    { role: "user" as const, content: input.message },
+  ];
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      temperature: 0.7,
+      max_tokens: 500,
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) {
+      throw new Error("No content in response");
+    }
+
+    return content;
+  } catch (error) {
+    console.error("Error generating chat response:", error);
+    throw error;
+  }
+}
