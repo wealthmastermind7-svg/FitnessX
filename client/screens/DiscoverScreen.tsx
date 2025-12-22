@@ -42,6 +42,18 @@ const MUSCLE_GROUPS = [
   "Calves",
 ];
 
+// Map display names to RapidAPI muscle group names
+const getMuscleApiName = (displayName: string): string => {
+  const muscleMap: Record<string, string> = {
+    "Quads": "quadriceps",
+    "Hamstrings": "hamstring",
+    "Glutes": "glutes",
+    "Calves": "calf",
+    "Obliques": "oblique",
+  };
+  return muscleMap[displayName] || displayName.toLowerCase();
+};
+
 const POPULAR_WORKOUTS = [
   {
     id: "1",
@@ -75,7 +87,8 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [imageLoaded, setImageLoaded] = React.useState(false);
   const baseUrl = getApiUrl();
-  const imageUrl = `${baseUrl}api/muscle-image?muscles=${muscle.toLowerCase()}&color=255,107,107`;
+  const apiMuscleName = getMuscleApiName(muscle);
+  const imageUrl = `${baseUrl}api/muscle-image?muscles=${apiMuscleName}&color=255,107,107`;
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {

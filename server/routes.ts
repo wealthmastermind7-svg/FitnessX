@@ -151,19 +151,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const muscleList = (muscles as string)?.split(",").map(m => m.trim().toLowerCase()) || [];
       const colorValue = color || "255,107,107";
 
-      const response = await fetch(
-        `https://muscle-group-image-generator.p.rapidapi.com/getImage?muscleGroups=${encodeURIComponent(muscleList.join(","))}&color=${encodeURIComponent(colorValue as string)}&transparentBackground=0`,
-        {
-          method: "GET",
-          headers: {
-            "x-rapidapi-host": RAPIDAPI_HOST,
-            "x-rapidapi-key": RAPIDAPI_KEY || "",
-          },
-        }
-      );
+      const url = `https://muscle-group-image-generator.p.rapidapi.com/getImage?muscleGroups=${encodeURIComponent(muscleList.join(","))}&color=${encodeURIComponent(colorValue as string)}&transparentBackground=0`;
+      
+      console.log(`[Muscle API] Requesting muscles: ${muscleList.join(",")}`);
+      
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "x-rapidapi-host": RAPIDAPI_HOST,
+          "x-rapidapi-key": RAPIDAPI_KEY || "",
+        },
+      });
 
       if (!response.ok) {
-        console.error("Muscle image API error:", await response.text());
+        const errorText = await response.text();
+        console.error(`[Muscle API Error] Status: ${response.status}, Muscles: ${muscleList.join(",")}, Error: ${errorText}`);
         return res.status(500).json({ error: "Failed to fetch muscle image" });
       }
 
