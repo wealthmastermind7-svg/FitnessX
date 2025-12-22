@@ -31,25 +31,21 @@ const MUSCLE_GROUPS = [
   "Chest",
   "Back",
   "Shoulders",
-  "Biceps",
-  "Triceps",
+  "Arms",
   "Forearms",
-  "Abs",
-  "Obliques",
-  "Quads",
-  "Hamstrings",
-  "Glutes",
+  "Legs",
   "Calves",
+  "Core",
+  "Cardio",
 ];
 
 // Map display names to RapidAPI muscle group names
 const getMuscleApiName = (displayName: string): string => {
   const muscleMap: Record<string, string> = {
-    "Quads": "quadriceps",
-    "Hamstrings": "hamstring",
-    "Glutes": "glute",
-    "Calves": "calf",
-    "Obliques": "oblique",
+    "Arms": "biceps",
+    "Legs": "quadriceps",
+    "Core": "abs",
+    "Cardio": "chest",
   };
   return muscleMap[displayName] || displayName.toLowerCase();
 };
