@@ -303,7 +303,11 @@ export default function WorkoutDetailScreen() {
     try {
       const savedWorkouts = await AsyncStorage.getItem("savedWorkouts");
       const workouts = savedWorkouts ? JSON.parse(savedWorkouts) : [];
-      workouts.push(workout);
+      const workoutWithTimestamp = {
+        ...workout,
+        savedAt: Date.now(),
+      };
+      workouts.push(workoutWithTimestamp);
       await AsyncStorage.setItem("savedWorkouts", JSON.stringify(workouts));
 
       const statsData = await AsyncStorage.getItem("workoutStats");

@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   Pressable,
   FlatList,
   ListRenderItemInfo,
@@ -120,7 +119,7 @@ export default function SavedWorkoutsScreen() {
 
       <FlatList
         data={workouts}
-        keyExtractor={item => item.id}
+        keyExtractor={(item, index) => (item as any).savedAt ? (item as any).savedAt.toString() : `${item.id}-${index}`}
         renderItem={renderWorkoutCard}
         contentContainerStyle={[
           styles.listContent,
