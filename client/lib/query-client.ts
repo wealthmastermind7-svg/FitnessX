@@ -9,9 +9,9 @@ export function getApiUrl(): string {
 
   // Fallback for TestFlight/production builds where env var may not be set
   if (!host) {
-    // In development/Expo Go, this should be set
-    // In production, use a default (will be replaced with your actual domain)
-    host = "localhost:5000";
+    // In development/Expo Go, this should be set by Replit
+    // In TestFlight/production, use the published Replit domain
+    host = "fitforge.replit.app";
   }
 
   let url = new URL(`https://${host}`);
