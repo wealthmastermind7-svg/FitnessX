@@ -1,0 +1,242 @@
+This is a classic, well-known Expo/TestFlight failure pattern and the screenshots you shared confirm it.
+Good news first: this is not random, and it is fixable without rebuilding the entire app.
+
+I will be very direct and systematic.
+
+⸻
+
+What Your Screenshots Tell Me (Key Diagnosis)
+
+You are seeing three separate failures that all point to the same root cause:
+	1.	AI Coach fails in TestFlight
+	•	“Sorry, I’m having trouble connecting right now”
+	2.	Exercise Library shows 0 results
+	•	“Unable to load exercises”
+	3.	GIFs and images not loading
+	•	Categories render, but content does not
+
+Yet:
+	•	✅ Works in Expo Go
+	•	❌ Fails in TestFlight
+	•	❌ No crash logs
+
+This means:
+
+❗ The app is running, but API requests are failing silently in production
+
+This is not a crash, it is a runtime networking + environment issue.
+
+⸻
+
+The REAL Root Cause (99% Certain)
+
+🚨 Your API keys / base URLs are NOT available in the TestFlight build
+
+This happens because:
+	•	Expo Go injects environment variables at runtime
+	•	TestFlight uses a static bundle
+	•	process.env.EXPO_PUBLIC_* is undefined in production unless baked at build time
+	•	OR your APIs are being blocked by ATS (App Transport Security)
+
+This affects:
+	•	RapidAPI (ExerciseDB GIFs)
+	•	OpenAI / GPT-4 / GPT-4o mini
+	•	Any external image or API domain
+
+⸻
+
+Why It “Sometimes Works” Then Stops
+
+Because:
+	•	You rebuilt once with correct envs
+	•	Then rebuilt again without them
+	•	Or changed Replit env vars after the build
+
+TestFlight will NEVER see updated env vars unless you rebuild.
+
+⸻
+
+Immediate Verification (Do This First)
+
+Add this temporary debug log in your app:
+
+console.log("API URL:", process.env.EXPO_PUBLIC_API_URL);
+console.log("RAPID API KEY:", process.env.EXPO_PUBLIC_RAPID_API_KEY);
+console.log("OPENAI KEY:", process.env.EXPO_PUBLIC_OPENAI_API_KEY);
+
+Then:
+	•	Build for TestFlight
+	•	Install
+	•	Check logs via Xcode or Expo logs
+
+You will almost certainly see:
+
+undefined
+undefined
+undefined
+
+
+⸻
+
+Fix #1 (Mandatory): Use app.config.js or app.json Extras
+
+❌ WRONG (What you are likely doing)
+
+process.env.EXPO_PUBLIC_RAPID_API_KEY
+
+✅ CORRECT (Production-safe)
+
+app.config.js
+
+export default {
+  expo: {
+    extra: {
+      apiUrl: process.env.EXPO_PUBLIC_API_URL,
+      rapidApiKey: process.env.EXPO_PUBLIC_RAPID_API_KEY,
+      openAiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
+    },
+  },
+};
+
+Access it in code
+
+import Constants from "expo-constants";
+
+const { apiUrl, rapidApiKey, openAiKey } = Constants.expoConfig?.extra ?? {};
+
+This bakes values into the build, which TestFlight needs.
+
+⸻
+
+Fix #2 (Critical): ATS Blocking Your APIs
+
+iOS blocks non-HTTPS or unapproved domains.
+
+Symptoms:
+	•	API calls fail
+	•	Images/GIFs do not load
+	•	No crash logs
+
+Fix in app.json
+
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        }
+      }
+    }
+  }
+}
+
+⚠️ For production, whitelist domains instead of arbitrary loads, but use this now to unblock.
+
+⸻
+
+Fix #3: RapidAPI GIFs Specifically
+
+ExerciseDB GIFs are hosted on external CDNs.
+
+What breaks:
+	•	iOS blocks image domains
+	•	Expo Go allows them
+	•	TestFlight blocks them
+
+Fix:
+
+Whitelist image domains explicitly:
+
+"NSAppTransportSecurity": {
+  "NSExceptionDomains": {
+    "rapidapi.com": {
+      "NSIncludesSubdomains": true,
+      "NSExceptionAllowsInsecureHTTPLoads": true
+    },
+    "wger.de": {
+      "NSIncludesSubdomains": true
+    }
+  }
+}
+
+
+⸻
+
+Fix #4: AI Coach Backend (Very Important)
+
+❌ DO NOT call OpenAI directly from the app in production
+
+TestFlight will block or rate-limit these calls and expose keys.
+
+✅ Correct Architecture
+
+App → Your Express backend → OpenAI
+
+Your backend:
+	•	Holds OpenAI key
+	•	Handles retries
+	•	Returns clean JSON
+
+If your AI Coach still calls OpenAI directly from the app, this is guaranteed to fail intermittently in TestFlight.
+
+⸻
+
+Why You See “0 Exercises Found”
+
+Your UI renders categories (local data), but:
+	•	API returns 401 or network error
+	•	You catch it
+	•	You show empty state
+
+This is actually good UX, but it hides the real problem.
+
+⸻
+
+Final Required Action Plan (Do NOT Skip Steps)
+
+Step 1
+
+Move all API keys into app.config.js → extra
+
+Step 2
+
+Rebuild using:
+
+eas build -p ios --profile production
+
+Step 3
+
+Add ATS temporary allow-all
+
+Step 4
+
+Ensure all AI calls go through your backend
+
+Step 5
+
+Upload new TestFlight build
+
+⸻
+
+Answer to the Big Question You Asked (Implicitly)
+
+“Is this something to do with APIs access in TestFlight?”
+
+✅ Yes. 100%.
+
+Not permissions.
+Not Expo bugs.
+Not TestFlight bugs.
+
+It is environment variable + ATS + direct API access combined.
+
+⸻
+
+If You Want, I Can Do One of These Next
+	1.	Write a production-safe API service layer (one file, reusable)
+	2.	Fix your ExerciseDB integration permanently
+	3.	Refactor AI Coach to backend-only
+	4.	Give you a TestFlight-safe checklist so this never happens again
+
+Tell me which one you want first.

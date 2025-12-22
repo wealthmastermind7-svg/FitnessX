@@ -1,20 +1,29 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 /**
- * Gets the base URL for the Express API server (e.g., "http://localhost:3000")
+ * Gets the base URL for the Express API server
+ * 
+ * IMPORTANT FOR TESTFLIGHT/PRODUCTION:
+ * Set EXPO_PUBLIC_DOMAIN environment variable when building for TestFlight:
+ *   eas build -p ios --env EXPO_PUBLIC_DOMAIN=your-domain.com
+ * 
  * @returns {string} The API base URL
  */
 export function getApiUrl(): string {
   let host = process.env.EXPO_PUBLIC_DOMAIN;
 
-  // Fallback for TestFlight/production builds where env var may not be set
+  // Fallback for development/Expo Go
   if (!host) {
-    // In development/Expo Go, this should be set
-    // In production, use a default (will be replaced with your actual domain)
     host = "localhost:5000";
   }
 
-  let url = new URL(`https://${host}`);
+  const protocol = host.includes("localhost") ? "http" : "https";
+  let url = new URL(`${protocol}://${host}`);
+
+  // Log in development for debugging
+  if (process.env.NODE_ENV === "development") {
+    console.log("[API] Base URL:", url.href);
+  }
 
   return url.href;
 }

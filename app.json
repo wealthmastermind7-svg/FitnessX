@@ -10,7 +10,34 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.fitforge.app"
+      "bundleIdentifier": "com.fitforge.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSExceptionDomains": {
+            "rapidapi.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": false
+            },
+            "exercisedb.p.rapidapi.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": false
+            },
+            "ai-workout-planner-exercise-fitness-nutrition-guide.p.rapidapi.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": false
+            },
+            "wger.de": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": false
+            },
+            "openai.com": {
+              "NSIncludesSubdomains": true,
+              "NSExceptionAllowsInsecureHTTPLoads": false
+            }
+          }
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
