@@ -12,10 +12,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { apiRequest, getApiUrl } from "@/lib/query-client";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -51,16 +53,15 @@ const DEFAULT_GOALS: MacroGoals = {
   fats: 65,
 };
 
-const MEAL_SUGGESTIONS = [
-  { name: "Oatmeal with Berries", calories: 350, protein: 12, carbs: 58, fats: 8 },
-  { name: "Grilled Chicken Breast", calories: 280, protein: 42, carbs: 0, fats: 12 },
-  { name: "Brown Rice Bowl", calories: 420, protein: 15, carbs: 72, fats: 10 },
-  { name: "Greek Yogurt Parfait", calories: 280, protein: 18, carbs: 35, fats: 8 },
-  { name: "Salmon with Veggies", calories: 450, protein: 38, carbs: 12, fats: 28 },
-  { name: "Protein Shake", calories: 200, protein: 25, carbs: 10, fats: 4 },
-  { name: "Egg White Omelette", calories: 220, protein: 28, carbs: 4, fats: 10 },
-  { name: "Quinoa Salad", calories: 380, protein: 14, carbs: 52, fats: 14 },
-];
+interface NutritionData {
+  name: string;
+  quantity: number;
+  unit: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fats: number;
+}
 
 export default function NutritionScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
@@ -70,10 +71,31 @@ export default function NutritionScreen({ navigation }: any) {
   const [showGoalsModal, setShowGoalsModal] = useState(false);
   const [newMeal, setNewMeal] = useState<Partial<Meal>>({});
   const [selectedDay, setSelectedDay] = useState(new Date());
+  const [mealSuggestions, setMealSuggestions] = useState<NutritionData[]>([]);
+
+  // Fetch meal suggestions from RapidAPI nutrition endpoint
+  const { data: suggestions = [] } = useQuery({
+    queryKey: ["/api/nutrition/suggestions"],
+    queryFn: async () => {
+      try {
+        const baseUrl = getApiUrl();
+        const url = new URL("/api/nutrition/suggestions", baseUrl);
+        const res = await fetch(url.toString());
+        return res.json() as Promise<NutritionData[]>;
+      } catch (error) {
+        console.error("Failed to fetch suggestions:", error);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 60, // Cache for 1 hour
+  });
 
   useEffect(() => {
+    if (suggestions.length > 0) {
+      setMealSuggestions(suggestions);
+    }
     loadData();
-  }, []);
+  }, [suggestions]);
 
   const loadData = async () => {
     try {
@@ -127,24 +149,47 @@ export default function NutritionScreen({ navigation }: any) {
     }
   };
 
+  // Mutation to analyze meal nutrition via RapidAPI
+  const analyzeMealMutation = useMutation({
+    mutationFn: async (meal: Partial<Meal>) => {
+      if (!meal.name || !meal.calories) throw new Error("Missing meal data");
+      const baseUrl = getApiUrl();
+      const url = new URL("/api/nutrition/analyze", baseUrl);
+      const res = await fetch(url.toString(), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          mealName: meal.name,
+          quantity: 100,
+          unit: "g",
+        }),
+      });
+      return res.json();
+    },
+    onSuccess: (data, meal) => {
+      const newMealFull: Meal = {
+        id: Date.now().toString(),
+        name: meal.name || "Unknown",
+        time: new Date().toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        calories: data.calories || meal.calories || 0,
+        protein: data.protein || meal.protein || 0,
+        carbs: data.carbs || meal.carbs || 0,
+        fats: data.fats || meal.fats || 0,
+      };
+      const newMeals = [...todayMeals, newMealFull];
+      saveMeals(newMeals);
+      setNewMeal({});
+      setShowAddModal(false);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    },
+  });
+
   const addMeal = (meal: Partial<Meal>) => {
     if (!meal.name || !meal.calories) return;
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-
-    const newMealFull: Meal = {
-      id: Date.now().toString(),
-      name: meal.name,
-      time: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
-      calories: meal.calories || 0,
-      protein: meal.protein || 0,
-      carbs: meal.carbs || 0,
-      fats: meal.fats || 0,
-    };
-
-    const newMeals = [...todayMeals, newMealFull];
-    saveMeals(newMeals);
-    setNewMeal({});
-    setShowAddModal(false);
+    analyzeMealMutation.mutate(meal);
   };
 
   const deleteMeal = (mealId: string) => {
@@ -376,13 +421,26 @@ export default function NutritionScreen({ navigation }: any) {
 
           <ThemedText style={styles.sectionLabel}>Quick Add</ThemedText>
           <View style={styles.suggestionsGrid}>
-            {MEAL_SUGGESTIONS.map((suggestion, idx) => (
+            {(mealSuggestions.length > 0 ? mealSuggestions : [
+              { name: "Chicken Breast", calories: 280, protein: 42, carbs: 0, fats: 12, quantity: 200, unit: "g" },
+              { name: "Brown Rice", calories: 420, protein: 15, carbs: 72, fats: 10, quantity: 150, unit: "g" },
+              { name: "Salmon", calories: 450, protein: 38, carbs: 0, fats: 28, quantity: 200, unit: "g" },
+              { name: "Sweet Potato", calories: 150, protein: 3, carbs: 34, fats: 0, quantity: 200, unit: "g" },
+              { name: "Eggs", calories: 155, protein: 13, carbs: 1, fats: 11, quantity: 100, unit: "g" },
+              { name: "Oats", calories: 380, protein: 14, carbs: 67, fats: 8, quantity: 100, unit: "g" },
+            ]).map((suggestion, idx) => (
               <Pressable
                 key={idx}
                 style={styles.suggestionCard}
                 onPress={() => {
                   Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  addMeal(suggestion);
+                  addMeal({
+                    name: suggestion.name,
+                    calories: suggestion.calories,
+                    protein: suggestion.protein,
+                    carbs: suggestion.carbs,
+                    fats: suggestion.fats,
+                  });
                 }}
               >
                 <ThemedText style={styles.suggestionName}>{suggestion.name}</ThemedText>
