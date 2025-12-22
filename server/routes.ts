@@ -338,7 +338,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
         history: history || [],
       });
 
-      res.json({ response });
+      // Extract exercise names from the AI response and fetch matching exercises
+      const exercises: ExerciseDBExercise[] = [];
+      
+      // Common exercise patterns to look for in the response
+      const exercisePatterns = [
+        /(?:try|do|perform|recommend|suggest)(?:ing)?\s+(?:the\s+)?([a-zA-Z\s]+?)(?:\s+for|\s+to|\s*[,\.\n])/gi,
+        /exercises?\s+(?:like|such as)\s+([^\.]+)/gi,
+        /([a-zA-Z]+\s+(?:press|curl|row|squat|lunge|deadlift|raise|extension|fly|pulldown|pull-up|push-up|crunch|plank)s?)/gi,
+      ];
+
+      const foundExercises = new Set<string>();
+      
+      for (const pattern of exercisePatterns) {
+        const matches = response.matchAll(pattern);
+        for (const match of matches) {
+          const exerciseName = match[1]?.trim().toLowerCase();
+          if (exerciseName && exerciseName.length > 3 && exerciseName.length < 50) {
+            foundExercises.add(exerciseName);
+          }
+        }
+      }
+
+      // Also check for common exercise names directly mentioned
+      const commonExercises = [
+        "bench press", "squat", "deadlift", "shoulder press", "bicep curl", 
+        "tricep extension", "lat pulldown", "seated row", "leg press", "leg curl",
+        "leg extension", "calf raise", "plank", "crunch", "russian twist",
+        "push-up", "pull-up", "dip", "lunge", "romanian deadlift", "hip thrust",
+        "face pull", "lateral raise", "front raise", "hammer curl", "preacher curl",
+        "skull crusher", "overhead press", "incline press", "decline press",
+        "cable fly", "dumbbell fly", "barbell row", "t-bar row", "chest press"
+      ];
+
+      for (const exercise of commonExercises) {
+        if (response.toLowerCase().includes(exercise)) {
+          foundExercises.add(exercise);
+        }
+      }
+
+      // Fetch up to 3 exercises from ExerciseDB
+      const exerciseNames = Array.from(foundExercises).slice(0, 3);
+      
+      for (const name of exerciseNames) {
+        try {
+          const searchUrl = `https://exercisedb.p.rapidapi.com/exercises/name/${encodeURIComponent(name)}?limit=1`;
+          const exerciseResponse = await fetch(searchUrl, {
+            headers: {
+              "X-RapidAPI-Key": RAPIDAPI_KEY || "",
+              "X-RapidAPI-Host": EXERCISEDB_HOST,
+            },
+          });
+
+          if (exerciseResponse.ok) {
+            const data = await exerciseResponse.json();
+            if (Array.isArray(data) && data.length > 0) {
+              exercises.push(data[0]);
+            }
+          }
+        } catch (err) {
+          console.error(`Failed to fetch exercise: ${name}`, err);
+        }
+      }
+
+      res.json({ response, exercises });
     } catch (error) {
       console.error("Error generating chat response:", error);
       res.status(500).json({ error: "Failed to generate response" });

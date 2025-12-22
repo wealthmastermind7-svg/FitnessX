@@ -5,27 +5,41 @@ import {
   ScrollView,
   Pressable,
   TextInput,
-  Animated,
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { Image as ExpoImage } from "expo-image";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl, apiRequest } from "@/lib/query-client";
 
+interface Exercise {
+  id: string;
+  name: string;
+  bodyPart: string;
+  target: string;
+  equipment: string;
+  gifUrl: string;
+  instructions: string[];
+}
+
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
   timestamp: Date;
+  exercises?: Exercise[];
 }
+
+const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const QUICK_PROMPTS = [
   "How can I build muscle faster?",
@@ -100,6 +114,7 @@ export default function AIChatScreen({ navigation }: any) {
         role: "assistant",
         content: data.response,
         timestamp: new Date(),
+        exercises: data.exercises || [],
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -205,6 +220,7 @@ export default function AIChatScreen({ navigation }: any) {
                   message.role === "user"
                     ? styles.userBubble
                     : styles.assistantBubble,
+                  message.exercises && message.exercises.length > 0 && styles.assistantBubbleWithExercises,
                 ]}
               >
                 <ThemedText
@@ -215,6 +231,50 @@ export default function AIChatScreen({ navigation }: any) {
                 >
                   {message.content}
                 </ThemedText>
+                
+                {message.exercises && message.exercises.length > 0 ? (
+                  <View style={styles.exercisesContainer}>
+                    <View style={styles.exercisesDivider} />
+                    <ThemedText style={styles.exercisesTitle}>
+                      Related Exercises
+                    </ThemedText>
+                    {message.exercises.map((exercise) => (
+                      <Pressable
+                        key={exercise.id}
+                        style={styles.exerciseCard}
+                        onPress={() => {
+                          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                          navigation.navigate("ExerciseDetail", { exercise });
+                        }}
+                      >
+                        <ExpoImage
+                          source={{ uri: `${getApiUrl()}api/exercises/image/${exercise.id}` }}
+                          style={styles.exerciseGif}
+                          contentFit="cover"
+                        />
+                        <View style={styles.exerciseInfo}>
+                          <ThemedText style={styles.exerciseName} numberOfLines={2}>
+                            {exercise.name}
+                          </ThemedText>
+                          <View style={styles.exerciseTags}>
+                            <View style={styles.exerciseTag}>
+                              <ThemedText style={styles.exerciseTagText}>
+                                {exercise.target}
+                              </ThemedText>
+                            </View>
+                            <View style={styles.exerciseTag}>
+                              <ThemedText style={styles.exerciseTagText}>
+                                {exercise.equipment}
+                              </ThemedText>
+                            </View>
+                          </View>
+                        </View>
+                        <Feather name="chevron-right" size={18} color={Colors.dark.textSecondary} />
+                      </Pressable>
+                    ))}
+                  </View>
+                ) : null}
+                
                 <ThemedText style={styles.messageTime}>
                   {formatTime(message.timestamp)}
                 </ThemedText>
@@ -466,5 +526,63 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: Spacing.xs,
     fontSize: 10,
+  },
+  assistantBubbleWithExercises: {
+    maxWidth: "85%",
+  },
+  exercisesContainer: {
+    marginTop: Spacing.md,
+  },
+  exercisesDivider: {
+    height: 1,
+    backgroundColor: Colors.dark.border,
+    marginBottom: Spacing.md,
+  },
+  exercisesTitle: {
+    ...Typography.small,
+    color: "#9D4EDD",
+    fontWeight: "600",
+    marginBottom: Spacing.sm,
+  },
+  exerciseCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  exerciseGif: {
+    width: 60,
+    height: 60,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.dark.backgroundRoot,
+  },
+  exerciseInfo: {
+    flex: 1,
+    marginLeft: Spacing.sm,
+  },
+  exerciseName: {
+    ...Typography.small,
+    color: Colors.dark.text,
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
+  exerciseTags: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 4,
+    marginTop: 4,
+  },
+  exerciseTag: {
+    backgroundColor: "#9D4EDD20",
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  exerciseTagText: {
+    fontSize: 10,
+    color: "#9D4EDD",
+    textTransform: "capitalize",
   },
 });
