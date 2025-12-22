@@ -40,6 +40,18 @@ const BODY_PARTS = [
   { id: "cardio", label: "Cardio", icon: "heart" },
 ];
 
+// Map display names from DiscoverScreen to ExerciseDB body part names
+const normalizeBodyPartName = (name: string): string => {
+  const nameMap: Record<string, string> = {
+    "arms": "upper arms",
+    "legs": "upper legs",
+    "calves": "lower legs",
+    "forearms": "lower arms",
+    "core": "waist",
+  };
+  return nameMap[name.toLowerCase()] || name.toLowerCase();
+};
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function ExerciseBrowserScreen() {
@@ -50,7 +62,7 @@ export default function ExerciseBrowserScreen() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
-    route.params?.filterByMuscle?.toLowerCase() || "all"
+    route.params?.filterByMuscle ? normalizeBodyPartName(route.params.filterByMuscle) : "all"
   );
   const [refreshing, setRefreshing] = useState(false);
 
