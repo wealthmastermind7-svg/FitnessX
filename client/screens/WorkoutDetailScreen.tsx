@@ -284,7 +284,11 @@ export default function WorkoutDetailScreen() {
     fetchExerciseData();
   }, [workout.exercises, baseUrl]);
 
-  const handleExercisePress = useCallback((exerciseData: ExerciseDBData) => {
+  const handleExercisePress = useCallback((exerciseData: ExerciseDBData | undefined) => {
+    if (!exerciseData) {
+      console.warn("Exercise data not yet loaded, please try again");
+      return;
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("ExerciseDetail", { exercise: exerciseData });
   }, [navigation]);
@@ -419,15 +423,18 @@ export default function WorkoutDetailScreen() {
 
           <ThemedText style={styles.exercisesTitle}>Exercises</ThemedText>
 
-          {workout.exercises.map((exercise, index) => (
-            <ExerciseCard 
-              key={index} 
-              exercise={exercise} 
-              index={index}
-              exerciseData={exerciseDataMap[exercise.name]}
-              onPress={() => handleExercisePress(exerciseDataMap[exercise.name])}
-            />
-          ))}
+          {workout.exercises.map((exercise, index) => {
+            const exerciseData = exerciseDataMap[exercise.name];
+            return (
+              <ExerciseCard 
+                key={`${exercise.name}-${index}`}
+                exercise={exercise} 
+                index={index}
+                exerciseData={exerciseData}
+                onPress={() => handleExercisePress(exerciseData)}
+              />
+            );
+          })}
 
           <Pressable onPress={handleSave} style={styles.saveButton}>
             <LinearGradient
