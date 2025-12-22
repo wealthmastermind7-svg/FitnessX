@@ -212,6 +212,52 @@ interface ExerciseSubstitution {
 export async function generateExerciseSubstitutions(
   input: ExerciseSubstitutionInput
 ): Promise<ExerciseSubstitution> {
+  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
+  const EXERCISEDB_HOST = "exercisedb.p.rapidapi.com";
+
+  // Fetch real exercises for this target muscle from ExerciseDB
+  let availableExercises: string[] = [];
+  try {
+    const response = await fetch(
+      `https://exercisedb.p.rapidapi.com/exercises/target/${encodeURIComponent(input.targetMuscle)}?limit=50`,
+      {
+        headers: {
+          "X-RapidAPI-Key": RAPIDAPI_KEY || "",
+          "X-RapidAPI-Host": EXERCISEDB_HOST,
+        },
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      if (Array.isArray(data)) {
+        availableExercises = data.map((ex: any) => ex.name).filter((name: string) => name);
+      }
+    }
+  } catch (error) {
+    console.error("Failed to fetch exercises from ExerciseDB:", error);
+  }
+
+  // If no exercises found, fall back to a default list
+  if (availableExercises.length === 0) {
+    const muscleToExercises: Record<string, string[]> = {
+      chest: ["Bench Press", "Incline Bench Press", "Dumbbell Bench Press", "Cable Fly", "Push-up"],
+      back: ["Barbell Bent Over Row", "Lat Pulldown", "Seated Cable Row", "Pull-up", "Deadlift"],
+      shoulders: ["Shoulder Press", "Lateral Raise", "Face Pull", "Upright Row", "Pike Push-up"],
+      biceps: ["Barbell Curl", "Dumbbell Curl", "Cable Curl", "Hammer Curl", "Preacher Curl"],
+      triceps: ["Tricep Pushdown", "Skull Crusher", "Close Grip Bench Press", "Dip", "Overhead Extension"],
+      legs: ["Squat", "Leg Press", "Leg Curl", "Leg Extension", "Walking Lunge"],
+      quads: ["Squat", "Leg Press", "Leg Extension", "Walking Lunge", "Bulgarian Split Squat"],
+      hamstrings: ["Romanian Deadlift", "Leg Curl", "Good Morning", "Nordic Curl", "Glute-Ham Raise"],
+      glutes: ["Hip Thrust", "Squat", "Leg Press", "Bulgarian Split Squat", "Leg Curl"],
+      abs: ["Crunch", "Plank", "Ab Wheel", "Hanging Leg Raise", "Cable Woodchop"],
+    };
+    const key = input.targetMuscle.toLowerCase();
+    availableExercises = muscleToExercises[key] || [];
+  }
+
+  const exerciseList = availableExercises.slice(0, 15).join(", ");
+
   const prompt = `You are a strength and conditioning coach helping find exercise alternatives.
 
 Original Exercise: ${input.originalExercise}
@@ -219,17 +265,19 @@ Target Muscle: ${input.targetMuscle}
 Available Equipment: ${input.equipment.join(", ")}
 ${input.constraints ? `Constraints: ${input.constraints.join(", ")}` : ""}
 
-Suggest 3 exercise alternatives that:
-1. Target the same muscle group
-2. Have similar difficulty
-3. Can be done with available equipment
-4. Account for any constraints
+IMPORTANT: You MUST choose exercise alternatives ONLY from this list of real exercises:
+${exerciseList}
+
+Select 3 different exercises from the list above that:
+1. Are suitable alternatives for the original exercise
+2. Can be done with available equipment
+3. Account for any constraints
 
 Return ONLY valid JSON (no markdown):
 {
   "exercises": [
     {
-      "name": "exercise name",
+      "name": "exact name from the list above",
       "difficulty": "easy/moderate/hard",
       "why": "why this works as a substitute"
     }
