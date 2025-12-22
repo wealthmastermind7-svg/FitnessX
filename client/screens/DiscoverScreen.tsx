@@ -71,7 +71,7 @@ const POPULAR_WORKOUTS = [
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function MuscleCard({ muscle, index }: { muscle: string; index: number }) {
+function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
   const imageUrl = `${baseUrl}api/muscle-image?muscles=${muscle.toLowerCase()}&color=255,107,107`;
@@ -91,7 +91,8 @@ function MuscleCard({ muscle, index }: { muscle: string; index: number }) {
   };
 
   const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate("ExerciseBrowser", { filterByMuscle: muscle });
   };
 
   return (
@@ -309,7 +310,7 @@ export default function DiscoverScreen() {
           </View>
           <View style={styles.muscleGrid}>
             {MUSCLE_GROUPS.map((muscle, index) => (
-              <MuscleCard key={muscle} muscle={muscle} index={index} />
+              <MuscleCard key={muscle} muscle={muscle} index={index} navigation={navigation} />
             ))}
           </View>
         </View>

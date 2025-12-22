@@ -47,7 +47,7 @@ export type RootStackParamList = {
   WorkoutFeedback: undefined;
   ExerciseSubstitution: undefined;
   RecoveryAdvisor: undefined;
-  ExerciseBrowser: undefined;
+  ExerciseBrowser: { filterByMuscle?: string } | undefined;
   ExerciseDetail: { 
     exercise: ExerciseDBExercise;
     exercises?: ExerciseDBExercise[];

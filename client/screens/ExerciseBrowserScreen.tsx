@@ -14,8 +14,9 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type { RouteProp } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -23,6 +24,8 @@ import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+
+type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
 
 const BODY_PARTS = [
   { id: "all", label: "All", icon: "grid" },
@@ -42,10 +45,13 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function ExerciseBrowserScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
+  const route = useRoute<RoutePropType>();
   const baseUrl = getApiUrl();
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBodyPart, setSelectedBodyPart] = useState("all");
+  const [selectedBodyPart, setSelectedBodyPart] = useState(
+    route.params?.filterByMuscle?.toLowerCase() || "all"
+  );
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchUrl = useMemo(() => {
