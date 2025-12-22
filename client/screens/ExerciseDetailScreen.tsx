@@ -12,9 +12,7 @@ import * as Haptics from "expo-haptics";
 import { Image } from "expo-image";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useMutation } from "@tanstack/react-query";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useQuery } from "@tanstack/react-query";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -26,15 +24,6 @@ import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNa
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-interface AIAlternative {
-  name: string;
-  difficulty: string;
-  why: string;
-}
-
-interface AISubstitutionsResponse {
-  exercises: AIAlternative[];
-}
 
 export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
@@ -46,100 +35,8 @@ export default function ExerciseDetailScreen() {
   const baseUrl = getApiUrl();
 
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
-  const [showAIInsights, setShowAIInsights] = useState(false);
-  const [loadingExerciseName, setLoadingExerciseName] = useState<string | null>(null);
 
   const exercise = exercises[currentIndex];
-
-  const handleAlternativePress = useCallback(async (alternativeName: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setLoadingExerciseName(alternativeName);
-    
-    try {
-      // Try exact name match first
-      let response = await fetch(
-        `${baseUrl}api/exercises/name/${encodeURIComponent(alternativeName)}`
-      );
-      
-      if (response.ok) {
-        const data = await response.json();
-        const realExercise = Array.isArray(data) && data.length > 0 ? data[0] : null;
-        
-        if (realExercise && realExercise.gifUrl) {
-          console.log("Found exercise by exact name:", alternativeName);
-          navigation.push("ExerciseDetail", { exercise: realExercise });
-          setLoadingExerciseName(null);
-          return;
-        }
-      }
-      
-      // Try searching by target muscle (more reliable than name)
-      if (exercise.target) {
-        response = await fetch(
-          `${baseUrl}api/exercises/target/${encodeURIComponent(exercise.target)}?limit=10`
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            // Find first exercise with same equipment or any with gif
-            const matchingExercise = data.find((ex: ExerciseDBExercise) => 
-              ex.equipment === exercise.equipment && ex.gifUrl
-            ) || data.find((ex: ExerciseDBExercise) => ex.gifUrl);
-            
-            if (matchingExercise) {
-              console.log("Found exercise by target muscle:", exercise.target, matchingExercise.name);
-              navigation.push("ExerciseDetail", { exercise: matchingExercise });
-              setLoadingExerciseName(null);
-              return;
-            }
-          }
-        }
-      }
-      
-      // Last resort: search by the last word (e.g., "Row" from "Barbell Pendlay Row")
-      const words = alternativeName.split(" ");
-      const lastWord = words[words.length - 1];
-      
-      if (lastWord && lastWord.length > 3) {
-        response = await fetch(
-          `${baseUrl}api/exercises/name/${encodeURIComponent(lastWord)}?limit=5`
-        );
-        
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data) && data.length > 0) {
-            const matchingExercise = data.find((ex: ExerciseDBExercise) => ex.gifUrl) || null;
-            
-            if (matchingExercise) {
-              console.log("Found exercise by partial name:", lastWord, matchingExercise.name);
-              navigation.push("ExerciseDetail", { exercise: matchingExercise });
-              setLoadingExerciseName(null);
-              return;
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch exercise:", alternativeName, error);
-    }
-    
-    console.log("No real exercise found for:", alternativeName, "- using fallback");
-    
-    // Fallback if API fails - use a similar exercise from the same muscle group
-    const fallbackExercise: ExerciseDBExercise = {
-      id: `alternative-${alternativeName}`,
-      name: alternativeName,
-      target: exercise.target,
-      bodyPart: exercise.bodyPart,
-      equipment: exercise.equipment || "bodyweight",
-      secondaryMuscles: exercise.secondaryMuscles || [],
-      instructions: [`This exercise targets your ${exercise.target}`, `Perform with proper form and controlled movements`],
-      gifUrl: "",
-    };
-    navigation.push("ExerciseDetail", { exercise: fallbackExercise });
-    setLoadingExerciseName(null);
-  }, [exercise, navigation, baseUrl]);
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
@@ -155,23 +52,6 @@ export default function ExerciseDetailScreen() {
     }
   };
 
-  const aiInsightsMutation = useMutation({
-    mutationFn: async (): Promise<AISubstitutionsResponse> => {
-      const response = await apiRequest("POST", "/api/ai/substitutions", {
-        originalExercise: exercise.name,
-        targetMuscle: exercise.target,
-        equipment: [exercise.equipment],
-        constraints: [],
-      });
-      return response.json();
-    },
-  });
-
-  const handleGetAIInsights = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setShowAIInsights(true);
-    aiInsightsMutation.mutate();
-  };
 
   return (
     <ThemedView style={styles.container}>
@@ -318,82 +198,6 @@ export default function ExerciseDetailScreen() {
             </ThemedText>
           )}
         </Card>
-
-        <Pressable onPress={handleGetAIInsights} style={styles.aiButton}>
-          <LinearGradient
-            colors={["#9D4EDD", "#5A189A"] as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.aiButtonGradient}
-          >
-            <Feather name="cpu" size={20} color="#FFF" style={{ marginRight: Spacing.md }} />
-            <View style={{ flex: 1 }}>
-              <ThemedText style={styles.aiButtonTitle}>
-                AI Exercise Alternatives
-              </ThemedText>
-              <ThemedText style={styles.aiButtonSubtitle}>
-                Find similar exercises that target the same muscle
-              </ThemedText>
-            </View>
-            <Feather name="arrow-right" size={20} color="#FFF" />
-          </LinearGradient>
-        </Pressable>
-
-        {showAIInsights && (
-          <Card style={styles.aiInsightsCard}>
-            <View style={styles.cardHeader}>
-              <Feather name="zap" size={20} color="#9D4EDD" />
-              <ThemedText style={[styles.cardTitle, { color: "#9D4EDD" }]}>
-                AI Alternatives
-              </ThemedText>
-            </View>
-
-            {aiInsightsMutation.isPending ? (
-              <View style={styles.loadingContainer}>
-                <ActivityIndicator color="#9D4EDD" />
-                <ThemedText style={styles.loadingText}>
-                  Finding alternatives...
-                </ThemedText>
-              </View>
-            ) : aiInsightsMutation.data?.exercises ? (
-              aiInsightsMutation.data.exercises.map(
-                (alt: { name: string; difficulty: string; why: string }, idx: number) => (
-                  <Pressable 
-                    key={idx} 
-                    style={[
-                      styles.alternativeItem,
-                      loadingExerciseName === alt.name && styles.alternativeItemLoading
-                    ]}
-                    onPress={() => handleAlternativePress(alt.name)}
-                    disabled={loadingExerciseName !== null}
-                  >
-                    <View style={styles.alternativeHeader}>
-                      <ThemedText style={styles.alternativeName}>
-                        {alt.name}
-                      </ThemedText>
-                      <View style={styles.alternativeActions}>
-                        {loadingExerciseName === alt.name ? (
-                          <ActivityIndicator size="small" color="#9D4EDD" />
-                        ) : (
-                          <View style={styles.difficultyBadge}>
-                            <ThemedText style={styles.difficultyText}>
-                              {alt.difficulty}
-                            </ThemedText>
-                          </View>
-                        )}
-                      </View>
-                    </View>
-                    <ThemedText style={styles.alternativeWhy}>{alt.why}</ThemedText>
-                  </Pressable>
-                )
-              )
-            ) : aiInsightsMutation.isError ? (
-              <ThemedText style={styles.errorText}>
-                Unable to load alternatives. Please try again.
-              </ThemedText>
-            ) : null}
-          </Card>
-        )}
 
         <Card style={styles.suggestedCard}>
           <View style={styles.cardHeader}>
@@ -628,90 +432,6 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.dark.textSecondary,
     fontStyle: "italic",
-  },
-  aiButton: {
-    marginBottom: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-  },
-  aiButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Spacing.lg,
-  },
-  aiButtonTitle: {
-    ...Typography.body,
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  aiButtonSubtitle: {
-    ...Typography.small,
-    color: "rgba(255,255,255,0.8)",
-    marginTop: 2,
-  },
-  aiInsightsCard: {
-    padding: Spacing.lg,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: "#9D4EDD40",
-  },
-  loadingContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-    paddingVertical: Spacing.md,
-  },
-  loadingText: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-  },
-  alternativeItem: {
-    paddingVertical: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-    paddingHorizontal: Spacing.sm,
-    marginHorizontal: -Spacing.sm,
-  },
-  alternativeItemLoading: {
-    opacity: 0.6,
-  },
-  alternativeActions: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  alternativeHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.sm,
-  },
-  alternativeName: {
-    ...Typography.body,
-    color: Colors.dark.text,
-    fontWeight: "600",
-    flex: 1,
-  },
-  difficultyBadge: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  difficultyText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    textTransform: "capitalize",
-  },
-  alternativeWhy: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    lineHeight: 18,
-  },
-  errorText: {
-    ...Typography.body,
-    color: "#FF6B6B",
-    textAlign: "center",
-    paddingVertical: Spacing.md,
   },
   suggestedCard: {
     padding: Spacing.lg,
