@@ -95,34 +95,49 @@ function setupRequestLogging(app: express.Application) {
 function getAppName(): string {
   try {
     const appJsonPath = path.resolve(process.cwd(), "app.json");
+    if (!appJsonPath || typeof appJsonPath !== "string") {
+      console.error("[getAppName] Invalid path:", appJsonPath);
+      return "App Landing Page";
+    }
     const appJsonContent = fs.readFileSync(appJsonPath, "utf-8");
     const appJson = JSON.parse(appJsonContent);
     return appJson.expo?.name || "App Landing Page";
-  } catch {
+  } catch (err) {
+    console.error("[getAppName] Error:", err);
     return "App Landing Page";
   }
 }
 
 function serveExpoManifest(platform: string, res: Response) {
-  const manifestPath = path.resolve(
-    process.cwd(),
-    "static-build",
-    platform,
-    "manifest.json",
-  );
+  try {
+    const manifestPath = path.resolve(
+      process.cwd(),
+      "static-build",
+      platform,
+      "manifest.json",
+    );
 
-  if (!fs.existsSync(manifestPath)) {
-    return res
-      .status(404)
-      .json({ error: `Manifest not found for platform: ${platform}` });
+    if (!manifestPath || typeof manifestPath !== "string") {
+      console.error("[serveExpoManifest] Invalid path:", manifestPath);
+      return res.status(500).json({ error: "Invalid path" });
+    }
+
+    if (!fs.existsSync(manifestPath)) {
+      return res
+        .status(404)
+        .json({ error: `Manifest not found for platform: ${platform}` });
+    }
+
+    res.setHeader("expo-protocol-version", "1");
+    res.setHeader("expo-sfv-version", "0");
+    res.setHeader("content-type", "application/json");
+
+    const manifest = fs.readFileSync(manifestPath, "utf-8");
+    res.send(manifest);
+  } catch (err) {
+    console.error("[serveExpoManifest] Error:", err);
+    res.status(500).json({ error: "Failed to serve manifest" });
   }
-
-  res.setHeader("expo-protocol-version", "1");
-  res.setHeader("expo-sfv-version", "0");
-  res.setHeader("content-type", "application/json");
-
-  const manifest = fs.readFileSync(manifestPath, "utf-8");
-  res.send(manifest);
 }
 
 function serveLandingPage({
@@ -156,14 +171,23 @@ function serveLandingPage({
 }
 
 function configureExpoAndLanding(app: express.Application) {
-  const templatePath = path.resolve(
-    process.cwd(),
-    "server",
-    "templates",
-    "landing-page.html",
-  );
-  const landingPageTemplate = fs.readFileSync(templatePath, "utf-8");
-  const appName = getAppName();
+  let landingPageTemplate: string;
+  let appName: string;
+  
+  try {
+    const templatePath = path.resolve(
+      process.cwd(),
+      "server",
+      "templates",
+      "landing-page.html",
+    );
+
+    landingPageTemplate = fs.readFileSync(templatePath, "utf-8");
+    appName = getAppName();
+  } catch (err) {
+    console.error("[configureExpoAndLanding] Error:", err);
+    throw err;
+  }
 
   log("Serving static Expo files with dynamic manifest routing");
 
@@ -200,19 +224,26 @@ function configureExpoAndLanding(app: express.Application) {
 }
 
 function setupErrorHandler(app: express.Application) {
-  app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     const error = err as {
       status?: number;
       statusCode?: number;
       message?: string;
+      stack?: string;
+      code?: string;
     };
 
     const status = error.status || error.statusCode || 500;
     const message = error.message || "Internal Server Error";
 
-    res.status(status).json({ message });
+    console.error(`[ERROR] ${req.method} ${req.path}`, {
+      status,
+      message,
+      code: error.code,
+      stack: error.stack,
+    });
 
-    throw err;
+    res.status(status).json({ error: message });
   });
 }
 
