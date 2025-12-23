@@ -56,12 +56,9 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
         let apiKey = '';
         
         if (Platform.OS === 'ios') {
-          // HARDCODED iOS public API key - replace with your actual key starting with "appl_"
-          apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS || 
-                   process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
-                   process.env.REVENUECAT_API_KEY || 
-                   '';
-          console.log(`[RevenueCat] iOS Platform - Using API key for iOS configuration`);
+          // HARDCODED iOS public API key
+          apiKey = 'appl_FpFTFhthqgEYqxmwaVBhoRqRChP';
+          console.log(`[RevenueCat] iOS Platform - Using hardcoded iOS public API key`);
         } else if (Platform.OS === 'android') {
           // Android uses the standard environment variable
           apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
