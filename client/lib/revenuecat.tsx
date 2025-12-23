@@ -8,7 +8,7 @@ import Purchases, {
 } from 'react-native-purchases';
 
 const ENTITLEMENT_ID = 'FitForgeX Pro';
-const DEV_MODE_PRO_BYPASS = true;
+const DEV_MODE_PRO_BYPASS = false;
 
 interface RevenueCatContextType {
   isProUser: boolean;
