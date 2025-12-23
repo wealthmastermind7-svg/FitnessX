@@ -10,6 +10,26 @@ Architecture: Local-first with AsyncStorage for user preferences and saved worko
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (Session Dec 23, 2025)
+
+### RevenueCat Subscription Integration (Dec 23)
+- **RevenueCat SDK**: Installed `react-native-purchases` and `react-native-purchases-ui` for in-app subscription management
+- **RevenueCat Provider**: Created `client/lib/revenuecat.tsx` with context provider pattern, proper listener cleanup, and web platform fallbacks
+- **ProGate Component**: Created `client/components/ProGate.tsx` for gating premium features behind "FitForgeX Pro" entitlement
+- **PaywallScreen**: Full subscription purchase flow with RevenueCatUI.presentPaywall(), fallback UI, and web handling
+- **CustomerCenterScreen**: Subscription management using RevenueCatUI.presentCustomerCenter() with platform-specific handling
+- **Premium Feature Gating**: AI Coach, Workout Feedback, and Recovery Advisor screens wrapped with ProGate
+- **Profile Screen**: Added subscription management section with Pro status display
+- **DiscoverScreen**: Added PRO badges to AI feature cards
+- **Environment**: `EXPO_PUBLIC_REVENUECAT_API_KEY` secret for API key (configured in Replit Secrets)
+- **DEV_MODE_PRO_BYPASS**: Constant in revenuecat.tsx to bypass subscription checks during development
+
+### New Files (Dec 23)
+- `client/lib/revenuecat.tsx` - RevenueCat provider with initialization, purchases, and entitlement checking
+- `client/components/ProGate.tsx` - HOC for gating premium features
+- `client/screens/PaywallScreen.tsx` - Subscription purchase flow
+- `client/screens/CustomerCenterScreen.tsx` - Subscription management
+
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
 ### Nutrition Feature Activation (Dec 22 - Final)
@@ -119,6 +139,7 @@ shared/           # Shared types and schemas
 ## External Dependencies
 
 ### Third-Party Services
+- **RevenueCat**: In-app subscription management for iOS/Android (requires `EXPO_PUBLIC_REVENUECAT_API_KEY` secret from Replit)
 - **OpenAI API**: GPT-4o-mini for AI training programs, feedback, substitutions, and recovery advice (requires `OPENAI_API_KEY` secret from Replit)
 - **ExerciseDB API**: 1,300+ exercises with animated GIFs (requires `RAPIDAPI_KEY` environment variable)
 - **RapidAPI Muscle Group Image Generator**: Workout visualization (requires `RAPIDAPI_KEY` environment variable)
