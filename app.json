@@ -16,7 +16,7 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": false,
           "NSExceptionDomains": {
-            "fitforge.replit.app": {
+            "muscle-motion--wealthmastermin.replit.app": {
               "NSIncludesSubdomains": true,
               "NSExceptionAllowsInsecureHTTPLoads": false
             },

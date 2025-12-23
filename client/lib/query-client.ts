@@ -11,7 +11,7 @@ export function getApiUrl(): string {
   if (!host) {
     // In development/Expo Go, this should be set by Replit
     // In TestFlight/production, use the published Replit domain
-    host = "fitforge.replit.app";
+    host = "muscle-motion--wealthmastermin.replit.app";
   }
 
   let url = new URL(`https://${host}`);
