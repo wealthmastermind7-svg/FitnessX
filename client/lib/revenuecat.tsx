@@ -52,9 +52,23 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
 
         Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
-        const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
-                       process.env.REVENUECAT_API_KEY || 
-                       '';
+        // Platform-specific API key configuration
+        let apiKey = '';
+        
+        if (Platform.OS === 'ios') {
+          // HARDCODED iOS public API key - replace with your actual key starting with "appl_"
+          apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY_IOS || 
+                   process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
+                   process.env.REVENUECAT_API_KEY || 
+                   '';
+          console.log(`[RevenueCat] iOS Platform - Using API key for iOS configuration`);
+        } else if (Platform.OS === 'android') {
+          // Android uses the standard environment variable
+          apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
+                   process.env.REVENUECAT_API_KEY || 
+                   '';
+          console.log(`[RevenueCat] Android Platform - Using API key for Android configuration`);
+        }
 
         if (!apiKey) {
           console.warn('RevenueCat API key not found. Please set EXPO_PUBLIC_REVENUECAT_API_KEY environment variable.');
@@ -63,9 +77,10 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
           return;
         }
 
-        console.log(`[RevenueCat] Configuring with API key from environment variable`);
+        console.log(`[RevenueCat] Configuring Purchases SDK with API key for ${Platform.OS}`);
 
         if (Platform.OS === 'ios' || Platform.OS === 'android') {
+          console.log(`[RevenueCat] About to call Purchases.configure with key`);
           await Purchases.configure({ apiKey });
         } else {
           console.log('RevenueCat: Unsupported platform');
