@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
+import * as WebBrowser from 'expo-web-browser';
 import { useNavigation } from '@react-navigation/native';
 import RevenueCatUI, { PAYWALL_RESULT } from 'react-native-purchases-ui';
 
@@ -284,6 +285,16 @@ export default function PaywallScreen() {
               : 'Payment will be charged to your Google Play account. Subscription automatically renews unless cancelled at least 24 hours before the current period ends.'}
           </ThemedText>
         )}
+
+        <View style={styles.legalLinks}>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}>
+            <ThemedText style={styles.legalLink}>Privacy Policy</ThemedText>
+          </Pressable>
+          <ThemedText style={styles.legalSeparator}>|</ThemedText>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}>
+            <ThemedText style={styles.legalLink}>Terms of Service</ThemedText>
+          </Pressable>
+        </View>
       </ScrollView>
     </ThemedView>
   );
@@ -475,6 +486,22 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     textAlign: 'center',
     lineHeight: 16,
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: Spacing.md,
+    marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  legalLink: {
+    fontSize: 12,
+    color: Colors.dark.accent,
+  },
+  legalSeparator: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
   },
   successContainer: {
     alignItems: 'center',
