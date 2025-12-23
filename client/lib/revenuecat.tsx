@@ -118,19 +118,47 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
 
     try {
       setIsLoading(true);
-      const { customerInfo: newInfo } = await Purchases.purchasePackage(pkg);
-      setCustomerInfo(newInfo);
+      console.log(`[RevenueCat] Starting purchase for package: ${pkg.identifier}`);
+      console.log(`[RevenueCat] Package details:`, {
+        identifier: pkg.identifier,
+        product: pkg.product?.title,
+        price: pkg.product?.priceString,
+      });
+
+      const result = await Purchases.purchasePackage(pkg);
+      console.log(`[RevenueCat] Purchase completed`, result);
       
-      if (newInfo.entitlements.active[ENTITLEMENT_ID]) {
+      setCustomerInfo(result.customerInfo);
+      
+      if (result.customerInfo.entitlements.active[ENTITLEMENT_ID]) {
+        console.log(`[RevenueCat] Entitlement confirmed: ${ENTITLEMENT_ID}`);
         return true;
       }
+      
+      console.warn(`[RevenueCat] Purchase completed but entitlement not active`);
       return false;
     } catch (error: any) {
+      console.error('[RevenueCat] Purchase error details:', {
+        message: error.message,
+        code: error.code,
+        userCancelled: error.userCancelled,
+        fullError: error,
+      });
+
       if (!error.userCancelled) {
-        console.error('Purchase error:', error);
+        const errorMessage = error.userCancelled
+          ? 'Purchase cancelled'
+          : error.message || 'There was an error processing your purchase. Please try again.';
+        
         Alert.alert(
           'Purchase Failed',
-          error.message || 'There was an error processing your purchase. Please try again.'
+          errorMessage,
+          [
+            {
+              text: 'OK',
+              onPress: () => console.log('[RevenueCat] User acknowledged error'),
+            },
+          ]
         );
       }
       return false;
