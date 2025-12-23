@@ -52,9 +52,14 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
 
         Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
-        const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
-                       process.env.REVENUECAT_API_KEY || 
-                       '';
+        let apiKey = '';
+        if (Platform.OS === 'ios') {
+          apiKey = 'appl_FpFTFhthqgEYqxmwaVBhoRqRChP';
+        } else if (Platform.OS === 'android') {
+          apiKey = process.env.EXPO_PUBLIC_REVENUECAT_API_KEY || 
+                   process.env.REVENUECAT_API_KEY || 
+                   '';
+        }
 
         if (!apiKey) {
           console.warn('RevenueCat API key not found');
@@ -62,6 +67,8 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
           setIsInitialized(true);
           return;
         }
+
+        console.log(`[RevenueCat] Configuring with iOS key: ${Platform.OS === 'ios' ? 'appl_FpFTFhthqgEYqxmwaVBhoRqRChP' : 'environment variable'}`);
 
         if (Platform.OS === 'ios' || Platform.OS === 'android') {
           await Purchases.configure({ apiKey });
