@@ -1,0 +1,141 @@
+Based on what you described, the problem is no longer that the servers are down, it is that the health check cannot successfully reach or validate the /status endpoint. This is a very common issue in Expo plus Express setups, especially when running in Replit, Docker, or managed workflows.
+
+Below is a structured, deterministic way to resolve it.
+
+⸻
+
+1. First, verify the /status endpoint in isolation
+
+In your Express server file (for example server/index.js or server.ts), confirm the endpoint is defined before the server starts listening:
+
+app.get("/status", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+Then confirm the port:
+
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Express server serving on port ${PORT}`);
+});
+
+Key points:
+	•	Use 0.0.0.0, not localhost
+	•	Ensure the endpoint returns HTTP 200
+	•	Keep the response simple, JSON only
+
+⸻
+
+2. Manually test the endpoint from the server container
+
+Before involving Expo or any health checker, confirm the endpoint is reachable:
+
+curl http://localhost:5000/status
+
+Expected output:
+
+{"status":"ok"}
+
+If this fails, the issue is purely backend related.
+
+⸻
+
+3. If using Replit or a hosted workflow, test the public URL
+
+Health checks usually do not call localhost. They call the public URL.
+
+For Replit, this will look like:
+
+https://your-repl-name.your-username.repl.co/status
+
+Test it manually in a browser or with curl:
+
+curl https://your-public-url/status
+
+If this fails but localhost works, the issue is one of:
+	•	Port mismatch
+	•	Server not bound to 0.0.0.0
+	•	Reverse proxy not routing correctly
+
+⸻
+
+4. Confirm the health check is pointing to the correct port
+
+This is the most common failure.
+
+If your Express server is on 5000, but the platform expects 3000, the health check will fail even though the app works.
+
+Check:
+	•	Replit .replit file
+	•	Dockerfile
+	•	Workflow config
+	•	Any PORT environment variable
+
+Example fix:
+
+PORT=5000
+
+Or align everything to 3000 if required by the platform.
+
+⸻
+
+5. Expo-specific issue: Do not block the event loop
+
+If your server file also imports Expo or Metro-related logic, make sure nothing blocks startup before /status is registered.
+
+Bad pattern:
+
+await someLongStartupTask();
+app.get("/status", ...);
+
+Good pattern:
+
+app.get("/status", ...);
+// then async startup logic
+
+Health checks typically run within the first few seconds.
+
+⸻
+
+6. Restart correctly after changes
+
+When you say “restart the workflow”, make sure it is a full restart, not a hot reload:
+	•	Stop the process entirely
+	•	Restart the workflow
+	•	Watch logs for:
+	•	Server listening log
+	•	No port binding errors
+	•	No crashes before first request
+
+⸻
+
+7. Final checklist (most likely causes)
+
+In order of probability:
+	1.	Health check calling the wrong port
+	2.	Server not bound to 0.0.0.0
+	3.	Health check calling public URL but /status only works on localhost
+	4.	Endpoint registered after async startup
+	5.	Workflow expecting / but you implemented /status
+
+⸻
+
+Recommended minimal health check (best practice)
+
+If the platform allows it, use / instead of /status:
+
+app.get("/", (req, res) => {
+  res.send("OK");
+});
+
+Many platforms default to / and do not follow custom paths reliably.
+
+⸻
+
+If you want, paste:
+	•	Your Express server file
+	•	Your workflow or Replit config
+	•	The exact health check error message
+
+I can pinpoint the failure in one pass.

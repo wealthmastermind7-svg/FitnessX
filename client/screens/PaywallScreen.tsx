@@ -163,9 +163,10 @@ export default function PaywallScreen() {
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable onPress={handleClose} style={styles.closeButton}>
-          <Feather name="x" size={24} color={Colors.dark.text} />
+          <Feather name="chevron-left" size={28} color={Colors.dark.text} />
         </Pressable>
-        <Pressable onPress={handleRestore} disabled={isLoading}>
+        <ThemedText style={styles.headerTitle}>FitForgeX Pro</ThemedText>
+        <Pressable onPress={handleRestore} disabled={isLoading} style={styles.restoreButton}>
           <ThemedText style={styles.restoreText}>Restore</ThemedText>
         </Pressable>
       </View>
@@ -319,15 +320,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    paddingBottom: Spacing.lg,
   },
   closeButton: {
     padding: Spacing.sm,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: '600' as any,
+    color: Colors.dark.text,
+    flex: 1,
+    textAlign: 'center',
+  },
+  restoreButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    minWidth: 60,
+    alignItems: 'flex-end',
   },
   restoreText: {
     color: Colors.dark.accent,
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '500' as any,
   },
   content: {
     flex: 1,
