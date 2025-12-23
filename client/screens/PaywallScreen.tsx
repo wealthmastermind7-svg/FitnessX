@@ -48,6 +48,11 @@ const PRO_FEATURES = [
     description: 'Save up to 100 workouts instead of just 5 for free users',
   },
   {
+    icon: 'activity',
+    title: 'Full Exercise Library',
+    description: 'Browse all 1,300+ exercises instead of the first 10 only',
+  },
+  {
     icon: 'star',
     title: 'Unlimited Access',
     description: 'No limits on all features - use them as much as you want',

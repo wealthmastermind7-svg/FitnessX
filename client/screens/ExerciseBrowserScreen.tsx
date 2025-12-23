@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -24,6 +25,7 @@ import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import { useRevenueCat } from "@/lib/revenuecat";
 
 type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
 
@@ -59,6 +61,7 @@ export default function ExerciseBrowserScreen() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RoutePropType>();
   const baseUrl = getApiUrl();
+  const { isProUser } = useRevenueCat();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
@@ -94,6 +97,18 @@ export default function ExerciseBrowserScreen() {
   }, [refetch]);
 
   const handleExercisePress = (exercise: ExerciseDBExercise, index: number) => {
+    if (!isProUser && index >= 10) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Alert.alert(
+        "Pro Feature",
+        "Free users can browse the first 10 exercises. Upgrade to Pro to access all 1,300+ exercises.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
+        ]
+      );
+      return;
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate("ExerciseDetail", { 
       exercise, 
@@ -112,18 +127,21 @@ export default function ExerciseBrowserScreen() {
     return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
   };
 
-  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => (
+  const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => {
+    const isLocked = !isProUser && index >= 10;
+    return (
     <Pressable
       onPress={() => handleExercisePress(item, index)}
       style={({ pressed }) => [
         styles.exerciseCard,
+        isLocked && styles.exerciseCardLocked,
         pressed && styles.exerciseCardPressed,
       ]}
     >
       <View style={styles.exerciseImageContainer}>
         <Image
           source={{ uri: getExerciseImageUrl(item.id, "180") }}
-          style={styles.exerciseImage}
+          style={[styles.exerciseImage, isLocked && styles.exerciseImageLocked]}
           contentFit="cover"
           transition={200}
           placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
@@ -135,6 +153,11 @@ export default function ExerciseBrowserScreen() {
           <View style={styles.targetBadge}>
             <ThemedText style={styles.targetBadgeText}>{item.target}</ThemedText>
           </View>
+          {isLocked && (
+            <View style={styles.lockOverlay}>
+              <Feather name="lock" size={24} color="#9D4EDD" />
+            </View>
+          )}
         </View>
       </View>
       <View style={styles.exerciseInfo}>
@@ -154,7 +177,8 @@ export default function ExerciseBrowserScreen() {
       </View>
       <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
     </Pressable>
-  );
+    );
+  };
 
   const ListHeader = () => (
     <View>
@@ -413,6 +437,22 @@ const styles = StyleSheet.create({
   exerciseCardPressed: {
     opacity: 0.8,
     transform: [{ scale: 0.98 }],
+  },
+  exerciseCardLocked: {
+    opacity: 0.6,
+  },
+  exerciseImageLocked: {
+    opacity: 0.6,
+  },
+  lockOverlay: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.4)",
   },
   exerciseImageContainer: {
     width: 80,

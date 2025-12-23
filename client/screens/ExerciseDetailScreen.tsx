@@ -5,6 +5,7 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -20,6 +21,7 @@ import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl, apiRequest } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import { useRevenueCat } from "@/lib/revenuecat";
 
 type RouteParams = RouteProp<RootStackParamList, "ExerciseDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -29,6 +31,7 @@ export default function ExerciseDetailScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<RouteParams>();
+  const { isProUser } = useRevenueCat();
   const initialExercise = route.params?.exercise as ExerciseDBExercise;
   const exercises = (route.params?.exercises as ExerciseDBExercise[]) || [initialExercise];
   const initialIndex = route.params?.exerciseIndex ?? 0;
@@ -37,18 +40,45 @@ export default function ExerciseDetailScreen() {
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
   const exercise = exercises[currentIndex];
+  const isLocked = !isProUser && currentIndex >= 10;
 
   const handlePrevious = () => {
     if (currentIndex > 0) {
+      const prevIndex = currentIndex - 1;
+      if (!isProUser && prevIndex >= 10) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Alert.alert(
+          "Pro Feature",
+          "Free users can browse the first 10 exercises. Upgrade to Pro to access all 1,300+ exercises.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
+          ]
+        );
+        return;
+      }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setCurrentIndex(currentIndex - 1);
+      setCurrentIndex(prevIndex);
     }
   };
 
   const handleNext = () => {
     if (currentIndex < exercises.length - 1) {
+      const nextIndex = currentIndex + 1;
+      if (!isProUser && nextIndex >= 10) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Alert.alert(
+          "Pro Feature",
+          "Free users can browse the first 10 exercises. Upgrade to Pro to access all 1,300+ exercises.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
+          ]
+        );
+        return;
+      }
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(nextIndex);
     }
   };
 
