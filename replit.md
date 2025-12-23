@@ -12,15 +12,26 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Session Dec 23, 2025)
 
+### Consolidated AI Coach Interface (Dec 23)
+- **Unified AI Coach Screen**: Consolidated all AI Pro features (Coach, Program, Feedback, Recovery) into a single mode-based interface
+- **Mode Tabs**: 4 modes with distinct functionality:
+  - **Coach Mode**: General fitness Q&A and personalized advice
+  - **Program Mode**: 8-week training program generation with experience level input
+  - **Feedback Mode**: Post-workout analysis with muscle group selector, duration, and difficulty
+  - **Recovery Mode**: Training readiness analysis and recovery recommendations
+- **Dynamic UI**: Mode-specific colors, icons, welcome messages, and sample prompts
+- **Response Formatting**: Specialized rendering for each mode (program summaries, feedback strengths/improvements, recovery recommendations)
+- **ProGate Integration**: All modes gated behind "FitForgeX Pro" entitlement
+
 ### RevenueCat Subscription Integration (Dec 23)
 - **RevenueCat SDK**: Installed `react-native-purchases` and `react-native-purchases-ui` for in-app subscription management
 - **RevenueCat Provider**: Created `client/lib/revenuecat.tsx` with context provider pattern, proper listener cleanup, and web platform fallbacks
 - **ProGate Component**: Created `client/components/ProGate.tsx` for gating premium features behind "FitForgeX Pro" entitlement
 - **PaywallScreen**: Full subscription purchase flow with RevenueCatUI.presentPaywall(), fallback UI, and web handling
 - **CustomerCenterScreen**: Subscription management using RevenueCatUI.presentCustomerCenter() with platform-specific handling
-- **Premium Feature Gating**: AI Coach, Workout Feedback, and Recovery Advisor screens wrapped with ProGate
+- **Premium Feature Gating**: AI Coach with all modes wrapped with ProGate
 - **Profile Screen**: Added subscription management section with Pro status display
-- **DiscoverScreen**: Added PRO badges to AI feature cards
+- **DiscoverScreen**: Added PRO badges to AI feature cards, updated description for consolidated AI Coach
 - **Environment**: `EXPO_PUBLIC_REVENUECAT_API_KEY` secret for API key (configured in Replit Secrets)
 - **DEV_MODE_PRO_BYPASS**: Constant in revenuecat.tsx to bypass subscription checks during development
 
@@ -29,6 +40,9 @@ Preferred communication style: Simple, everyday language.
 - `client/components/ProGate.tsx` - HOC for gating premium features
 - `client/screens/PaywallScreen.tsx` - Subscription purchase flow
 - `client/screens/CustomerCenterScreen.tsx` - Subscription management
+
+### Updated Files (Dec 23)
+- `client/screens/AIChatScreen.tsx` - Completely rewritten with mode-based interface for all AI features
 
 ## Recent Changes (Session Dec 22, 2025 - Final Updates)
 
