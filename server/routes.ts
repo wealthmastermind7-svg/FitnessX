@@ -530,11 +530,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const { bodyPart } = req.params;
+      const normalizedBodyPart = bodyPart.toLowerCase();
       const limit = parseInt(req.query.limit as string) || 50;
       const offset = parseInt(req.query.offset as string) || 0;
 
       const response = await fetch(
-        `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${encodeURIComponent(bodyPart)}?limit=${limit}&offset=${offset}`,
+        `https://exercisedb.p.rapidapi.com/exercises/bodyPart/${encodeURIComponent(normalizedBodyPart)}?limit=${limit}&offset=${offset}`,
         { headers: exerciseDbHeaders }
       );
 
