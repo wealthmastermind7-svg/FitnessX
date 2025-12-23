@@ -303,7 +303,7 @@ export default function PaywallScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.dark.backgroundRoot,
   },
   header: {
     flexDirection: 'row',
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   },
   restoreText: {
     color: Colors.dark.accent,
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
   },
   content: {
     flex: 1,
@@ -341,14 +341,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   title: {
-    fontSize: Typography.sizes.xxl,
-    fontWeight: Typography.weights.bold as any,
+    fontSize: 32,
+    fontWeight: '600' as any,
     color: Colors.dark.text,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   subtitle: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     textAlign: 'center',
   },
@@ -373,28 +373,28 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featureTitle: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
     marginBottom: 2,
   },
   featureDescription: {
-    fontSize: Typography.sizes.small,
+    fontSize: 14,
     color: Colors.dark.textSecondary,
   },
   packagesSection: {
     marginBottom: Spacing.xl,
   },
   sectionTitle: {
-    fontSize: Typography.sizes.lg,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 18,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
     marginBottom: Spacing.md,
   },
   packageCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.dark.card,
+    backgroundColor: Colors.dark.backgroundSecondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -420,27 +420,27 @@ const styles = StyleSheet.create({
   },
   saveBadgeText: {
     fontSize: 10,
-    fontWeight: Typography.weights.bold as any,
+    fontWeight: '700' as any,
     color: '#FFF',
   },
   packageInfo: {
     flex: 1,
   },
   packageTitle: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
     marginBottom: 4,
   },
   packagePrice: {
-    fontSize: Typography.sizes.lg,
-    fontWeight: Typography.weights.bold as any,
+    fontSize: 18,
+    fontWeight: '700' as any,
     color: Colors.dark.text,
   },
   packagePeriod: {
-    fontSize: Typography.sizes.small,
+    fontSize: 14,
     color: Colors.dark.textSecondary,
-    fontWeight: Typography.weights.regular as any,
+    fontWeight: '400' as any,
   },
   radioButton: {
     width: 24,
@@ -477,8 +477,8 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   subscribeButtonText: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: '#FFF',
   },
   legalText: {
@@ -516,13 +516,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   successTitle: {
-    fontSize: Typography.sizes.xxl,
-    fontWeight: Typography.weights.bold as any,
+    fontSize: 32,
+    fontWeight: '700' as any,
     color: Colors.dark.text,
     marginBottom: Spacing.md,
   },
   successDescription: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
@@ -534,8 +534,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
   },
   doneButtonText: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: '#FFF',
   },
 });

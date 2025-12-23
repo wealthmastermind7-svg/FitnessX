@@ -160,13 +160,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   title: {
-    fontSize: Typography.sizes.xl,
-    fontWeight: Typography.weights.bold as any,
+    fontSize: 24,
+    fontWeight: '700' as any,
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
   },
   description: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   upgradeButtonText: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: '#FFF',
   },
   badge: {
@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
   },
   badgeText: {
     fontSize: 9,
-    fontWeight: Typography.weights.bold as any,
+    fontWeight: '700' as any,
     color: '#FFF',
   },
   compactButton: {
@@ -215,8 +215,8 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   buttonText: {
-    fontSize: Typography.sizes.small,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 14,
+    fontWeight: '500' as any,
     color: '#FFF',
   },
 });

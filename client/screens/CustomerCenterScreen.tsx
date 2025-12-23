@@ -246,7 +246,7 @@ export default function CustomerCenterScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.background,
+    backgroundColor: Colors.dark.backgroundRoot,
   },
   header: {
     flexDirection: 'row',
@@ -259,8 +259,8 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    fontSize: Typography.sizes.lg,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 18,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
   },
   headerRight: {
@@ -283,13 +283,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   statusTitle: {
-    fontSize: Typography.sizes.xl,
-    fontWeight: Typography.weights.bold as any,
+    fontSize: 24,
+    fontWeight: '700' as any,
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
   },
   statusDescription: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
@@ -304,16 +304,16 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   upgradeButtonText: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: '#FFF',
   },
   detailsCard: {
     padding: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
     marginBottom: Spacing.lg,
   },
@@ -326,11 +326,11 @@ const styles = StyleSheet.create({
     borderBottomColor: Colors.dark.border,
   },
   detailLabel: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
   },
   detailValue: {
-    fontSize: Typography.sizes.body,
+    fontSize: 16,
     color: Colors.dark.text,
   },
   activeBadge: {
@@ -340,8 +340,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   activeBadgeText: {
-    fontSize: Typography.sizes.small,
-    fontWeight: Typography.weights.semiBold as any,
+    fontSize: 14,
+    fontWeight: '500' as any,
     color: '#10B981',
   },
   actionsCard: {
@@ -370,13 +370,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   actionTitle: {
-    fontSize: Typography.sizes.body,
-    fontWeight: Typography.weights.medium as any,
+    fontSize: 16,
+    fontWeight: '500' as any,
     color: Colors.dark.text,
     marginBottom: 2,
   },
   actionDescription: {
-    fontSize: Typography.sizes.small,
+    fontSize: 14,
     color: Colors.dark.textSecondary,
   },
 });
