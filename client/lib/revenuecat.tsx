@@ -8,7 +8,7 @@ import Purchases, {
 } from 'react-native-purchases';
 
 const ENTITLEMENT_ID = 'FitForgeX Pro';
-const DEV_MODE_PRO_BYPASS = false;
+const DEV_MODE_PRO_BYPASS = true;
 
 interface RevenueCatContextType {
   isProUser: boolean;
@@ -84,9 +84,10 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
           setCurrentOffering(offerings.current);
         }
 
-        listenerRemoverRef.current = Purchases.addCustomerInfoUpdateListener((info) => {
+        const removeListener = Purchases.addCustomerInfoUpdateListener((info) => {
           setCustomerInfo(info);
         });
+        listenerRemoverRef.current = removeListener;
 
       } catch (error) {
         console.error('RevenueCat initialization error:', error);
