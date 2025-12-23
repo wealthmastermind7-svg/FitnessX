@@ -18,6 +18,7 @@ import { Card } from "@/components/Card";
 import KeyboardAwareScrollViewCompat from "@/components/KeyboardAwareScrollViewCompat";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
+import { ProGate } from "@/components/ProGate";
 
 interface Exercise {
   name: string;
@@ -201,6 +202,7 @@ export default function WorkoutFeedbackScreen() {
   }
 
   return (
+    <ProGate feature="Workout Feedback">
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable
@@ -387,6 +389,7 @@ export default function WorkoutFeedbackScreen() {
         </Pressable>
       </KeyboardAwareScrollViewCompat>
     </ThemedView>
+  </ProGate>
   );
 }
 

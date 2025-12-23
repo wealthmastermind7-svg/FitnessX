@@ -11,22 +11,25 @@ import { queryClient } from "@/lib/query-client";
 
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { RevenueCatProvider } from "@/lib/revenuecat";
 
 export default function App() {
   return (
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <SafeAreaProvider>
-          <GestureHandlerRootView style={styles.root}>
-            <KeyboardProvider>
-              <NavigationContainer>
-                <RootStackNavigator />
-              </NavigationContainer>
-              <StatusBar style="light" />
-            </KeyboardProvider>
-          </GestureHandlerRootView>
-        </SafeAreaProvider>
-      </QueryClientProvider>
+      <RevenueCatProvider>
+        <QueryClientProvider client={queryClient}>
+          <SafeAreaProvider>
+            <GestureHandlerRootView style={styles.root}>
+              <KeyboardProvider>
+                <NavigationContainer>
+                  <RootStackNavigator />
+                </NavigationContainer>
+                <StatusBar style="light" />
+              </KeyboardProvider>
+            </GestureHandlerRootView>
+          </SafeAreaProvider>
+        </QueryClientProvider>
+      </RevenueCatProvider>
     </ErrorBoundary>
   );
 }

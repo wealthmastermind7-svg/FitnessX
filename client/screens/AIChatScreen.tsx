@@ -20,6 +20,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl, apiRequest } from "@/lib/query-client";
+import { ProGate } from "@/components/ProGate";
 
 interface Exercise {
   id: string;
@@ -144,47 +145,48 @@ export default function AIChatScreen({ navigation }: any) {
   };
 
   return (
-    <ThemedView style={styles.container}>
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.goBack();
-          }}
-        >
-          <Feather name="arrow-left" size={24} color={Colors.dark.text} />
-        </Pressable>
-        <View style={styles.headerCenter}>
-          <LinearGradient
-            colors={["#9D4EDD", "#5A189A"]}
-            style={styles.aiAvatar}
+    <ProGate feature="AI Coach">
+      <ThemedView style={styles.container}>
+        <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              navigation.goBack();
+            }}
           >
-            <Feather name="cpu" size={18} color="#fff" />
-          </LinearGradient>
-          <View>
-            <ThemedText style={styles.headerTitle}>AI Coach</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>Powered by GPT-4</ThemedText>
+            <Feather name="arrow-left" size={24} color={Colors.dark.text} />
+          </Pressable>
+          <View style={styles.headerCenter}>
+            <LinearGradient
+              colors={["#9D4EDD", "#5A189A"]}
+              style={styles.aiAvatar}
+            >
+              <Feather name="cpu" size={18} color="#fff" />
+            </LinearGradient>
+            <View>
+              <ThemedText style={styles.headerTitle}>AI Coach</ThemedText>
+              <ThemedText style={styles.headerSubtitle}>Powered by GPT-4</ThemedText>
+            </View>
           </View>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setMessages([
+                {
+                  id: "welcome",
+                  role: "assistant",
+                  content:
+                    "Hey! I'm your AI fitness coach. I can help you with workout advice, nutrition tips, exercise form, recovery strategies, and more. What would you like to know?",
+                  timestamp: new Date(),
+                },
+              ]);
+            }}
+          >
+            <Feather name="refresh-cw" size={20} color={Colors.dark.textSecondary} />
+          </Pressable>
         </View>
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            setMessages([
-              {
-                id: "welcome",
-                role: "assistant",
-                content:
-                  "Hey! I'm your AI fitness coach. I can help you with workout advice, nutrition tips, exercise form, recovery strategies, and more. What would you like to know?",
-                timestamp: new Date(),
-              },
-            ]);
-          }}
-        >
-          <Feather name="refresh-cw" size={20} color={Colors.dark.textSecondary} />
-        </Pressable>
-      </View>
 
-      <KeyboardAvoidingView
+        <KeyboardAvoidingView
         style={styles.chatContainer}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         keyboardVerticalOffset={0}
@@ -353,8 +355,9 @@ export default function AIChatScreen({ navigation }: any) {
             AI responses are for informational purposes. Consult a professional for medical advice.
           </ThemedText>
         </View>
-      </KeyboardAvoidingView>
-    </ThemedView>
+        </KeyboardAvoidingView>
+      </ThemedView>
+    </ProGate>
   );
 }
 

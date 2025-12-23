@@ -20,6 +20,7 @@ import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
+import { useRevenueCat } from "@/lib/revenuecat";
 
 interface UserProfile {
   displayName: string;
@@ -84,6 +85,7 @@ export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { isProUser, isLoading: isRevenueCatLoading } = useRevenueCat();
   const [profile, setProfile] = useState<UserProfile>({
     displayName: "Athlete",
     experienceLevel: "Intermediate",
@@ -327,6 +329,49 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Subscription</ThemedText>
+          
+          <View style={styles.settingsCard}>
+            <Pressable
+              style={styles.settingsRow}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                if (isProUser) {
+                  navigation.navigate("CustomerCenter");
+                } else {
+                  navigation.navigate("Paywall");
+                }
+              }}
+            >
+              <View style={styles.settingsRowLeft}>
+                <View style={[styles.settingsIconContainer, { backgroundColor: Colors.dark.accent + '20' }]}>
+                  <Feather name="zap" size={20} color={Colors.dark.accent} />
+                </View>
+                <View>
+                  <ThemedText style={styles.settingsLabel}>
+                    {isRevenueCatLoading ? "Loading..." : isProUser ? "FitForgeX Pro" : "Upgrade to Pro"}
+                  </ThemedText>
+                  {!isRevenueCatLoading && !isProUser && (
+                    <ThemedText style={[styles.settingsValue, { marginLeft: 0, marginTop: 2 }]}>
+                      Unlock all AI features
+                    </ThemedText>
+                  )}
+                </View>
+              </View>
+              <View style={styles.settingsRowRight}>
+                {isProUser ? (
+                  <View style={styles.proBadge}>
+                    <ThemedText style={styles.proBadgeText}>ACTIVE</ThemedText>
+                  </View>
+                ) : (
+                  <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
+                )}
+              </View>
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Data</ThemedText>
           
           <View style={styles.settingsCard}>
@@ -496,5 +541,17 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xs,
+  },
+  proBadge: {
+    backgroundColor: Colors.dark.accent,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  proBadgeText: {
+    ...Typography.small,
+    color: "#FFF",
+    fontWeight: "700" as const,
+    fontSize: 10,
   },
 });

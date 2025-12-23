@@ -17,6 +17,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
+import { ProGate } from "@/components/ProGate";
 
 interface RecoveryAdvice {
   recommendation: string;
@@ -204,6 +205,7 @@ export default function RecoveryAdvisorScreen() {
   }
 
   return (
+    <ProGate feature="Recovery Advisor">
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top }]}>
         <Pressable
@@ -303,6 +305,7 @@ export default function RecoveryAdvisorScreen() {
         </Pressable>
       </ScrollView>
     </ThemedView>
+  </ProGate>
   );
 }
 

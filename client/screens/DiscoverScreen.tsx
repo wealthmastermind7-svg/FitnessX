@@ -329,9 +329,9 @@ export default function DiscoverScreen() {
             <View style={styles.exerciseLibraryContent}>
               <View style={styles.exerciseLibraryText}>
                 <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                  <Feather name="cpu" size={14} color="#fff" />
+                  <Feather name="zap" size={14} color="#fff" />
                   <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#fff" }]}>
-                    AI Powered
+                    PRO
                   </ThemedText>
                 </View>
                 <ThemedText style={styles.exerciseLibraryTitle}>
