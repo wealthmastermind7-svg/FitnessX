@@ -24,6 +24,8 @@ import { Colors, Spacing, BorderRadius, Typography, Shadows, Gradients } from "@
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRevenueCat } from "@/lib/revenuecat";
+import { Alert } from "react-native";
 
 const MUSCLE_GROUPS = [
   "Chest", "Back", "Shoulders", "Biceps", "Triceps",
@@ -88,6 +90,7 @@ export default function GenerateScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
+  const { isProUser } = useRevenueCat();
   
   const [selectedMuscles, setSelectedMuscles] = useState<string[]>([]);
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>(["Any"]);
@@ -132,6 +135,23 @@ export default function GenerateScreen() {
       return;
     }
 
+    if (!isProUser) {
+      const savedWorkouts = await AsyncStorage.getItem("savedWorkouts");
+      const workouts = savedWorkouts ? JSON.parse(savedWorkouts) : [];
+      if (workouts.length >= 5) {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+        Alert.alert(
+          "Workout Limit Reached",
+          "Free users can save up to 5 workouts. Upgrade to Pro to save unlimited workouts.",
+          [
+            { text: "Cancel", style: "cancel" },
+            { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
+          ]
+        );
+        return;
+      }
+    }
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setIsGenerating(true);
 
@@ -155,7 +175,7 @@ export default function GenerateScreen() {
     } finally {
       setIsGenerating(false);
     }
-  }, [selectedMuscles, selectedEquipment, difficulty, description, navigation, baseUrl]);
+  }, [selectedMuscles, selectedEquipment, difficulty, description, navigation, baseUrl, isProUser]);
 
   const handleButtonPressIn = () => {
     Animated.spring(buttonScale, {

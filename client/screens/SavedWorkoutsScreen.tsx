@@ -5,6 +5,7 @@ import {
   Pressable,
   FlatList,
   ListRenderItemInfo,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -17,10 +18,12 @@ import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigato
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { useRevenueCat } from "@/lib/revenuecat";
 
 export default function SavedWorkoutsScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { isProUser } = useRevenueCat();
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,10 +44,22 @@ export default function SavedWorkoutsScreen() {
     }
   };
 
-  const handleWorkoutPress = useCallback((workout: Workout) => {
+  const handleWorkoutPress = useCallback((workout: Workout, index: number) => {
+    if (!isProUser && index >= 5) {
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+      Alert.alert(
+        "Pro Feature",
+        "You've reached the free limit of 5 saved workouts. Upgrade to Pro to save up to 100 workouts.",
+        [
+          { text: "Cancel", style: "cancel" },
+          { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
+        ]
+      );
+      return;
+    }
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     navigation.navigate("WorkoutDetail", { workout });
-  }, [navigation]);
+  }, [navigation, isProUser]);
 
   const handleDelete = useCallback((id: string) => {
     const updated = workouts.filter(w => w.id !== id);
@@ -53,23 +68,32 @@ export default function SavedWorkoutsScreen() {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
   }, [workouts]);
 
-  const renderWorkoutCard = ({ item }: ListRenderItemInfo<Workout>) => (
+  const renderWorkoutCard = ({ item, index }: ListRenderItemInfo<Workout>) => {
+    const isLocked = !isProUser && index >= 5;
+    return (
     <Pressable
-      style={styles.workoutCard}
-      onPress={() => handleWorkoutPress(item)}
+      style={[styles.workoutCard, isLocked && styles.workoutCardLocked]}
+      onPress={() => handleWorkoutPress(item, index)}
     >
       <View style={styles.cardHeader}>
         <View style={styles.cardTitleContainer}>
           <ThemedText style={styles.cardTitle}>{item.name}</ThemedText>
           <ThemedText style={styles.cardDifficulty}>{item.difficulty}</ThemedText>
         </View>
-        <Pressable
-          onPress={() => handleDelete(item.id)}
-          hitSlop={8}
-          style={styles.deleteButton}
-        >
-          <Feather name="trash-2" size={18} color={Colors.dark.accent} />
-        </Pressable>
+        <View style={styles.cardActions}>
+          {isLocked && (
+            <View style={styles.lockBadge}>
+              <Feather name="lock" size={14} color="#9D4EDD" />
+            </View>
+          )}
+          <Pressable
+            onPress={() => handleDelete(item.id)}
+            hitSlop={8}
+            style={styles.deleteButton}
+          >
+            <Feather name="trash-2" size={18} color={Colors.dark.accent} />
+          </Pressable>
+        </View>
       </View>
 
       <ThemedText style={styles.cardDescription}>{item.description}</ThemedText>
@@ -96,6 +120,7 @@ export default function SavedWorkoutsScreen() {
       </View>
     </Pressable>
   );
+  };
 
   const emptyView = () => (
     <View style={styles.emptyContainer}>
@@ -167,7 +192,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xl * 2,
   },
   emptyTitle: {
-    ...Typography.h4,
+    ...Typography.h3,
     marginTop: Spacing.md,
     textAlign: "center",
   },
@@ -195,7 +220,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cardTitle: {
-    ...Typography.h4,
+    ...Typography.h3,
     marginBottom: Spacing.xs,
   },
   cardDifficulty: {
@@ -226,5 +251,19 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: 12,
     color: Colors.dark.textSecondary,
+  },
+  lockBadge: {
+    backgroundColor: Colors.dark.accent + '20',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    marginRight: Spacing.sm,
+  },
+  cardActions: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  workoutCardLocked: {
+    opacity: 0.6,
   },
 });

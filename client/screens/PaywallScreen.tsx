@@ -43,9 +43,14 @@ const PRO_FEATURES = [
     description: 'Get detailed AI analysis of your workout performance',
   },
   {
+    icon: 'save',
+    title: 'Unlimited Workouts',
+    description: 'Save up to 100 workouts instead of just 5 for free users',
+  },
+  {
     icon: 'star',
     title: 'Unlimited Access',
-    description: 'No limits on AI features - use them as much as you want',
+    description: 'No limits on all features - use them as much as you want',
   },
 ];
 
