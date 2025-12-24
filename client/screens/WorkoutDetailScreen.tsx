@@ -50,6 +50,7 @@ function ExerciseCard({
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(20)).current;
+  const scaleAnim = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
 
   useEffect(() => {
@@ -68,16 +69,30 @@ function ExerciseCard({
     ]).start();
   }, [index]);
 
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.98,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const gifUrl = `${baseUrl}api/exercises/image/${exerciseData.id}`;
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} hitSlop={8}>
       <Animated.View
         style={[
           styles.exerciseCard,
           {
             opacity: fadeAnim,
-            transform: [{ translateY }],
+            transform: [{ translateY }, { scale: scaleAnim }],
           },
         ]}
       >
