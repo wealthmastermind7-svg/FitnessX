@@ -19,18 +19,9 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
-import type { RootStackParamList, Exercise } from "@/navigation/RootStackNavigator";
+import type { RootStackParamList, Exercise, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 
-interface ExerciseDBData {
-  id: string;
-  name: string;
-  gifUrl: string;
-  bodyPart: string;
-  target: string;
-  equipment: string;
-  instructions: string[];
-  secondaryMuscles: string[];
-}
+type ExerciseDBData = ExerciseDBExercise;
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -70,6 +61,7 @@ function ExerciseCard({
   }, [index]);
 
   const handlePressIn = () => {
+    console.log(`[ExerciseCard] Press in: ${exercise.name}`);
     Animated.spring(scaleAnim, {
       toValue: 0.98,
       useNativeDriver: true,
@@ -77,16 +69,28 @@ function ExerciseCard({
   };
 
   const handlePressOut = () => {
+    console.log(`[ExerciseCard] Press out: ${exercise.name}`);
     Animated.spring(scaleAnim, {
       toValue: 1,
       useNativeDriver: true,
     }).start();
   };
 
+  const handleCardPress = () => {
+    console.log(`[ExerciseCard] Pressed: ${exercise.name}, navigating to ExerciseDetail`);
+    console.log(`[ExerciseCard] Exercise data:`, exerciseData);
+    onPress();
+  };
+
   const gifUrl = `${baseUrl}api/exercises/image/${exerciseData.id}`;
 
   return (
-    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut} hitSlop={8}>
+    <Pressable 
+      onPress={handleCardPress}
+      onPressIn={handlePressIn} 
+      onPressOut={handlePressOut} 
+      hitSlop={8}
+    >
       <Animated.View
         style={[
           styles.exerciseCard,
@@ -300,8 +304,15 @@ export default function WorkoutDetailScreen() {
   }, [workout.exercises, baseUrl]);
 
   const handleExercisePress = useCallback((exerciseData: ExerciseDBData) => {
+    console.log(`[WorkoutDetail] handleExercisePress called for:`, exerciseData);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    navigation.navigate("ExerciseDetail", { exercise: exerciseData });
+    try {
+      console.log(`[WorkoutDetail] Navigating to ExerciseDetail with:`, { exercise: exerciseData });
+      navigation.navigate("ExerciseDetail", { exercise: exerciseData });
+      console.log(`[WorkoutDetail] Navigation call succeeded`);
+    } catch (error) {
+      console.error(`[WorkoutDetail] Navigation error:`, error);
+    }
   }, [navigation]);
 
   const muscleImageUrl = workout.muscleGroups.length > 0
