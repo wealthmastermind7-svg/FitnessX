@@ -106,7 +106,7 @@ export default function RootStackNavigator() {
         name="ExerciseDetail"
         component={ExerciseDetailScreen}
         options={{
-          presentation: "card",
+          presentation: "modal",
           headerShown: false,
         }}
       />
