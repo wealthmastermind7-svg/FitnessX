@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -23,13 +24,14 @@ type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingWelcom
 export default function OnboardingWelcomeScreen() {
   const navigation = useNavigation<OnboardingNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { completeOnboarding } = useOnboarding();
 
   const handleGetStarted = () => {
     navigation.navigate("OnboardingDiscover");
   };
 
   const handleSkip = () => {
-    navigation.navigate("Main");
+    completeOnboarding();
   };
 
   return (
