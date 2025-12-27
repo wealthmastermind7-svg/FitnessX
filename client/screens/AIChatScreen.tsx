@@ -40,12 +40,9 @@ interface Message {
   content: string;
   timestamp: Date;
   exercises?: Exercise[];
-  programData?: any;
-  feedbackData?: any;
-  recoveryData?: any;
 }
 
-type CoachMode = "chat" | "generate" | "feedback" | "recovery";
+type CoachMode = "chat";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -62,42 +59,6 @@ const MODE_CONFIG = {
       "Tips for losing body fat?",
     ],
   },
-  generate: {
-    icon: "zap" as const,
-    label: "Program",
-    color: "#FF6B6B",
-    prompts: [
-      "Create an 8-week muscle building program",
-      "Design a fat loss training plan",
-      "Build me a strength program for beginners",
-      "Create a home workout plan with no equipment",
-      "Design a 4-day split routine",
-    ],
-  },
-  feedback: {
-    icon: "bar-chart-2" as const,
-    label: "Feedback",
-    color: "#4ECDC4",
-    prompts: [
-      "Analyze my chest and triceps workout",
-      "Review my leg day performance",
-      "Give feedback on my back workout",
-      "Evaluate my full body session",
-      "What can I improve in my training?",
-    ],
-  },
-  recovery: {
-    icon: "heart" as const,
-    label: "Recovery",
-    color: "#FFE66D",
-    prompts: [
-      "Should I train today or rest?",
-      "Am I overtraining my muscles?",
-      "How to optimize my recovery?",
-      "What muscle groups need rest?",
-      "Analyze my training readiness",
-    ],
-  },
 };
 
 const MUSCLE_GROUPS = [
@@ -110,114 +71,32 @@ export default function AIChatScreen({ navigation }: any) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentMode, setCurrentMode] = useState<CoachMode>("chat");
-  const [showModeSelector, setShowModeSelector] = useState(true);
   const scrollViewRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
-
-  const [workoutLog, setWorkoutLog] = useState({
-    exercises: "",
-    duration: "45",
-    muscles: [] as string[],
-    difficulty: "Moderate",
-  });
 
   useEffect(() => {
     setMessages([
       {
         id: "welcome",
         role: "assistant",
-        content: getWelcomeMessage(currentMode),
+        content: getWelcomeMessage(),
         timestamp: new Date(),
       },
     ]);
   }, []);
 
-  const getWelcomeMessage = (mode: CoachMode) => {
-    switch (mode) {
-      case "chat":
-        return "Hey! I'm your AI fitness coach. I can help with workout advice, nutrition tips, exercise form, and more. What would you like to know?";
-      case "generate":
-        return "Ready to create your personalized training program! Tell me your goals, fitness level, and available equipment, and I'll design an 8-week progressive plan for you.";
-      case "feedback":
-        return "I can analyze your workout and provide coaching feedback. Tell me what exercises you did, how many sets/reps, and how you felt. I'll give you actionable tips!";
-      case "recovery":
-        return "Let's check your training readiness! Tell me about your recent workouts, how you're feeling, and what muscles you've trained. I'll advise on whether to train or rest.";
-    }
-  };
-
-  const handleModeChange = (mode: CoachMode) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setCurrentMode(mode);
-    setShowModeSelector(false);
-    setMessages([
-      {
-        id: "welcome-" + mode,
-        role: "assistant",
-        content: getWelcomeMessage(mode),
-        timestamp: new Date(),
-      },
-    ]);
-  };
-
-  const getApiEndpoint = () => {
-    switch (currentMode) {
-      case "generate":
-        return "api/ai/program";
-      case "feedback":
-        return "api/ai/feedback";
-      case "recovery":
-        return "api/ai/recovery";
-      default:
-        return "api/ai/chat";
-    }
+  const getWelcomeMessage = () => {
+    return "Hey! I'm your AI fitness coach. I can help with workout advice, nutrition tips, exercise form, and more. What would you like to know?";
   };
 
   const buildRequestBody = (text: string) => {
-    const baseHistory = messages.slice(-6).map((m) => ({
-      role: m.role,
-      content: m.content,
-    }));
-
-    switch (currentMode) {
-      case "generate":
-        return {
-          weeks: 8,
-          experience: "intermediate",
-          equipment: ["dumbbell", "barbell"],
-          targetMuscles: ["chest", "back", "shoulders"],
-          sessionsPerWeek: 4,
-          sessionLength: 45,
-        };
-      case "feedback":
-        return {
-          exercisesCompleted: [
-            {
-              name: workoutLog.exercises || text,
-              targetSets: 3,
-              completedSets: 3,
-              reps: "8-12",
-              rpe: 7,
-            },
-          ],
-          totalDuration: parseInt(workoutLog.duration) || 45,
-          musclesFocused: workoutLog.muscles.length > 0 ? workoutLog.muscles : ["General"],
-          difficulty: workoutLog.difficulty,
-        };
-      case "recovery":
-        return {
-          streak: 3,
-          minutesTrained: 135,
-          musclesHitLastWeek: workoutLog.muscles.length > 0 ? workoutLog.muscles : ["Chest", "Back"],
-          plannedMuscleToday: workoutLog.muscles[0] || "Legs",
-          averageSessionDuration: 45,
-        };
-      default:
-        return {
-          message: text,
-          history: baseHistory,
-        };
-    }
+    return {
+      message: text,
+      history: messages.slice(-6).map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
+    };
   };
 
   const sendMessage = async (text: string) => {
@@ -234,7 +113,6 @@ export default function AIChatScreen({ navigation }: any) {
     setMessages((prev) => [...prev, userMessage]);
     setInputText("");
     setIsLoading(true);
-    setShowModeSelector(false);
 
     setTimeout(() => {
       scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -242,10 +120,9 @@ export default function AIChatScreen({ navigation }: any) {
 
     try {
       const baseUrl = getApiUrl();
-      const endpoint = getApiEndpoint();
       const body = buildRequestBody(text.trim());
 
-      const response = await fetch(`${baseUrl}${endpoint}`, {
+      const response = await fetch(`${baseUrl}api/ai/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
@@ -257,33 +134,12 @@ export default function AIChatScreen({ navigation }: any) {
 
       const data = await response.json();
 
-      let content = "";
-      let programData = null;
-      let feedbackData = null;
-      let recoveryData = null;
-
-      if (currentMode === "generate" && data.weeks) {
-        programData = data;
-        content = formatProgramResponse(data);
-      } else if (currentMode === "feedback" && data.strengths) {
-        feedbackData = data;
-        content = formatFeedbackResponse(data);
-      } else if (currentMode === "recovery" && data.recommendation) {
-        recoveryData = data;
-        content = formatRecoveryResponse(data);
-      } else {
-        content = data.response || data.message || JSON.stringify(data);
-      }
-
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: "assistant",
-        content,
+        content: data.response || data.message || JSON.stringify(data),
         timestamp: new Date(),
         exercises: data.exercises || [],
-        programData,
-        feedbackData,
-        recoveryData,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -305,78 +161,6 @@ export default function AIChatScreen({ navigation }: any) {
     }
   };
 
-  const formatProgramResponse = (data: any) => {
-    if (!data.weeks || data.weeks.length === 0) {
-      return "I've created your training program! Here's your personalized plan.";
-    }
-    
-    let response = "Here's your personalized 8-week training program:\n\n";
-    
-    data.weeks.slice(0, 2).forEach((week: any) => {
-      response += `Week ${week.week}: ${week.focus}\n`;
-      week.sessions?.forEach((session: any) => {
-        response += `  ${session.day}:\n`;
-        session.exercises?.slice(0, 3).forEach((ex: any) => {
-          response += `    - ${ex.name}: ${ex.sets}x${ex.reps}\n`;
-        });
-        if (session.exercises?.length > 3) {
-          response += `    ...and ${session.exercises.length - 3} more exercises\n`;
-        }
-      });
-      response += "\n";
-    });
-    
-    if (data.weeks.length > 2) {
-      response += `...and ${data.weeks.length - 2} more weeks of progressive training!\n\n`;
-    }
-    
-    response += "Each week builds on the previous one with smart progression. Follow consistently for best results!";
-    return response;
-  };
-
-  const formatFeedbackResponse = (data: any) => {
-    let response = "Here's your workout analysis:\n\n";
-    
-    if (data.strengths?.length > 0) {
-      response += "Strengths:\n";
-      data.strengths.forEach((s: string) => {
-        response += `  + ${s}\n`;
-      });
-      response += "\n";
-    }
-    
-    if (data.areas_to_improve?.length > 0) {
-      response += "Areas to Improve:\n";
-      data.areas_to_improve.forEach((a: string) => {
-        response += `  - ${a}\n`;
-      });
-      response += "\n";
-    }
-    
-    if (data.next_session_recommendation) {
-      response += `Next Session Tip: ${data.next_session_recommendation}`;
-    }
-    
-    return response;
-  };
-
-  const formatRecoveryResponse = (data: any) => {
-    let response = `Recommendation: ${data.recommendation?.toUpperCase() || "TRAIN"}\n\n`;
-    
-    if (data.reasoning) {
-      response += `${data.reasoning}\n\n`;
-    }
-    
-    if (data.alternatives?.length > 0) {
-      response += "Alternative Options:\n";
-      data.alternatives.forEach((alt: string) => {
-        response += `  - ${alt}\n`;
-      });
-    }
-    
-    return response;
-  };
-
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
@@ -384,17 +168,7 @@ export default function AIChatScreen({ navigation }: any) {
     });
   };
 
-  const toggleMuscle = (muscle: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setWorkoutLog(prev => ({
-      ...prev,
-      muscles: prev.muscles.includes(muscle)
-        ? prev.muscles.filter(m => m !== muscle)
-        : [...prev.muscles, muscle],
-    }));
-  };
-
-  const modeConfig = MODE_CONFIG[currentMode];
+  const modeConfig = MODE_CONFIG.chat;
 
   return (
     <ProGate feature="AI Coach">
@@ -425,12 +199,11 @@ export default function AIChatScreen({ navigation }: any) {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setShowModeSelector(true);
               setMessages([
                 {
                   id: "welcome",
                   role: "assistant",
-                  content: getWelcomeMessage(currentMode),
+                  content: getWelcomeMessage(),
                   timestamp: new Date(),
                 },
               ]);
@@ -438,43 +211,6 @@ export default function AIChatScreen({ navigation }: any) {
           >
             <Feather name="refresh-cw" size={20} color={Colors.dark.textSecondary} />
           </Pressable>
-        </View>
-
-        <View style={styles.modeTabsContainer}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.modeTabs}
-          >
-            {(Object.keys(MODE_CONFIG) as CoachMode[]).map((mode) => {
-              const config = MODE_CONFIG[mode];
-              const isActive = currentMode === mode;
-              return (
-                <Pressable
-                  key={mode}
-                  style={[
-                    styles.modeTab,
-                    isActive && { backgroundColor: config.color + "20", borderColor: config.color },
-                  ]}
-                  onPress={() => handleModeChange(mode)}
-                >
-                  <Feather
-                    name={config.icon}
-                    size={16}
-                    color={isActive ? config.color : Colors.dark.textSecondary}
-                  />
-                  <ThemedText
-                    style={[
-                      styles.modeTabText,
-                      isActive && { color: config.color, fontWeight: "600" },
-                    ]}
-                  >
-                    {config.label}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
         </View>
 
         <KeyboardAvoidingView
@@ -586,18 +322,13 @@ export default function AIChatScreen({ navigation }: any) {
                 <View style={[styles.messageBubble, styles.assistantBubble]}>
                   <View style={styles.typingIndicator}>
                     <ActivityIndicator size="small" color={modeConfig.color} />
-                    <ThemedText style={styles.typingText}>
-                      {currentMode === "generate" ? "Creating your program..." :
-                       currentMode === "feedback" ? "Analyzing your workout..." :
-                       currentMode === "recovery" ? "Checking your readiness..." :
-                       "Thinking..."}
-                    </ThemedText>
+                    <ThemedText style={styles.typingText}>Thinking...</ThemedText>
                   </View>
                 </View>
               </View>
             )}
 
-            {showModeSelector && messages.length <= 1 && !isLoading && (
+            {messages.length <= 1 && !isLoading && (
               <View style={styles.quickPromptsSection}>
                 <ThemedText style={styles.quickPromptsTitle}>
                   Quick Actions:
@@ -618,37 +349,6 @@ export default function AIChatScreen({ navigation }: any) {
               </View>
             )}
 
-            {currentMode === "feedback" && showModeSelector && messages.length <= 1 && (
-              <View style={styles.workoutLogSection}>
-                <ThemedText style={styles.workoutLogTitle}>
-                  Quick Log Your Workout:
-                </ThemedText>
-                <View style={styles.muscleChipsRow}>
-                  {MUSCLE_GROUPS.map((muscle) => (
-                    <Pressable
-                      key={muscle}
-                      style={[
-                        styles.muscleChip,
-                        workoutLog.muscles.includes(muscle) && {
-                          backgroundColor: modeConfig.color + "20",
-                          borderColor: modeConfig.color,
-                        },
-                      ]}
-                      onPress={() => toggleMuscle(muscle)}
-                    >
-                      <ThemedText
-                        style={[
-                          styles.muscleChipText,
-                          workoutLog.muscles.includes(muscle) && { color: modeConfig.color },
-                        ]}
-                      >
-                        {muscle}
-                      </ThemedText>
-                    </Pressable>
-                  ))}
-                </View>
-              </View>
-            )}
           </ScrollView>
 
           <View style={[styles.inputContainer, { paddingBottom: insets.bottom + Spacing.sm }]}>
@@ -658,12 +358,7 @@ export default function AIChatScreen({ navigation }: any) {
                 style={styles.input}
                 value={inputText}
                 onChangeText={setInputText}
-                placeholder={
-                  currentMode === "generate" ? "Describe your fitness goals..." :
-                  currentMode === "feedback" ? "Describe your workout..." :
-                  currentMode === "recovery" ? "How are you feeling today?" :
-                  "Ask me anything about fitness..."
-                }
+                placeholder="Ask me anything about fitness..."
                 placeholderTextColor={Colors.dark.textSecondary}
                 multiline
                 maxLength={500}
