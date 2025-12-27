@@ -20,10 +20,10 @@ import { useOnboarding } from "@/contexts/OnboardingContext";
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingDiscover">;
 
 const MUSCLE_GROUPS = [
-  { name: "Chest", selected: true },
-  { name: "Back", selected: false },
-  { name: "Shoulders", selected: false },
-  { name: "Arms", selected: false },
+  { name: "Chest", selected: true, image: require("@/assets/images/muscle-chest.png") },
+  { name: "Back", selected: false, image: require("@/assets/images/muscle-back.png") },
+  { name: "Shoulders", selected: false, image: require("@/assets/images/muscle-shoulders.png") },
+  { name: "Arms", selected: false, image: require("@/assets/images/muscle-arms.png") },
 ];
 
 export default function OnboardingDiscoverScreen() {
@@ -84,16 +84,11 @@ export default function OnboardingDiscoverScreen() {
                         group.selected && styles.muscleCardSelected,
                       ]}
                     >
-                      <View style={[
-                        styles.muscleIcon,
-                        group.selected && styles.muscleIconSelected,
-                      ]}>
-                        {group.selected ? (
-                          <View style={styles.muscleIconDot} />
-                        ) : (
-                          <Feather name="user" size={24} color="#666" />
-                        )}
-                      </View>
+                      <Image
+                        source={group.image}
+                        style={styles.muscleImage}
+                        resizeMode="contain"
+                      />
                       <ThemedText style={styles.muscleName}>{group.name}</ThemedText>
                     </View>
                   ))}
@@ -273,23 +268,10 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,77,77,0.5)",
     backgroundColor: "rgba(255,77,77,0.1)",
   },
-  muscleIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    alignItems: "center",
-    justifyContent: "center",
+  muscleImage: {
+    width: 56,
+    height: 56,
     marginBottom: 8,
-  },
-  muscleIconSelected: {
-    backgroundColor: "rgba(255,77,77,0.2)",
-  },
-  muscleIconDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: "#FF4D4D",
   },
   muscleName: {
     fontSize: 11,
