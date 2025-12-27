@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ActivityIndicator, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -10,8 +10,32 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/query-client";
 
 import RootStackNavigator from "@/navigation/RootStackNavigator";
+import OnboardingStackNavigator from "@/navigation/OnboardingStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RevenueCatProvider } from "@/lib/revenuecat";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import { Colors } from "@/constants/theme";
+
+function NavigationRoot() {
+  const { isOnboardingComplete, isLoading } = useOnboarding();
+
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator
+          size="large"
+          color={Colors.dark.accent}
+        />
+      </View>
+    );
+  }
+
+  return (
+    <NavigationContainer>
+      {isOnboardingComplete ? <RootStackNavigator /> : <OnboardingStackNavigator />}
+    </NavigationContainer>
+  );
+}
 
 export default function App() {
   return (
@@ -21,9 +45,7 @@ export default function App() {
           <SafeAreaProvider>
             <GestureHandlerRootView style={styles.root}>
               <KeyboardProvider>
-                <NavigationContainer>
-                  <RootStackNavigator />
-                </NavigationContainer>
+                <NavigationRoot />
                 <StatusBar style="light" />
               </KeyboardProvider>
             </GestureHandlerRootView>
@@ -37,5 +59,11 @@ export default function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: Colors.dark.backgroundRoot,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

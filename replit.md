@@ -30,13 +30,10 @@ Preferred communication style: Simple, everyday language.
 - **Database (Planned/Optional)**: PostgreSQL with Drizzle ORM, with schema validation using Zod.
 
 ### Feature Specifications
+- **Onboarding Flow**: 4-screen guided introduction showcasing app capabilities (Welcome, Discover Exercises, AI Coach, Custom Workouts). Stored in AsyncStorage to show only on first launch.
 - **Workout Generation**: Users can generate custom workouts based on muscle groups and equipment.
 - **Exercise Browsing**: Access to a library of 1,300+ exercises with GIF demonstrations, search, and filtering.
-- **AI Coach**: A unified interface for AI-powered features including:
-    - **Coach Mode**: General fitness Q&A.
-    - **Program Mode**: 8-week training program generation with experience level input.
-    - **Feedback Mode**: Post-workout analysis.
-    - **Recovery Mode**: Training readiness and recovery recommendations.
+- **AI Coach**: Chat-based fitness assistant for general fitness Q&A, form checks, and recovery recommendations (simplified from multi-mode to chat-only).
 - **Workout Tracking**: Log workouts with exercises, sets, reps, and weight.
 - **Progress Tracking**: Chart weight, heart rate, and body measurements.
 - **Nutrition Planning**: Log meals, track macros, and get meal suggestions.
