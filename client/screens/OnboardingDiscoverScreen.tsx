@@ -3,8 +3,8 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ScrollView,
   Dimensions,
+  ImageBackground,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,16 +13,15 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingDiscover">;
 
 const MUSCLE_GROUPS = [
-  { name: "Chest", icon: "heart" },
-  { name: "Back", icon: "move" },
-  { name: "Shoulders", icon: "circle" },
-  { name: "Arms", icon: "zap" },
+  { name: "Chest", selected: true },
+  { name: "Back", selected: false },
+  { name: "Shoulders", selected: false },
+  { name: "Arms", selected: false },
 ];
 
 export default function OnboardingDiscoverScreen() {
@@ -37,253 +36,375 @@ export default function OnboardingDiscoverScreen() {
     navigation.goBack();
   };
 
+  const handleSkip = () => {
+    navigation.navigate("Main");
+  };
+
   return (
-    <ThemedView style={styles.root}>
-      {/* Background */}
-      <LinearGradient
-        colors={["rgba(0,0,0,0.3)", "rgba(0,0,0,0.95)"] as const}
-        style={styles.gradient}
-      />
-
-      {/* Progress indicator */}
-      <View
-        style={[
-          styles.progressBar,
-          { paddingTop: insets.top + Spacing.lg },
-        ]}
+    <View style={styles.root}>
+      <ImageBackground
+        source={{ uri: "https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?w=800&q=80" }}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
       >
-        <View style={styles.progressDots}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-        </View>
-        <Pressable onPress={() => navigation.navigate("Main")}>
-          <ThemedText style={styles.skipText}>Skip</ThemedText>
-        </Pressable>
-      </View>
+        <LinearGradient
+          colors={["rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)"]}
+          locations={[0, 0.5, 1]}
+          style={styles.gradient}
+        />
 
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + Spacing.xl,
-        }}
-      >
-        {/* Content area */}
-        <View style={styles.content}>
-          <View style={styles.muscleGrid}>
-            {MUSCLE_GROUPS.map((group) => (
-              <View key={group.name} style={styles.muscleCard}>
-                <View style={styles.muscleIconContainer}>
-                  <Feather
-                    name={group.icon as any}
-                    size={32}
-                    color={Colors.dark.accent}
-                  />
-                </View>
-                <ThemedText style={styles.muscleName}>{group.name}</ThemedText>
-              </View>
-            ))}
-          </View>
-        </View>
-
-        {/* Section title and description */}
-        <View style={styles.descriptionSection}>
-          <View style={styles.iconRow}>
-            <View style={styles.statsIcon}>
-              <Feather
-                name="bar-chart-2"
-                size={20}
-                color={Colors.dark.accent}
-              />
+        <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
+          <View style={styles.header}>
+            <View style={styles.progressDots}>
+              <View style={[styles.dot, styles.dotActive]} />
+              <View style={styles.dot} />
+              <View style={styles.dot} />
+              <View style={styles.dot} />
             </View>
-            <ThemedText style={styles.mainTitle}>
-              Discover{"\n"}
-              <ThemedText style={styles.highlightText}>1,300+ Exercises</ThemedText>
+            <Pressable onPress={handleSkip}>
+              <ThemedText style={styles.skipText}>SKIP</ThemedText>
+            </Pressable>
+          </View>
+
+          <View style={styles.content}>
+            <View style={styles.phoneFrame}>
+              <View style={styles.phoneNotch} />
+              <View style={styles.phoneScreen}>
+                <ThemedText style={styles.phoneTitle}>MUSCLE GROUPS</ThemedText>
+                <View style={styles.muscleGrid}>
+                  {MUSCLE_GROUPS.map((group) => (
+                    <View 
+                      key={group.name} 
+                      style={[
+                        styles.muscleCard,
+                        group.selected && styles.muscleCardSelected,
+                      ]}
+                    >
+                      <View style={[
+                        styles.muscleIcon,
+                        group.selected && styles.muscleIconSelected,
+                      ]}>
+                        {group.selected ? (
+                          <View style={styles.muscleIconDot} />
+                        ) : (
+                          <Feather name="user" size={24} color="#666" />
+                        )}
+                      </View>
+                      <ThemedText style={styles.muscleName}>{group.name}</ThemedText>
+                    </View>
+                  ))}
+                </View>
+                <View style={styles.phoneTabBar}>
+                  <View style={styles.phoneTab}>
+                    <Feather name="search" size={18} color="#FF4D4D" />
+                    <ThemedText style={styles.phoneTabTextActive}>Discover</ThemedText>
+                  </View>
+                  <View style={styles.phoneTab}>
+                    <Feather name="zap" size={18} color="#666" />
+                    <ThemedText style={styles.phoneTabText}>Generate</ThemedText>
+                  </View>
+                  <View style={styles.phoneTab}>
+                    <Feather name="user" size={18} color="#666" />
+                    <ThemedText style={styles.phoneTabText}>Profile</ThemedText>
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.descriptionSection}>
+            <View style={styles.statsIconRow}>
+              <View style={styles.statsBar} />
+              <View style={[styles.statsBar, styles.statsBarShort]} />
+              <View style={[styles.statsBar, styles.statsBarTall]} />
+              <View style={[styles.statsBar, styles.statsBarMedium]} />
+            </View>
+            <View style={styles.titleRow}>
+              <ThemedText style={styles.mainTitle}>Discover</ThemedText>
+              <ThemedText style={styles.mainTitle}>
+                <ThemedText style={styles.highlightNumber}>1,300+</ThemedText>
+                {" "}
+                <ThemedText style={styles.highlightText}>Exercises</ThemedText>
+              </ThemedText>
+            </View>
+            <ThemedText style={styles.description}>
+              Explore our comprehensive library. Filter by muscle group, equipment, or difficulty to build your perfect routine.
             </ThemedText>
           </View>
 
-          <ThemedText style={styles.description}>
-            Explore our comprehensive library. Filter by muscle group, equipment,
-            or difficulty to build your perfect routine.
-          </ThemedText>
+          <View style={styles.buttonContainer}>
+            <Pressable
+              onPress={handleBack}
+              style={({ pressed }) => [
+                styles.secondaryButton,
+                pressed && styles.buttonPressed,
+              ]}
+            >
+              <ThemedText style={styles.secondaryButtonText}>BACK</ThemedText>
+            </Pressable>
+
+            <Pressable
+              onPress={handleNext}
+              style={({ pressed }) => [
+                styles.primaryButton,
+                pressed && styles.buttonPressed,
+              ]}
+            >
+              <ThemedText style={styles.primaryButtonText}>NEXT</ThemedText>
+            </Pressable>
+          </View>
         </View>
-      </ScrollView>
 
-      {/* Bottom buttons */}
-      <View
-        style={[
-          styles.buttonContainer,
-          { paddingBottom: insets.bottom + Spacing.lg },
-        ]}
-      >
-        <Pressable
-          onPress={handleBack}
-          style={({ pressed }) => [
-            styles.secondaryButton,
-            pressed && styles.buttonPressed,
-          ]}
-        >
-          <ThemedText style={styles.secondaryButtonText}>BACK</ThemedText>
-        </Pressable>
-
-        <LinearGradient
-          colors={["#FF6B6B", "#FFB347"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.primaryButton}
-        >
-          <Pressable
-            onPress={handleNext}
-            style={({ pressed }) => [
-              styles.primaryButtonInner,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <ThemedText style={styles.primaryButtonText}>NEXT</ThemedText>
-          </Pressable>
-        </LinearGradient>
-      </View>
-    </ThemedView>
+        <View style={styles.homeIndicator} />
+      </ImageBackground>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
+    backgroundColor: "#0A0A0A",
+  },
+  backgroundImage: {
+    flex: 1,
+  },
+  backgroundImageStyle: {
+    opacity: 0.5,
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
-  },
-  progressBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    zIndex: 10,
-  },
-  progressDots: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  dot: {
-    width: 8,
-    height: 1.5,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.dark.backgroundSecondary,
-  },
-  dotActive: {
-    width: 32,
-    backgroundColor: Colors.dark.accent,
-  },
-  skipText: {
-    ...Typography.caption,
-    color: Colors.dark.textSecondary,
   },
   container: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
   },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
+  },
+  progressDots: {
+    flexDirection: "row",
+    gap: 6,
+  },
+  dot: {
+    width: 32,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: "rgba(255,255,255,0.2)",
+  },
+  dotActive: {
+    backgroundColor: "#FF4D4D",
+  },
+  skipText: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.7)",
+    letterSpacing: 1,
+  },
   content: {
-    marginVertical: Spacing.xxl,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.lg,
+  },
+  phoneFrame: {
+    width: 240,
+    height: 380,
+    backgroundColor: "#1A1A1A",
+    borderRadius: 36,
+    borderWidth: 4,
+    borderColor: "#333",
+    overflow: "hidden",
+    position: "relative",
+  },
+  phoneNotch: {
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    marginLeft: -40,
+    width: 80,
+    height: 24,
+    backgroundColor: "#0A0A0A",
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
+    zIndex: 10,
+  },
+  phoneScreen: {
+    flex: 1,
+    backgroundColor: "#0F0F0F",
+    paddingTop: 36,
+    paddingHorizontal: 12,
+  },
+  phoneTitle: {
+    fontSize: 10,
+    fontWeight: "600",
+    color: "rgba(255,255,255,0.6)",
+    letterSpacing: 1.5,
+    marginBottom: 12,
   },
   muscleGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
-    gap: Spacing.md,
+    gap: 8,
   },
   muscleCard: {
-    width: "48%",
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.accent,
-    padding: Spacing.lg,
+    width: "47%",
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: 12,
+    padding: 12,
     alignItems: "center",
-    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
   },
-  muscleIconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: BorderRadius.lg,
-    backgroundColor: "rgba(255,107,107,0.1)",
+  muscleCardSelected: {
+    borderColor: "rgba(255,77,77,0.5)",
+    backgroundColor: "rgba(255,77,77,0.1)",
+  },
+  muscleIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
+    marginBottom: 8,
+  },
+  muscleIconSelected: {
+    backgroundColor: "rgba(255,77,77,0.2)",
+  },
+  muscleIconDot: {
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: "#FF4D4D",
   },
   muscleName: {
-    ...Typography.body,
-    color: Colors.dark.text,
+    fontSize: 11,
     fontWeight: "500",
+    color: "white",
+  },
+  phoneTabBar: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: 10,
+    backgroundColor: "#1A1A1A",
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.1)",
+  },
+  phoneTab: {
+    alignItems: "center",
+    gap: 2,
+  },
+  phoneTabText: {
+    fontSize: 9,
+    color: "#666",
+  },
+  phoneTabTextActive: {
+    fontSize: 9,
+    color: "#FF4D4D",
   },
   descriptionSection: {
-    marginVertical: Spacing.xxl,
-    gap: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
-  iconRow: {
+  statsIconRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
-    gap: Spacing.lg,
+    gap: 3,
+    alignItems: "flex-end",
+    marginBottom: Spacing.md,
   },
-  statsIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "rgba(255,107,107,0.15)",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: Spacing.sm,
+  statsBar: {
+    width: 4,
+    height: 20,
+    backgroundColor: "#FF4D4D",
+    borderRadius: 2,
+  },
+  statsBarShort: {
+    height: 12,
+    backgroundColor: "white",
+  },
+  statsBarTall: {
+    height: 28,
+    backgroundColor: "white",
+  },
+  statsBarMedium: {
+    height: 16,
+    backgroundColor: "white",
+  },
+  titleRow: {
+    marginBottom: Spacing.md,
   },
   mainTitle: {
-    ...Typography.h1,
-    color: Colors.dark.text,
-    flex: 1,
+    fontSize: 36,
+    fontWeight: "800",
+    color: "white",
     lineHeight: 40,
   },
+  highlightNumber: {
+    fontSize: 36,
+    fontWeight: "800",
+    color: "white",
+  },
   highlightText: {
-    color: Colors.dark.accent,
+    fontSize: 36,
+    fontWeight: "800",
+    color: "#FF4D4D",
   },
   description: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-    lineHeight: 24,
+    fontSize: 15,
+    color: "rgba(255,255,255,0.6)",
+    lineHeight: 22,
   },
   buttonContainer: {
     flexDirection: "row",
     gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+  },
+  secondaryButton: {
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    borderRadius: BorderRadius.full,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
   },
   primaryButton: {
     flex: 1,
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-  },
-  primaryButtonInner: {
-    paddingVertical: Spacing.lg,
+    paddingVertical: 16,
+    paddingHorizontal: 28,
+    borderRadius: BorderRadius.full,
+    backgroundColor: "#FF4D4D",
     alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonText: {
-    ...Typography.h3,
-    color: "white",
-    fontWeight: "700",
-  },
-  secondaryButton: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.dark.text,
-    borderRadius: BorderRadius.xl,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryButtonText: {
-    ...Typography.h3,
-    color: Colors.dark.text,
-    fontWeight: "700",
   },
   buttonPressed: {
-    opacity: 0.7,
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
+  },
+  secondaryButtonText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "white",
+    letterSpacing: 1,
+  },
+  primaryButtonText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "white",
+    letterSpacing: 1,
+  },
+  homeIndicator: {
+    position: "absolute",
+    bottom: 8,
+    left: "50%",
+    marginLeft: -50,
+    width: 100,
+    height: 5,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 3,
   },
 });

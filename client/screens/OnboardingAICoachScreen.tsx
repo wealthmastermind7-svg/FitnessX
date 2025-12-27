@@ -3,18 +3,16 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ScrollView,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingAICoach">;
 
@@ -26,353 +24,318 @@ export default function OnboardingAICoachScreen() {
     navigation.navigate("OnboardingWorkout");
   };
 
-  const handleBack = () => {
-    navigation.goBack();
+  const handleSkip = () => {
+    navigation.navigate("Main");
   };
 
   return (
-    <ThemedView style={styles.root}>
-      {/* Background */}
-      <LinearGradient
-        colors={["rgba(147,112,219,0.1)", "rgba(0,0,0,0.95)"] as const}
-        style={styles.gradient}
-      />
-
-      {/* Progress indicator */}
-      <View
-        style={[
-          styles.progressBar,
-          { paddingTop: insets.top + Spacing.lg },
-        ]}
-      >
-        <View style={styles.progressDots}>
-          <View style={styles.dot} />
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
+    <View style={styles.root}>
+      <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
+        <View style={styles.header}>
+          <View style={styles.placeholder} />
+          <Pressable onPress={handleSkip}>
+            <ThemedText style={styles.skipText}>Skip</ThemedText>
+          </Pressable>
         </View>
-        <Pressable onPress={() => navigation.navigate("Main")}>
-          <ThemedText style={styles.skipText}>Skip</ThemedText>
-        </Pressable>
-      </View>
 
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + Spacing.xl,
-        }}
-      >
-        {/* Chat UI Mock */}
-        <View style={styles.chatContainer}>
-          <View style={styles.chatHeader}>
-            <Feather
-              name="circle"
-              size={40}
-              color="#9370DB"
-              style={styles.coachAvatar}
-            />
-            <ThemedText style={styles.chatTitle}>Your AI Fitness Coach</ThemedText>
-          </View>
-
-          <View style={styles.messagesContainer}>
-            {/* Coach message */}
-            <View style={styles.coachMessage}>
-              <View style={styles.coachBubble}>
-                <ThemedText style={styles.messageText}>
-                  Hey! I'm your AI fitness coach. I can help you with workout advice,
-                  form checks, and recovery strategies.
-                </ThemedText>
+        <ScrollView 
+          style={styles.scrollContent}
+          contentContainerStyle={styles.scrollContentContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.chatContainer}>
+            <View style={styles.chatBubbleRow}>
+              <View style={styles.avatarContainer}>
+                <View style={styles.avatar}>
+                  <Feather name="cpu" size={16} color="white" />
+                </View>
               </View>
-              <View style={styles.typingIndicator}>
-                <View style={styles.typingDot} />
-                <View style={styles.typingDot} />
-                <View style={styles.typingDot} />
+              <View style={styles.coachBubble}>
+                <ThemedText style={styles.coachText}>
+                  Hey! I'm your AI fitness coach. I can help you with workout advice, form checks, and recovery strategies.
+                </ThemedText>
               </View>
             </View>
 
-            {/* User message */}
-            <View style={styles.userMessage}>
+            <View style={styles.userBubbleRow}>
               <View style={styles.userBubble}>
-                <ThemedText style={styles.userMessageText}>
+                <ThemedText style={styles.userText}>
                   How can I build muscle faster?
                 </ThemedText>
               </View>
             </View>
 
-            {/* Suggested questions */}
-            <View style={styles.suggestionsContainer}>
-              <Pressable style={styles.suggestionChip}>
-                <ThemedText style={styles.suggestionText}>
-                  Best abs workout?
-                </ThemedText>
-              </Pressable>
-              <Pressable style={styles.suggestionChip}>
-                <ThemedText style={styles.suggestionText}>
-                  Fix my squat form
-                </ThemedText>
-              </Pressable>
+            <View style={styles.chatBubbleRow}>
+              <View style={styles.avatarContainer}>
+                <View style={styles.avatar}>
+                  <Feather name="cpu" size={16} color="white" />
+                </View>
+              </View>
+              <View style={styles.typingBubble}>
+                <View style={styles.typingDots}>
+                  <View style={styles.typingDot} />
+                  <View style={styles.typingDot} />
+                  <View style={styles.typingDot} />
+                </View>
+              </View>
+            </View>
+
+            <View style={styles.suggestionsRow}>
+              <View style={styles.suggestionChip}>
+                <ThemedText style={styles.suggestionText}>Best abs workout?</ThemedText>
+              </View>
+              <View style={styles.suggestionChip}>
+                <ThemedText style={styles.suggestionText}>Fix my squat form</ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.inputBar}>
+              <Feather name="plus" size={20} color="#999" />
+              <View style={styles.inputPlaceholder} />
+              <Feather name="mic" size={20} color="#999" />
             </View>
           </View>
-        </View>
+        </ScrollView>
 
-        {/* Description Section */}
         <View style={styles.descriptionSection}>
           <ThemedText style={styles.mainTitle}>
-            Your Personal{"\n"}
-            <ThemedText style={styles.highlightText}>AI Fitness Coach</ThemedText>
+            <ThemedText style={styles.titleItalic}>Your Personal</ThemedText>
           </ThemedText>
+          <ThemedText style={styles.mainTitleBold}>AI Fitness Coach</ThemedText>
 
           <ThemedText style={styles.description}>
-            Get instant expert advice, custom workout plans, and form corrections
-            anytime, anywhere.
+            Get instant expert advice, custom workout plans, and form corrections anytime, anywhere.
           </ThemedText>
 
-          <View style={styles.featureList}>
-            <View style={styles.featureItem}>
-              <Feather name="check-circle" size={20} color={Colors.dark.accent} />
-              <ThemedText style={styles.featureText}>Expert fitness advice</ThemedText>
-            </View>
-            <View style={styles.featureItem}>
-              <Feather name="check-circle" size={20} color={Colors.dark.accent} />
-              <ThemedText style={styles.featureText}>Form corrections</ThemedText>
-            </View>
-            <View style={styles.featureItem}>
-              <Feather name="check-circle" size={20} color={Colors.dark.accent} />
-              <ThemedText style={styles.featureText}>Custom workout plans</ThemedText>
-            </View>
+          <View style={styles.progressDots}>
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+            <View style={[styles.dot, styles.dotActive]} />
+            <View style={styles.dot} />
           </View>
         </View>
-      </ScrollView>
 
-      {/* Bottom buttons */}
-      <View
-        style={[
-          styles.buttonContainer,
-          { paddingBottom: insets.bottom + Spacing.lg },
-        ]}
-      >
         <Pressable
-          onPress={handleBack}
+          onPress={handleNext}
           style={({ pressed }) => [
-            styles.secondaryButton,
+            styles.primaryButton,
             pressed && styles.buttonPressed,
           ]}
         >
-          <ThemedText style={styles.secondaryButtonText}>BACK</ThemedText>
+          <ThemedText style={styles.primaryButtonText}>Continue</ThemedText>
+          <Feather name="arrow-right" size={20} color="white" />
         </Pressable>
-
-        <LinearGradient
-          colors={["#FF6B6B", "#FFB347"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.primaryButton}
-        >
-          <Pressable
-            onPress={handleNext}
-            style={({ pressed }) => [
-              styles.primaryButtonInner,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <ThemedText style={styles.primaryButtonText}>NEXT</ThemedText>
-          </Pressable>
-        </LinearGradient>
       </View>
-    </ThemedView>
+
+      <View style={styles.homeIndicator} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
-  },
-  gradient: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  progressBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    zIndex: 10,
-  },
-  progressDots: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  dot: {
-    width: 8,
-    height: 1.5,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.dark.backgroundSecondary,
-  },
-  dotActive: {
-    width: 32,
-    backgroundColor: Colors.dark.accent,
-  },
-  skipText: {
-    ...Typography.caption,
-    color: Colors.dark.textSecondary,
+    backgroundColor: "#F5F5F5",
   },
   container: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
   },
-  chatContainer: {
-    backgroundColor: "rgba(255,255,255,0.05)",
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    marginVertical: Spacing.xl,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-  },
-  chatHeader: {
+  header: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    gap: Spacing.md,
-    marginBottom: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    borderBottomWidth: 1,
-    borderBottomColor: "rgba(255,255,255,0.1)",
+    marginBottom: Spacing.md,
   },
-  coachAvatar: {
+  placeholder: {
     width: 40,
-    height: 40,
   },
-  chatTitle: {
-    ...Typography.body,
-    color: Colors.dark.text,
-    fontWeight: "600",
+  skipText: {
+    fontSize: 16,
+    color: "#FF4D4D",
+    fontWeight: "500",
   },
-  messagesContainer: {
-    gap: Spacing.md,
+  scrollContent: {
+    flex: 1,
   },
-  coachMessage: {
+  scrollContentContainer: {
+    paddingBottom: Spacing.lg,
+  },
+  chatContainer: {
+    backgroundColor: "white",
+    borderRadius: 24,
+    padding: Spacing.lg,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
+  },
+  chatBubbleRow: {
+    flexDirection: "row",
+    marginBottom: Spacing.md,
     alignItems: "flex-start",
-    gap: Spacing.sm,
+  },
+  avatarContainer: {
+    marginRight: Spacing.sm,
+  },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#8B5CF6",
+    alignItems: "center",
+    justifyContent: "center",
   },
   coachBubble: {
-    backgroundColor: "rgba(255,255,255,0.08)",
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    flex: 1,
+    backgroundColor: "#F0F0F0",
+    borderRadius: 16,
+    borderTopLeftRadius: 4,
+    padding: 14,
     maxWidth: "85%",
   },
-  messageText: {
-    ...Typography.small,
-    color: Colors.dark.text,
-    lineHeight: 18,
+  coachText: {
+    fontSize: 14,
+    color: "#333",
+    lineHeight: 20,
   },
-  typingIndicator: {
+  userBubbleRow: {
     flexDirection: "row",
-    gap: Spacing.xs,
-    alignItems: "center",
-  },
-  typingDot: {
-    width: 6,
-    height: 6,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.dark.textSecondary,
-  },
-  userMessage: {
-    alignItems: "flex-end",
+    justifyContent: "flex-end",
+    marginBottom: Spacing.md,
   },
   userBubble: {
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    maxWidth: "85%",
+    backgroundColor: "#FF4D4D",
+    borderRadius: 16,
+    borderTopRightRadius: 4,
+    padding: 14,
+    maxWidth: "75%",
   },
-  userMessageText: {
-    ...Typography.small,
+  userText: {
+    fontSize: 14,
     color: "white",
-    fontWeight: "600",
-    lineHeight: 18,
+    lineHeight: 20,
   },
-  suggestionsContainer: {
+  typingBubble: {
+    backgroundColor: "#F0F0F0",
+    borderRadius: 16,
+    borderTopLeftRadius: 4,
+    padding: 14,
+    paddingHorizontal: 20,
+  },
+  typingDots: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  typingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#999",
+  },
+  suggestionsRow: {
     flexDirection: "row",
     gap: Spacing.sm,
     marginTop: Spacing.md,
-    flexWrap: "wrap",
+    marginBottom: Spacing.lg,
   },
   suggestionChip: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.2)",
-    backgroundColor: "rgba(255,255,255,0.05)",
+    borderColor: "#E0E0E0",
+    backgroundColor: "white",
   },
   suggestionText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
+    fontSize: 13,
+    color: "#666",
+  },
+  inputBar: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
+    borderRadius: BorderRadius.full,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    gap: Spacing.sm,
+  },
+  inputPlaceholder: {
+    flex: 1,
+    height: 20,
+    backgroundColor: "transparent",
   },
   descriptionSection: {
-    gap: Spacing.lg,
+    alignItems: "center",
     marginVertical: Spacing.xl,
   },
   mainTitle: {
-    ...Typography.h1,
-    color: Colors.dark.text,
-    lineHeight: 40,
+    fontSize: 28,
+    color: "#333",
+    textAlign: "center",
   },
-  highlightText: {
-    color: Colors.dark.accent,
+  titleItalic: {
+    fontSize: 28,
+    fontStyle: "italic",
+    color: "#333",
+  },
+  mainTitleBold: {
+    fontSize: 28,
+    fontWeight: "700",
+    fontStyle: "italic",
+    color: "#333",
+    marginBottom: Spacing.md,
   },
   description: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-    lineHeight: 24,
+    fontSize: 15,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 22,
+    maxWidth: 300,
+    marginBottom: Spacing.lg,
   },
-  featureList: {
-    gap: Spacing.md,
-  },
-  featureItem: {
+  progressDots: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
+    gap: 8,
   },
-  featureText: {
-    ...Typography.body,
-    color: Colors.dark.text,
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#DDD",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+  dotActive: {
+    width: 24,
+    backgroundColor: "#FF4D4D",
   },
   primaryButton: {
-    flex: 1,
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-  },
-  primaryButtonInner: {
-    paddingVertical: Spacing.lg,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  primaryButtonText: {
-    ...Typography.h3,
-    color: "white",
-    fontWeight: "700",
-  },
-  secondaryButton: {
-    paddingVertical: Spacing.lg,
+    backgroundColor: "#FF4D4D",
+    paddingVertical: 18,
     paddingHorizontal: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.dark.text,
-    borderRadius: BorderRadius.xl,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryButtonText: {
-    ...Typography.h3,
-    color: Colors.dark.text,
-    fontWeight: "700",
+    borderRadius: 20,
+    gap: Spacing.sm,
   },
   buttonPressed: {
-    opacity: 0.7,
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
+  },
+  primaryButtonText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "white",
+  },
+  homeIndicator: {
+    position: "absolute",
+    bottom: 8,
+    left: "50%",
+    marginLeft: -50,
+    width: 100,
+    height: 5,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderRadius: 3,
   },
 });

@@ -3,8 +3,9 @@ import {
   View,
   StyleSheet,
   Pressable,
-  ScrollView,
   Dimensions,
+  ScrollView,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -13,8 +14,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
-import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+import { Spacing, BorderRadius } from "@/constants/theme";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingWorkout">;
 
@@ -26,339 +26,360 @@ export default function OnboardingWorkoutScreen() {
     navigation.navigate("Main");
   };
 
-  const handleBack = () => {
-    navigation.goBack();
+  const handleSkip = () => {
+    navigation.navigate("Main");
   };
 
   return (
-    <ThemedView style={styles.root}>
-      {/* Background */}
-      <LinearGradient
-        colors={["rgba(0,0,0,0.3)", "rgba(0,0,0,0.95)"] as const}
-        style={styles.gradient}
-      />
-
-      {/* Progress indicator */}
-      <View
-        style={[
-          styles.progressBar,
-          { paddingTop: insets.top + Spacing.lg },
-        ]}
-      >
-        <View style={styles.progressDots}>
-          <View style={styles.dot} />
-          <View style={styles.dot} />
-          <View style={[styles.dot, styles.dotActive]} />
-        </View>
-        <Pressable onPress={handleGetStarted}>
-          <ThemedText style={styles.skipText}>Skip</ThemedText>
-        </Pressable>
-      </View>
-
-      <ScrollView
-        style={styles.container}
-        contentContainerStyle={{
-          paddingBottom: insets.bottom + Spacing.xl,
-        }}
-      >
-        {/* Workout Card Mock */}
-        <View style={styles.workoutCard}>
-          <View style={styles.muscleVisualization}>
-            <View style={styles.muscleImagePlaceholder}>
-              <Feather name="zap" size={80} color={Colors.dark.accent} />
+    <View style={styles.root}>
+      <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
+        <View style={styles.header}>
+          <ThemedText style={styles.timeText}>9:41</ThemedText>
+          <View style={styles.headerRight}>
+            <View style={styles.signalIcons}>
+              <Feather name="bar-chart-2" size={14} color="#333" />
+              <Feather name="wifi" size={14} color="#333" />
+              <Feather name="battery" size={14} color="#333" />
             </View>
-            {/* Tags */}
-            <View style={styles.tagsContainer}>
-              <View style={styles.tag}>
-                <ThemedText style={styles.tagText}>Back Muscles</ThemedText>
+            <Pressable onPress={handleSkip} style={styles.skipButton}>
+              <View style={styles.moonIcon}>
+                <Feather name="moon" size={16} color="#333" />
               </View>
-              <View style={styles.tag}>
-                <ThemedText style={styles.tagText}>Equipment: Dumbbells</ThemedText>
-              </View>
-              <View style={styles.tagVerified}>
-                <Feather name="check-circle" size={14} color="white" />
-                <ThemedText style={styles.tagTextWhite}>AI Generated</ThemedText>
-              </View>
-            </View>
-          </View>
-
-          {/* Quick stats */}
-          <View style={styles.statsContainer}>
-            <View style={styles.statItem}>
-              <View style={styles.statIcon}>
-                <Feather name="zap" size={16} color={Colors.dark.accent} />
-              </View>
-              <ThemedText style={styles.statLabel}>AI Generated</ThemedText>
-            </View>
+              <ThemedText style={styles.skipText}>Skip</ThemedText>
+            </Pressable>
           </View>
         </View>
 
-        {/* Description Section */}
+        <ScrollView 
+          style={styles.scrollContent}
+          contentContainerStyle={styles.scrollContentContainer}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.cardContainer}>
+            <View style={styles.workoutCard}>
+              <View style={styles.cardImageContainer}>
+                <Image
+                  source={{ uri: "https://images.unsplash.com/photo-1574680096145-d05b474e2155?w=400&q=80" }}
+                  style={styles.muscleImage}
+                  resizeMode="cover"
+                />
+                <View style={styles.muscleBadge}>
+                  <ThemedText style={styles.muscleBadgeText}>Back Muscles</ThemedText>
+                </View>
+                <View style={styles.equipmentBadge}>
+                  <ThemedText style={styles.equipmentBadgeText}>Equipment: Dumbbells</ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.checkmarkFloating}>
+                <Feather name="check" size={18} color="#22C55E" />
+              </View>
+
+              <View style={styles.cardDetailsRow}>
+                <View style={styles.togglePlaceholder} />
+              </View>
+            </View>
+
+            <View style={styles.aiGeneratedBadge}>
+              <View style={styles.aiIconContainer}>
+                <Feather name="zap" size={16} color="#8B5CF6" />
+              </View>
+              <View>
+                <ThemedText style={styles.aiBadgeTitle}>AI Generated</ThemedText>
+                <ThemedText style={styles.aiBadgeSubtitle}>Optimized for you</ThemedText>
+              </View>
+            </View>
+
+            <LinearGradient
+              colors={["#FF6B6B", "#FFB347"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.progressBar}
+            />
+          </View>
+        </ScrollView>
+
         <View style={styles.descriptionSection}>
-          <ThemedText style={styles.mainTitle}>
-            Create Custom{"\n"}
-            <ThemedText style={styles.highlightText}>Workouts in Seconds</ThemedText>
+          <ThemedText style={styles.mainTitle}>Create Custom</ThemedText>
+          <ThemedText style={styles.mainTitleHighlight}>
+            <ThemedText style={styles.highlightText}>Workouts</ThemedText>
+            <ThemedText style={styles.mainTitle}> in Seconds</ThemedText>
           </ThemedText>
 
           <ThemedText style={styles.description}>
-            Select your muscle groups, equipment, and goals. Let our AI build the
-            perfect routine for you instantly.
+            Select your muscle groups, equipment, and goals. Let our AI build the perfect routine for you instantly.
           </ThemedText>
 
-          <View style={styles.benefitsList}>
-            <View style={styles.benefitItem}>
-              <View style={styles.benefitIcon}>
-                <Feather name="zap" size={16} color={Colors.dark.accent} />
-              </View>
-              <ThemedText style={styles.benefitText}>
-                AI optimized for your goals
-              </ThemedText>
-            </View>
-            <View style={styles.benefitItem}>
-              <View style={styles.benefitIcon}>
-                <Feather name="save" size={16} color={Colors.dark.accent} />
-              </View>
-              <ThemedText style={styles.benefitText}>Save unlimited workouts</ThemedText>
-            </View>
-            <View style={styles.benefitItem}>
-              <View style={styles.benefitIcon}>
-                <Feather name="refresh-cw" size={16} color={Colors.dark.accent} />
-              </View>
-              <ThemedText style={styles.benefitText}>
-                Generate new variations anytime
-              </ThemedText>
-            </View>
+          <View style={styles.progressDots}>
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+            <View style={styles.dot} />
+            <View style={[styles.dot, styles.dotActive]} />
           </View>
         </View>
-      </ScrollView>
 
-      {/* Bottom buttons */}
-      <View
-        style={[
-          styles.buttonContainer,
-          { paddingBottom: insets.bottom + Spacing.lg },
-        ]}
-      >
         <Pressable
-          onPress={handleBack}
+          onPress={handleGetStarted}
           style={({ pressed }) => [
-            styles.secondaryButton,
+            styles.primaryButton,
             pressed && styles.buttonPressed,
           ]}
         >
-          <ThemedText style={styles.secondaryButtonText}>BACK</ThemedText>
+          <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
+          <Feather name="arrow-right" size={20} color="white" />
         </Pressable>
-
-        <LinearGradient
-          colors={["#FF6B6B", "#FFB347"]}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 0 }}
-          style={styles.primaryButton}
-        >
-          <Pressable
-            onPress={handleGetStarted}
-            style={({ pressed }) => [
-              styles.primaryButtonInner,
-              pressed && styles.buttonPressed,
-            ]}
-          >
-            <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
-          </Pressable>
-        </LinearGradient>
       </View>
-    </ThemedView>
+
+      <View style={styles.homeIndicator} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
-  },
-  gradient: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  progressBar: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.lg,
-    zIndex: 10,
-  },
-  progressDots: {
-    flexDirection: "row",
-    gap: Spacing.sm,
-  },
-  dot: {
-    width: 8,
-    height: 1.5,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.dark.backgroundSecondary,
-  },
-  dotActive: {
-    width: 32,
-    backgroundColor: Colors.dark.accent,
-  },
-  skipText: {
-    ...Typography.caption,
-    color: Colors.dark.textSecondary,
+    backgroundColor: "#F5F5F5",
   },
   container: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
   },
-  workoutCard: {
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    marginVertical: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: Spacing.lg,
   },
-  muscleVisualization: {
-    position: "relative",
-    height: 280,
-    backgroundColor: Colors.dark.backgroundTertiary,
+  timeText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+  },
+  headerRight: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  signalIcons: {
+    flexDirection: "row",
+    gap: 4,
+  },
+  skipButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  moonIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: "#E8E8E8",
     alignItems: "center",
     justifyContent: "center",
   },
-  muscleImagePlaceholder: {
-    alignItems: "center",
-    justifyContent: "center",
+  skipText: {
+    fontSize: 14,
+    color: "#333",
+    fontWeight: "500",
+  },
+  scrollContent: {
     flex: 1,
   },
-  tagsContainer: {
+  scrollContentContainer: {
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.lg,
+    alignItems: "center",
+  },
+  cardContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  workoutCard: {
+    width: "90%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    overflow: "hidden",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    elevation: 8,
+    position: "relative",
+  },
+  cardImageContainer: {
+    height: 200,
+    backgroundColor: "#1A1A1A",
+    position: "relative",
+  },
+  muscleImage: {
+    width: "100%",
+    height: "100%",
+    opacity: 0.8,
+  },
+  muscleBadge: {
     position: "absolute",
-    bottom: Spacing.lg,
-    left: Spacing.lg,
-    right: Spacing.lg,
-    gap: Spacing.sm,
-  },
-  tag: {
-    backgroundColor: Colors.dark.accent,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    top: 16,
+    left: 16,
+    backgroundColor: "#FF4D4D",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
     borderRadius: BorderRadius.full,
-    alignSelf: "flex-start",
   },
-  tagText: {
-    ...Typography.caption,
-    color: Colors.dark.text,
-    fontWeight: "700",
-  },
-  tagVerified: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.xs,
-    backgroundColor: "rgba(255,107,107,0.2)",
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full,
-    alignSelf: "flex-start",
-  },
-  tagTextWhite: {
-    ...Typography.caption,
+  muscleBadgeText: {
+    fontSize: 12,
+    fontWeight: "600",
     color: "white",
-    fontWeight: "700",
   },
-  statsContainer: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.lg,
-    borderTopWidth: 1,
-    borderTopColor: Colors.dark.border,
+  equipmentBadge: {
+    position: "absolute",
+    bottom: 16,
+    left: 16,
+    backgroundColor: "rgba(0,0,0,0.7)",
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: BorderRadius.full,
+  },
+  equipmentBadgeText: {
+    fontSize: 12,
+    color: "white",
+  },
+  checkmarkFloating: {
+    position: "absolute",
+    top: 16,
+    right: 16,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  cardDetailsRow: {
     flexDirection: "row",
+    justifyContent: "flex-end",
+    padding: 12,
   },
-  statItem: {
+  togglePlaceholder: {
+    width: 50,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: "#E8E8E8",
+  },
+  aiGeneratedBadge: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+    marginTop: -20,
+    marginLeft: -80,
+    backgroundColor: "white",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: BorderRadius.full,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 4,
+    zIndex: 10,
   },
-  statIcon: {
-    width: 24,
-    height: 24,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: "rgba(255,107,107,0.1)",
+  aiIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F3E8FF",
     alignItems: "center",
     justifyContent: "center",
   },
-  statLabel: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
+  aiBadgeTitle: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#333",
+  },
+  aiBadgeSubtitle: {
+    fontSize: 11,
+    color: "#999",
+  },
+  progressBar: {
+    width: "75%",
+    height: 8,
+    borderRadius: 4,
+    marginTop: Spacing.lg,
   },
   descriptionSection: {
-    gap: Spacing.lg,
+    alignItems: "center",
     marginVertical: Spacing.xl,
   },
   mainTitle: {
-    ...Typography.h1,
-    color: Colors.dark.text,
-    lineHeight: 40,
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#333",
+    textAlign: "center",
+  },
+  mainTitleHighlight: {
+    fontSize: 28,
+    fontWeight: "700",
+    textAlign: "center",
+    marginBottom: Spacing.md,
   },
   highlightText: {
-    color: Colors.dark.accent,
+    fontSize: 28,
+    fontWeight: "700",
+    color: "#FF4D4D",
   },
   description: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-    lineHeight: 24,
+    fontSize: 15,
+    color: "#666",
+    textAlign: "center",
+    lineHeight: 22,
+    maxWidth: 320,
+    marginBottom: Spacing.lg,
   },
-  benefitsList: {
-    gap: Spacing.md,
-  },
-  benefitItem: {
+  progressDots: {
     flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
+    gap: 8,
   },
-  benefitIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: BorderRadius.md,
-    backgroundColor: "rgba(255,107,107,0.15)",
-    alignItems: "center",
-    justifyContent: "center",
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#DDD",
   },
-  benefitText: {
-    ...Typography.body,
-    color: Colors.dark.text,
-    flex: 1,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    gap: Spacing.md,
-    paddingHorizontal: Spacing.lg,
+  dotActive: {
+    width: 24,
+    backgroundColor: "#FF4D4D",
   },
   primaryButton: {
-    flex: 1,
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-  },
-  primaryButtonInner: {
-    paddingVertical: Spacing.lg,
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  primaryButtonText: {
-    ...Typography.h3,
-    color: "white",
-    fontWeight: "700",
-  },
-  secondaryButton: {
-    paddingVertical: Spacing.lg,
+    backgroundColor: "#FF4D4D",
+    paddingVertical: 18,
     paddingHorizontal: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.dark.text,
-    borderRadius: BorderRadius.xl,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  secondaryButtonText: {
-    ...Typography.h3,
-    color: Colors.dark.text,
-    fontWeight: "700",
+    borderRadius: 20,
+    gap: Spacing.sm,
   },
   buttonPressed: {
-    opacity: 0.7,
+    opacity: 0.9,
+    transform: [{ scale: 0.98 }],
+  },
+  primaryButtonText: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: "white",
+  },
+  homeIndicator: {
+    position: "absolute",
+    bottom: 8,
+    left: "50%",
+    marginLeft: -50,
+    width: 100,
+    height: 5,
+    backgroundColor: "rgba(0,0,0,0.2)",
+    borderRadius: 3,
   },
 });
