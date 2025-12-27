@@ -99,7 +99,7 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
         const removeListener = Purchases.addCustomerInfoUpdateListener((info) => {
           setCustomerInfo(info);
         });
-        listenerRemoverRef.current = removeListener;
+        listenerRemoverRef.current = removeListener as any;
 
       } catch (error) {
         console.error('RevenueCat initialization error:', error);
