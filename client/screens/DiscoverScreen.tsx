@@ -353,27 +353,6 @@ export default function DiscoverScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Your Fitness Hub</ThemedText>
-          </View>
-          <View style={styles.featureGrid}>
-            <Pressable
-              style={styles.featureCard}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-                navigation.navigate("ExerciseBrowser");
-              }}
-            >
-              <View style={[styles.featureIcon, { backgroundColor: "#9D4EDD20" }]}>
-                <Feather name="play-circle" size={24} color="#9D4EDD" />
-              </View>
-              <ThemedText style={styles.featureTitle}>Exercises</ThemedText>
-              <ThemedText style={styles.featureSubtitle}>1,300+ demos</ThemedText>
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
           </View>
           <View style={styles.muscleGrid}>
@@ -593,39 +572,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
-  },
-  featureGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.md,
-  },
-  featureCard: {
-    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  featureIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: Spacing.sm,
-  },
-  featureTitle: {
-    ...Typography.body,
-    color: Colors.dark.text,
-    fontWeight: "600",
-    marginBottom: Spacing.xs,
-  },
-  featureSubtitle: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    textAlign: "center",
   },
   socialRow: {
     flexDirection: "row",
