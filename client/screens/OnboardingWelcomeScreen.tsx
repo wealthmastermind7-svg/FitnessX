@@ -15,7 +15,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
-import FitForgeIcon from "@/assets/images/fitforge-icon.png";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -49,7 +48,7 @@ export default function OnboardingWelcomeScreen() {
         <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
           <View style={styles.header}>
             <View style={styles.logo}>
-              <Image source={FitForgeIcon} style={styles.logoIcon} />
+              <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.logoIcon} />
               <ThemedText style={styles.logoText}>FITFORGE</ThemedText>
             </View>
             <Pressable onPress={handleSkip}>

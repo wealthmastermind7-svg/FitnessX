@@ -14,7 +14,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import FitForgeIcon from "@/assets/images/fitforge-icon.png";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingAICoach">;
 
@@ -34,7 +33,7 @@ export default function OnboardingAICoachScreen() {
     <View style={styles.root}>
       <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
         <View style={styles.header}>
-          <Image source={FitForgeIcon} style={styles.headerIcon} />
+          <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.headerIcon} />
           <Pressable onPress={handleSkip}>
             <ThemedText style={styles.skipText}>Skip</ThemedText>
           </Pressable>

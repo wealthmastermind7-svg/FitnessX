@@ -15,7 +15,6 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
-import FitForgeIcon from "@/assets/images/fitforge-icon.png";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingDiscover">;
 
@@ -57,7 +56,7 @@ export default function OnboardingDiscoverScreen() {
 
         <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
           <View style={styles.header}>
-            <Image source={FitForgeIcon} style={styles.headerIcon} />
+            <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.headerIcon} />
             <View style={styles.progressDots}>
               <View style={[styles.dot, styles.dotActive]} />
               <View style={styles.dot} />
