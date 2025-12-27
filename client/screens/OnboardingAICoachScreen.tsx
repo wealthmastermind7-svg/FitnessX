@@ -5,6 +5,7 @@ import {
   Pressable,
   Dimensions,
   ScrollView,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -13,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import FitForgeIcon from "@/assets/images/fitforge-icon.png";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingAICoach">;
 
@@ -32,7 +34,7 @@ export default function OnboardingAICoachScreen() {
     <View style={styles.root}>
       <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
         <View style={styles.header}>
-          <View style={styles.placeholder} />
+          <Image source={FitForgeIcon} style={styles.headerIcon} />
           <Pressable onPress={handleSkip}>
             <ThemedText style={styles.skipText}>Skip</ThemedText>
           </Pressable>
@@ -147,8 +149,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: Spacing.md,
   },
-  placeholder: {
-    width: 40,
+  headerIcon: {
+    width: 32,
+    height: 32,
+    resizeMode: "contain",
   },
   skipText: {
     fontSize: 16,

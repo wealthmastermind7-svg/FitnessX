@@ -34,6 +34,7 @@ export default function OnboardingWorkoutScreen() {
     <View style={styles.root}>
       <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
         <View style={styles.header}>
+          <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.headerIcon} />
           <ThemedText style={styles.timeText}>9:41</ThemedText>
           <View style={styles.headerRight}>
             <View style={styles.signalIcons}>
@@ -149,6 +150,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  headerIcon: {
+    width: 28,
+    height: 28,
+    resizeMode: "contain",
   },
   timeText: {
     fontSize: 14,

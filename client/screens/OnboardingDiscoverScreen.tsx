@@ -5,6 +5,7 @@ import {
   Pressable,
   Dimensions,
   ImageBackground,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -14,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import FitForgeIcon from "@/assets/images/fitforge-icon.png";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingDiscover">;
 
@@ -55,6 +57,7 @@ export default function OnboardingDiscoverScreen() {
 
         <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
           <View style={styles.header}>
+            <Image source={FitForgeIcon} style={styles.headerIcon} />
             <View style={styles.progressDots}>
               <View style={[styles.dot, styles.dotActive]} />
               <View style={styles.dot} />
@@ -184,6 +187,12 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  headerIcon: {
+    width: 24,
+    height: 24,
+    resizeMode: "contain",
   },
   progressDots: {
     flexDirection: "row",
