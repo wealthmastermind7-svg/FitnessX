@@ -94,13 +94,6 @@ export default function OnboardingWelcomeScreen() {
               <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
               <Feather name="arrow-right" size={20} color="white" />
             </Pressable>
-
-            <View style={styles.loginContainer}>
-              <ThemedText style={styles.loginText}>Already have an account?</ThemedText>
-              <Pressable onPress={handleSkip}>
-                <ThemedText style={styles.loginLink}>Log In</ThemedText>
-              </Pressable>
-            </View>
           </View>
         </View>
 
@@ -225,21 +218,6 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: 18,
     fontWeight: "700",
-    color: "white",
-  },
-  loginContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 4,
-  },
-  loginText: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.5)",
-  },
-  loginLink: {
-    fontSize: 14,
-    fontWeight: "600",
     color: "white",
   },
   homeIndicator: {
