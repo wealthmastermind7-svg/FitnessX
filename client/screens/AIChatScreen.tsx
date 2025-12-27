@@ -182,28 +182,35 @@ export default function AIChatScreen({ navigation }: any) {
     switch (currentMode) {
       case "generate":
         return {
-          message: text,
-          history: baseHistory,
-          mode: "program",
-          fitnessLevel: "intermediate",
-          goals: text,
+          weeks: 8,
+          experience: "intermediate",
+          equipment: ["dumbbell", "barbell"],
+          targetMuscles: ["chest", "back", "shoulders"],
+          sessionsPerWeek: 4,
+          sessionLength: 45,
         };
       case "feedback":
         return {
-          message: text,
-          history: baseHistory,
-          mode: "feedback",
-          exercisesCompleted: workoutLog.exercises || text,
+          exercisesCompleted: [
+            {
+              name: workoutLog.exercises || text,
+              targetSets: 3,
+              completedSets: 3,
+              reps: "8-12",
+              rpe: 7,
+            },
+          ],
           totalDuration: parseInt(workoutLog.duration) || 45,
           musclesFocused: workoutLog.muscles.length > 0 ? workoutLog.muscles : ["General"],
           difficulty: workoutLog.difficulty,
         };
       case "recovery":
         return {
-          message: text,
-          history: baseHistory,
-          mode: "recovery",
-          recentWorkouts: text,
+          streak: 3,
+          minutesTrained: 135,
+          musclesHitLastWeek: workoutLog.muscles.length > 0 ? workoutLog.muscles : ["Chest", "Back"],
+          plannedMuscleToday: workoutLog.muscles[0] || "Legs",
+          averageSessionDuration: 45,
         };
       default:
         return {
