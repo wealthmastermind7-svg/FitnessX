@@ -1,0 +1,704 @@
+<!-- Welcome to Fitness App -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Fitness App Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&amp;family=Oswald:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#FF4D4D","background-light": "#FFFFFF",
+                        "background-dark": "#0A0A0A",
+                        "overlay-dark": "rgba(0,0,0,0.65)",
+                    },
+                    fontFamily: {
+                        display: ["Oswald", "sans-serif"],
+                        body: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "12px",
+                        'xl': "1.5rem",
+                        '2xl': "2rem",
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 1s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+<style>.video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }.parallax-wrapper {
+            perspective: 1px;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }.glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen overflow-hidden antialiased font-body selection:bg-primary selection:text-white">
+<div class="relative w-full h-full flex flex-col justify-end">
+<div class="absolute inset-0 z-0 bg-gray-900">
+<img alt="Abstract intense workout scene in black and white" class="video-background opacity-60 dark:opacity-40 grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbap0ulXrelMBphBFwmGkw2-bZq3CFWV6uawTAl96rjaCft5Ftr60V_jfx8rT5hIZNei17QU5_AQnDK6N4cpF5D2iE-oqVXVW9npBxzloFJay7MPIAwPROsu3DuczqbSusMjg6YDqfEUw1_1-0EUaZ5QJ1eWm7Uv9QNOjJS8h4-jC5n6jOl1Gwn6w7YBt6tPtgyJMReza_HWayMg19P-DpGpzXGuQpx2eFQpcfWY-XUqxrtAyykpe4CfukaMetwZbKLFFz4CuQPLb1"/>
+<div class="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/90 dark:to-black"></div>
+</div>
+<div class="relative z-10 w-full px-6 pb-12 pt-20 flex flex-col h-full justify-between">
+<div class="flex justify-between items-center opacity-0 animate-fade-in-up" style="animation-delay: 0.2s;">
+<div class="flex items-center space-x-2">
+<span class="material-icons-round text-primary text-3xl">fitness_center</span>
+<span class="text-white font-display font-bold text-xl tracking-wider uppercase">FitForge</span>
+</div>
+<button class="text-white/70 hover:text-white text-sm font-medium transition-colors">Skip Intro</button>
+</div>
+<div class="flex flex-col space-y-8 mb-8">
+<div class="space-y-2 opacity-0 animate-fade-in-up" style="animation-delay: 0.4s;">
+<h1 class="text-6xl md:text-7xl font-display font-bold text-white leading-[0.9] tracking-tight">
+                        UNLEASH<br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">YOUR TRUE</span><br/>
+                        POTENTIAL
+                    </h1>
+<p class="text-gray-300 text-lg font-light max-w-xs pt-4 leading-relaxed">
+                        Join the elite community. AI-driven workouts tailored to your exact physiology.
+                    </p>
+</div>
+<div class="flex flex-wrap gap-3 opacity-0 animate-fade-in-up" style="animation-delay: 0.6s;">
+<div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2">
+<span class="material-icons-round text-primary text-sm">bolt</span>
+<span class="text-white text-xs font-medium tracking-wide">AI COACH</span>
+</div>
+<div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2">
+<span class="material-icons-round text-primary text-sm">library_books</span>
+<span class="text-white text-xs font-medium tracking-wide">1,300+ EXERCISES</span>
+</div>
+<div class="glass-panel px-4 py-2 rounded-full flex items-center space-x-2">
+<span class="material-icons-round text-primary text-sm">monitor_heart</span>
+<span class="text-white text-xs font-medium tracking-wide">CUSTOM PLANS</span>
+</div>
+</div>
+<div class="space-y-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.8s;">
+<button class="w-full bg-primary hover:bg-red-600 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-red-900/20 transform transition hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center group">
+<span class="text-lg">Get Started</span>
+<span class="material-icons-round ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center space-x-1 text-gray-400 text-sm">
+<span>Already have an account?</span>
+<button class="text-white font-semibold hover:underline decoration-primary underline-offset-4">Log In</button>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute top-0 w-full h-12 bg-gradient-to-b from-black/50 to-transparent pointer-events-none z-20"></div>
+<div class="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-1/3 h-1.5 bg-white/30 rounded-full z-20"></div>
+</div>
+
+</body></html>
+
+<!-- Discover Exercises -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Discover Exercises - Fitness Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Oswald:wght@500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#EF4444", // Using a vibrant red for the primary accent (like muscle highlights)
+                        "background-light": "#F3F4F6",
+                        "background-dark": "#0A0A0A",
+                        "overlay-dark": "rgba(0, 0, 0, 0.7)",
+                        "glass-dark": "rgba(25, 25, 25, 0.6)",
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+<style>.hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }.cinematic-bg {
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.95) 100%);
+        }.graph-bar {
+            animation: graphGrow 2s ease-out infinite alternate;
+        }
+        @keyframes graphGrow {
+            0% { height: 20%; }
+            100% { height: 80%; }
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-sans antialiased h-screen overflow-hidden selection:bg-primary selection:text-white">
+<div class="relative w-full h-full max-w-md mx-auto bg-black overflow-hidden shadow-2xl">
+<div class="absolute inset-0 z-0">
+<img alt="Man working out in a dark gym environment" class="w-full h-full object-cover opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcHysTgLDLbKCXPZ0hpT2qW3u9pI2VDjLtr9WebpLZiblgUm7yVTXYtXcrRqFm2ZNYGJ628OtRBaz0OFEyxe4AWi-S2XoV7pdHk5z4uNfJX9CqsRCH3Nm5evNpSbobU0QjMWgHvge2XeNHVr83QhHXaVo-DkDajPk11aYySENxEm-XMuq1wMTlsew1HWhm76z0gVvpRCN06FsN1jreMnWGyB0MkoEuxNtTMCV4TjomgpQeTZETBZLHnDzwLATP4TaCwXOheTT_fJut"/>
+<div class="absolute inset-0 cinematic-bg"></div>
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
+</div>
+<div class="absolute top-20 right-[-20px] w-48 h-48 opacity-20 transform rotate-12 z-0 pointer-events-none">
+<svg class="w-full h-full text-white animate-spin-slow" style="animation-duration: 20s;" viewBox="0 0 100 100">
+<circle cx="50" cy="50" fill="none" r="45" stroke="currentColor" stroke-dasharray="10 5" stroke-width="1"></circle>
+<circle cx="50" cy="50" fill="none" r="35" stroke="currentColor" stroke-width="0.5"></circle>
+</svg>
+</div>
+<div class="absolute bottom-1/3 left-6 flex space-x-1 items-end h-16 opacity-30 z-0">
+<div class="w-1 bg-primary rounded-t graph-bar" style="animation-delay: 0.1s; height: 40%"></div>
+<div class="w-1 bg-white rounded-t graph-bar" style="animation-delay: 0.3s; height: 60%"></div>
+<div class="w-1 bg-primary rounded-t graph-bar" style="animation-delay: 0.5s; height: 30%"></div>
+<div class="w-1 bg-white rounded-t graph-bar" style="animation-delay: 0.2s; height: 70%"></div>
+<div class="w-1 bg-white rounded-t graph-bar" style="animation-delay: 0.7s; height: 50%"></div>
+</div>
+<div class="relative z-10 flex flex-col h-full justify-between pt-12 pb-8 px-6">
+<div class="flex justify-between items-center w-full animate-fade-in-up" style="animation-delay: 0.1s;">
+<div class="flex space-x-1">
+<div class="h-1 w-8 bg-primary rounded-full"></div>
+<div class="h-1 w-8 bg-gray-600 rounded-full"></div>
+<div class="h-1 w-8 bg-gray-600 rounded-full"></div>
+</div>
+<button class="text-xs font-semibold tracking-wider text-gray-400 hover:text-white uppercase transition-colors">Skip</button>
+</div>
+<div class="flex-grow flex items-center justify-center py-6 animate-float">
+<div class="relative w-64 h-[420px] rounded-[2rem] border-4 border-gray-800 bg-gray-900 shadow-2xl overflow-hidden transform scale-95 md:scale-100 ring-1 ring-white/10">
+<div class="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-6 bg-black rounded-b-xl z-20"></div>
+<div class="w-full h-full bg-background-dark flex flex-col pt-10 px-4">
+<div class="text-white/80 text-xs font-medium mb-4 uppercase tracking-widest pl-1">Muscle Groups</div>
+<div class="grid grid-cols-2 gap-3 overflow-hidden">
+<div class="bg-gray-800/50 rounded-xl p-3 border border-primary/40 relative group">
+<div class="absolute inset-0 bg-primary/5 rounded-xl"></div>
+<div class="h-20 w-full relative flex items-center justify-center mb-2">
+<svg class="h-16 w-16 text-gray-500 fill-current" viewBox="0 0 24 24">
+<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="w-8 h-8 bg-primary/20 rounded-full blur-md"></div>
+</div>
+<div class="absolute top-6 w-8 h-4 bg-primary rounded-full opacity-60 blur-[2px]"></div>
+</div>
+<div class="text-white font-medium text-center text-sm">Chest</div>
+</div>
+<div class="bg-gray-800/30 rounded-xl p-3 border border-white/5">
+<div class="h-20 w-full relative flex items-center justify-center mb-2">
+<svg class="h-16 w-16 text-gray-600 fill-current" viewBox="0 0 24 24">
+<path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path>
+</svg>
+</div>
+<div class="text-gray-400 font-medium text-center text-sm">Back</div>
+</div>
+<div class="bg-gray-800/30 rounded-xl p-3 border border-white/5">
+<div class="h-20 w-full relative flex items-center justify-center mb-2">
+<svg class="h-16 w-16 text-gray-600 fill-current" viewBox="0 0 24 24">
+<path d="M20.57 14.86L22 13.43 20.57 12 17 15.57 8.43 7 12 3.43 10.57 2 9.14 3.43 7.71 2 5.57 4.14 4.14 2.71 2.71 4.14l1.43 1.43L2 7.71l1.43 1.43L2 10.57 3.43 12 7 8.43 15.57 17 12 20.57 13.43 22l1.43-1.43L16.29 22l2.14-2.14 1.43 1.43 1.43-1.43-1.43-1.43L22 16.29z" opacity="0"></path> 
+<rect height="8" rx="2" width="16" x="4" y="8"></rect>
+</svg>
+</div>
+<div class="text-gray-400 font-medium text-center text-sm">Shoulders</div>
+</div>
+<div class="bg-gray-800/30 rounded-xl p-3 border border-white/5">
+<div class="h-20 w-full relative flex items-center justify-center mb-2">
+<svg class="h-16 w-16 text-gray-600 fill-current" viewBox="0 0 24 24">
+<circle cx="12" cy="12" r="8"></circle>
+</svg>
+</div>
+<div class="text-gray-400 font-medium text-center text-sm">Arms</div>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 h-16 bg-gray-900 border-t border-gray-800 flex justify-around items-center px-2">
+<div class="flex flex-col items-center text-primary">
+<span class="material-icons-round text-xl">search</span>
+<span class="text-[9px] mt-1 font-medium">Discover</span>
+</div>
+<div class="flex flex-col items-center text-gray-500">
+<span class="material-icons-round text-xl">bolt</span>
+<span class="text-[9px] mt-1 font-medium">Generate</span>
+</div>
+<div class="flex flex-col items-center text-gray-500">
+<span class="material-icons-round text-xl">person</span>
+<span class="text-[9px] mt-1 font-medium">Profile</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-col space-y-6 animate-fade-in-up" style="animation-delay: 0.3s;">
+<div class="space-y-3">
+<h1 class="font-display font-bold text-5xl text-white leading-[0.95] tracking-tight">
+                        Discover <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-400">1,300+</span>
+<span class="text-primary">Exercises</span>
+</h1>
+<p class="text-gray-400 text-sm leading-relaxed max-w-[85%] font-light">
+                        Explore our comprehensive library. Filter by muscle group, equipment, or difficulty to build your perfect routine.
+                    </p>
+</div>
+<div class="flex justify-between items-center pt-2">
+<button class="group relative inline-flex items-center justify-center p-0.5 mb-2 mr-2 overflow-hidden text-sm font-medium rounded-full bg-gradient-to-br from-gray-700 to-gray-900 hover:text-white focus:ring-4 focus:outline-none focus:ring-gray-800">
+<span class="relative px-6 py-3.5 transition-all ease-in duration-75 bg-black rounded-full group-hover:bg-opacity-0">
+<span class="text-white group-hover:text-white font-semibold tracking-wide">BACK</span>
+</span>
+</button>
+<button class="relative inline-flex items-center justify-center p-4 px-8 overflow-hidden font-medium text-white transition duration-300 ease-out border-2 border-primary rounded-full shadow-md group bg-primary hover:bg-red-600">
+<span class="absolute inset-0 flex items-center justify-center w-full h-full text-white duration-300 -translate-x-full bg-primary group-hover:translate-x-0 ease">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</span>
+<span class="absolute flex items-center justify-center w-full h-full text-white transition-all duration-300 transform group-hover:translate-x-full ease font-bold tracking-wider">NEXT</span>
+<span class="relative invisible">NEXT</span>
+</button>
+</div>
+</div>
+</div>
+<div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full opacity-40 z-20"></div>
+</div>
+
+</body></html>
+
+<!-- Personalized AI Coaching -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalized AI Coaching - Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#FF453A", // Vibrant red/coral accent often used in fitness
+                        "background-light": "#F2F2F7", // iOS system gray 6
+                        "background-dark": "#000000", // Deep AMOLED black
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#1C1C1E", // iOS system gray 6 dark
+                        "accent-purple": "#BF5AF2", // iOS Purple
+                        "accent-blue": "#0A84FF", // iOS Blue
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Playfair Display', 'serif'],
+                    },
+                    borderRadius: {
+                        DEFAULT: "12px",
+                        'xl': "20px",
+                        '2xl': "28px",
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                },
+            },
+        };
+    </script>
+<style>.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }.text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #FFFFFF 0%, #A1A1AA 100%);
+        }
+        .text-gradient-light {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-image: linear-gradient(135deg, #111827 0%, #4B5563 100%);
+        }.chat-tail::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -8px;
+            width: 20px;
+            height: 20px;
+            background-color: inherit;
+            clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+            border-radius: 0 0 0 4px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white font-sans antialiased h-screen overflow-hidden flex flex-col transition-colors duration-300">
+<div class="h-12 w-full bg-transparent shrink-0"></div>
+<main class="flex-1 flex flex-col relative w-full max-w-md mx-auto h-full overflow-y-auto no-scrollbar">
+<div class="px-6 py-2 flex justify-end z-20 shrink-0">
+<button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary transition-colors">
+                Skip
+            </button>
+</div>
+<div class="relative flex-1 flex items-center justify-center px-6 min-h-[45vh]">
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-accent-purple/20 dark:bg-accent-purple/10 rounded-full blur-3xl animate-pulse-slow"></div>
+<div class="absolute top-1/3 right-10 w-40 h-40 bg-accent-blue/20 dark:bg-accent-blue/10 rounded-full blur-2xl animate-pulse-slow delay-700"></div>
+<div class="relative w-full max-w-[300px] aspect-[9/18] bg-surface-light dark:bg-surface-dark rounded-[40px] border-[6px] border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden animate-float z-10 transform scale-95 sm:scale-100">
+<div class="absolute inset-0 bg-gray-50 dark:bg-black flex flex-col">
+<div class="h-14 border-b border-gray-200 dark:border-gray-800 flex items-center px-4 space-x-3 bg-white/80 dark:bg-black/80 backdrop-blur-md sticky top-0 z-10">
+<div class="w-8 h-8 rounded-full bg-gradient-to-br from-accent-purple to-indigo-600 flex items-center justify-center shadow-lg">
+<span class="material-icons-round text-white text-sm">smart_toy</span>
+</div>
+<div>
+<h3 class="text-xs font-bold text-gray-900 dark:text-white">AI Coach</h3>
+<p class="text-[10px] text-accent-purple font-medium">Powered by GPT-4</p>
+</div>
+</div>
+<div class="flex-1 p-4 space-y-4 overflow-hidden relative">
+<div class="flex items-end space-x-2">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-accent-purple to-indigo-600 flex-shrink-0 flex items-center justify-center">
+<span class="material-icons-round text-white text-[10px]">smart_toy</span>
+</div>
+<div class="bg-gray-200 dark:bg-gray-800 rounded-2xl rounded-bl-sm p-3 max-w-[85%]">
+<p class="text-[11px] leading-relaxed text-gray-800 dark:text-gray-200">
+                                    Hey! I'm your AI fitness coach. I can help you with workout advice, form checks, and recovery strategies.
+                                </p>
+</div>
+</div>
+<div class="flex items-end justify-end space-x-2">
+<div class="bg-primary text-white rounded-2xl rounded-br-sm p-3 max-w-[85%] shadow-md shadow-primary/20">
+<p class="text-[11px] leading-relaxed font-medium">
+                                    How can I build muscle faster?
+                                </p>
+</div>
+</div>
+<div class="flex items-end space-x-2">
+<div class="w-6 h-6 rounded-full bg-gradient-to-br from-accent-purple to-indigo-600 flex-shrink-0 flex items-center justify-center">
+<span class="material-icons-round text-white text-[10px]">smart_toy</span>
+</div>
+<div class="bg-gray-200 dark:bg-gray-800 rounded-2xl rounded-bl-sm p-3">
+<div class="flex space-x-1">
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-100"></div>
+<div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce delay-200"></div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-4 left-0 right-0 px-4 overflow-x-hidden whitespace-nowrap mask-linear-fade">
+<div class="inline-flex space-x-2">
+<span class="px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-black/50 backdrop-blur-sm text-[10px] text-gray-600 dark:text-gray-300">Best abs workout?</span>
+<span class="px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-black/50 backdrop-blur-sm text-[10px] text-gray-600 dark:text-gray-300">Fix my squat form</span>
+</div>
+</div>
+</div>
+<div class="h-12 border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-surface-dark px-3 flex items-center space-x-2">
+<div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons-round text-gray-500 text-[12px]">add</span>
+</div>
+<div class="flex-1 h-8 bg-gray-100 dark:bg-gray-800 rounded-full px-3 flex items-center">
+<span class="text-[10px] text-gray-400">Ask me anything about fitness...</span>
+</div>
+<div class="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+<span class="material-icons-round text-gray-500 text-[12px]">mic</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="relative z-20 px-8 pt-8 pb-10 flex flex-col items-center text-center space-y-6 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent">
+<div class="space-y-4">
+<h1 class="font-display text-4xl sm:text-5xl font-semibold leading-tight tracking-tight text-gradient-light dark:text-gradient dark:text-white">
+                    Your Personal<br/>
+<span class="italic text-primary">AI Fitness Coach</span>
+</h1>
+<p class="text-base text-gray-600 dark:text-gray-400 max-w-xs mx-auto font-light leading-relaxed">
+                    Get instant expert advice, custom workout plans, and form corrections anytime, anywhere.
+                </p>
+</div>
+<div class="flex items-center space-x-2 pt-2">
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"></div>
+<div class="w-6 h-2 rounded-full bg-primary transition-all shadow-lg shadow-primary/30"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"></div>
+</div>
+<button class="w-full py-4 px-6 bg-primary hover:bg-red-600 text-white font-semibold rounded-2xl shadow-xl shadow-primary/25 transform active:scale-95 transition-all duration-200 flex items-center justify-center space-x-2 group">
+<span>Continue</span>
+<span class="material-icons-round text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+</main>
+<div class="pointer-events-none fixed inset-0 z-50 opacity-[0.03] mix-blend-overlay" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBKe-X1sIdjUYvkdb2jMmgYg10NWEv1mNVmVdRIFijWES41RvSX4Pk4daxmRPORdvbgMb55QpC-72N87Fi8JVvaIFZR2sgBfxXJKqBAsmAoctLG7NvXRsj8d7UAC6jXvaZAxpcNGcRM6T2lBm8rWwatAGuz8iE7fZ6q3Ok2H_-7HUxXiiRyqjrJ-SJvgHRsRpFRFUo8I85wmJ1KCidizJ99QYctq8dWhDVb-DawPyasBbX6Y1O61cWg6ay-PLOQmadQAlIk0mxK9xKJ');"></div>
+<script>
+        // Simple dark mode toggle for demonstration purposes (simulating system preference)
+        // In a real app, this would respect system settings automatically via media query or JS
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+            if (event.matches) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        });
+    </script>
+
+</body></html>
+
+<!-- Custom Workouts -->
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Custom Workouts Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#FF4D4D", // A vibrant red/orange accent for fitness energy
+              "background-light": "#F3F4F6",
+              "background-dark": "#121212",
+              "surface-dark": "#1E1E1E",
+              "surface-light": "#FFFFFF",
+            },
+            fontFamily: {
+              display: ["Inter", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "12px",
+              'xl': "20px",
+              '2xl': "24px",
+            },
+            animation: {
+                'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                'float': 'float 6s ease-in-out infinite',
+            },
+            keyframes: {
+                float: {
+                    '0%, 100%': { transform: 'translateY(0)' },
+                    '50%': { transform: 'translateY(-10px)' },
+                }
+            }
+          },
+        },
+      };
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .ios-status-bar {
+            height: 44px;
+        }
+        .safe-area-bottom {
+            height: 34px;
+        }.no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-gray-900 dark:text-white h-screen overflow-hidden flex flex-col items-center justify-center relative transition-colors duration-300">
+<div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+<div class="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-gray-200/50 dark:from-gray-900/50 to-transparent"></div>
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="absolute bottom-20 -left-20 w-72 h-72 bg-blue-500/5 dark:bg-blue-400/5 rounded-full blur-3xl"></div>
+</div>
+<main class="relative z-10 w-full max-w-md h-full flex flex-col justify-between bg-surface-light dark:bg-black shadow-2xl overflow-hidden sm:rounded-[3rem] sm:h-[90vh] sm:border-8 sm:border-gray-900 dark:sm:border-gray-800">
+<div class="ios-status-bar w-full flex justify-between items-end px-6 pb-2 text-xs font-medium z-20 absolute top-0 left-0 bg-gradient-to-b from-white/90 dark:from-black/90 to-transparent">
+<span class="dark:text-white text-gray-900">9:41</span>
+<div class="flex items-center gap-1.5 dark:text-white text-gray-900">
+<span class="material-icons text-[16px]">signal_cellular_alt</span>
+<span class="material-icons text-[16px]">wifi</span>
+<span class="material-icons text-[16px]">battery_full</span>
+</div>
+</div>
+<div class="flex-1 flex flex-col pt-16 px-6 relative">
+<div class="w-full flex justify-end mb-4">
+<button class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                    Skip
+                </button>
+</div>
+<div class="flex-1 flex flex-col items-center justify-center relative mb-8">
+<div class="relative w-64 h-[22rem] bg-gray-100 dark:bg-gray-800 rounded-3xl border-4 border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden transform transition-transform animate-float">
+<div class="absolute inset-0 bg-white dark:bg-gray-900 flex flex-col">
+<div class="h-14 border-b border-gray-100 dark:border-gray-800 flex items-center px-4 justify-between">
+<div class="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+<div class="w-20 h-3 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+<div class="w-4 h-4 rounded-full bg-gray-200 dark:bg-gray-700"></div>
+</div>
+<div class="flex-1 p-4 flex flex-col items-center justify-center relative">
+<img alt="Muscular anatomy diagram showing back muscles highlighted in red" class="w-full h-full object-contain opacity-80 dark:opacity-60 mix-blend-multiply dark:mix-blend-lighten filter grayscale contrast-125" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDm9_JV0Xz3QgJmsE0RU2-vNJggAznmJJv6kl58AYVQ4BAGh7eQWqG6C-7c_Gf39NnM8g0U3nGZhcHqORZimnQg9sioQ8QEFVhAaJ2IG514q2wkGwu9wJIytkb4QnkKFyPmFfeUmb5ZCg46HqEsbvv7QFbM4DkCehuMiwIa8xJ7AMIoAB2hl0sM8c3iw31sffNBOGnjGeZ_8HByyHnZlq5rjD1O5uxo--MDza0vJIbj8rTgJkxsJmCW9ckBEnIXElIGYOnloEFaN9xv"/>
+<div class="absolute top-1/4 right-8 bg-primary/90 text-white text-[10px] font-bold py-1 px-3 rounded-full shadow-lg backdrop-blur-sm animate-pulse-slow">
+                                Back Muscles
+                            </div>
+<div class="absolute bottom-1/3 left-6 bg-surface-dark/80 dark:bg-surface-light/80 text-white dark:text-black text-[10px] font-bold py-1 px-3 rounded-full shadow-lg backdrop-blur-sm">
+                                Equipment: Dumbbells
+                            </div>
+</div>
+<div class="p-4 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+<div class="w-full h-10 bg-gradient-to-r from-primary to-orange-500 rounded-lg shadow-md opacity-80"></div>
+</div>
+</div>
+<div class="absolute top-0 left-0 w-full h-1 bg-primary shadow-[0_0_15px_3px_rgba(255,77,77,0.5)] z-20 animate-[scan_3s_ease-in-out_infinite]"></div>
+<style>
+                        @keyframes scan {
+                            0% { top: 0%; opacity: 0; }
+                            10% { opacity: 1; }
+                            90% { opacity: 1; }
+                            100% { top: 100%; opacity: 0; }
+                        }
+                    </style>
+</div>
+<div class="absolute top-10 -right-4 bg-white dark:bg-surface-dark p-3 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-[float_5s_ease-in-out_infinite_1s]">
+<div class="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400">
+<span class="material-icons text-sm">check</span>
+</div>
+<div>
+<div class="h-2 w-16 bg-gray-200 dark:bg-gray-700 rounded mb-1"></div>
+<div class="h-1.5 w-10 bg-gray-100 dark:bg-gray-800 rounded"></div>
+</div>
+</div>
+<div class="absolute bottom-16 -left-6 bg-white dark:bg-surface-dark p-3 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-[float_7s_ease-in-out_infinite_0.5s]">
+<div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400">
+<span class="material-icons text-sm">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[10px] font-bold text-gray-800 dark:text-gray-200">AI Generated</span>
+<span class="text-[8px] text-gray-400">Optimized for you</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-center text-center pb-8 space-y-6 z-20 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark pt-8">
+<h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-gray-900 dark:text-white leading-tight">
+                    Create Custom <br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-500">Workouts</span> in Seconds
+                </h1>
+<p class="text-gray-600 dark:text-gray-400 text-base px-4 max-w-xs leading-relaxed">
+                    Select your muscle groups, equipment, and goals. Let our AI build the perfect routine for you instantly.
+                </p>
+<div class="flex space-x-2 pt-2">
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+<div class="w-6 h-2 rounded-full bg-primary"></div>
+<div class="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-700"></div>
+</div>
+<button class="w-full bg-primary hover:bg-red-600 text-white font-bold py-4 px-8 rounded-xl shadow-lg shadow-primary/30 transform transition active:scale-95 flex items-center justify-center gap-2 mt-4 group">
+<span>Get Started</span>
+<span class="material-icons text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+</button>
+</div>
+</div>
+<div class="safe-area-bottom w-full bg-transparent"></div>
+</main>
+<div class="fixed top-4 right-4 z-50">
+<button class="bg-gray-200 dark:bg-gray-700 p-2 rounded-full shadow-lg" id="theme-toggle">
+<span class="material-icons text-gray-800 dark:text-yellow-300" id="theme-icon">dark_mode</span>
+</button>
+</div>
+<script>
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+        // Check local storage or system preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            html.classList.add('dark');
+            themeIcon.textContent = 'light_mode';
+        } else {
+            html.classList.remove('dark');
+            themeIcon.textContent = 'dark_mode';
+        }
+        themeToggleBtn.addEventListener('click', () => {
+            html.classList.toggle('dark');
+            if (html.classList.contains('dark')) {
+                localStorage.theme = 'dark';
+                themeIcon.textContent = 'light_mode';
+            } else {
+                localStorage.theme = 'light';
+                themeIcon.textContent = 'dark_mode';
+            }
+        });
+    </script>
+
+</body></html>
