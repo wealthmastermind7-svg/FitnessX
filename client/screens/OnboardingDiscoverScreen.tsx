@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingDiscover">;
 
@@ -28,6 +29,7 @@ const MUSCLE_GROUPS = [
 export default function OnboardingDiscoverScreen() {
   const navigation = useNavigation<OnboardingNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
     navigation.navigate("OnboardingAICoach");
@@ -38,7 +40,7 @@ export default function OnboardingDiscoverScreen() {
   };
 
   const handleSkip = () => {
-    navigation.navigate("Main");
+    completeOnboarding();
   };
 
   return (

@@ -14,19 +14,21 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Spacing, BorderRadius } from "@/constants/theme";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingAICoach">;
 
 export default function OnboardingAICoachScreen() {
   const navigation = useNavigation<OnboardingNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
     navigation.navigate("OnboardingWorkout");
   };
 
   const handleSkip = () => {
-    navigation.navigate("Main");
+    completeOnboarding();
   };
 
   return (

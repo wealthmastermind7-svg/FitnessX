@@ -15,7 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
-import { useOnboarding } from "@/hooks/useOnboarding";
+import { useOnboarding } from "@/contexts/OnboardingContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
