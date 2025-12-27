@@ -1,9 +1,18 @@
-import { useEffect, useState } from "react";
+import React, { createContext, useContext, useState, ReactNode, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ONBOARDING_KEY = "@fitforge_onboarding_complete";
 
-export function useOnboarding() {
+interface OnboardingContextType {
+  isOnboardingComplete: boolean | null;
+  isLoading: boolean;
+  completeOnboarding: () => Promise<void>;
+  resetOnboarding: () => Promise<void>;
+}
+
+const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+
+export function OnboardingProvider({ children }: { children: ReactNode }) {
   const [isOnboardingComplete, setIsOnboardingComplete] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -41,10 +50,24 @@ export function useOnboarding() {
     }
   };
 
-  return {
-    isOnboardingComplete,
-    isLoading,
-    completeOnboarding,
-    resetOnboarding,
-  };
+  return (
+    <OnboardingContext.Provider
+      value={{
+        isOnboardingComplete,
+        isLoading,
+        completeOnboarding,
+        resetOnboarding,
+      }}
+    >
+      {children}
+    </OnboardingContext.Provider>
+  );
+}
+
+export function useOnboarding(): OnboardingContextType {
+  const context = useContext(OnboardingContext);
+  if (!context) {
+    throw new Error("useOnboarding must be used within OnboardingProvider");
+  }
+  return context;
 }

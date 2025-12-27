@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import WorkoutDetailScreen from "@/screens/WorkoutDetailScreen";
@@ -12,7 +12,6 @@ import SavedWorkoutsScreen from "@/screens/SavedWorkoutsScreen";
 import PaywallScreen from "@/screens/PaywallScreen";
 import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
-import { useOnboarding } from "@/hooks/useOnboarding";
 import { Colors } from "@/constants/theme";
 
 export type Workout = {
@@ -66,11 +65,6 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function RootStackNavigator() {
   const screenOptions = useScreenOptions();
-  const { completeOnboarding } = useOnboarding();
-
-  useEffect(() => {
-    completeOnboarding();
-  }, []);
 
   return (
     <Stack.Navigator

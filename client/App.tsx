@@ -13,7 +13,7 @@ import RootStackNavigator from "@/navigation/RootStackNavigator";
 import OnboardingStackNavigator from "@/navigation/OnboardingStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RevenueCatProvider } from "@/lib/revenuecat";
-import { useOnboarding } from "@/hooks/useOnboarding";
+import { OnboardingProvider, useOnboarding } from "@/contexts/OnboardingContext";
 import { Colors } from "@/constants/theme";
 
 function NavigationRoot() {
@@ -40,18 +40,20 @@ function NavigationRoot() {
 export default function App() {
   return (
     <ErrorBoundary>
-      <RevenueCatProvider>
-        <QueryClientProvider client={queryClient}>
-          <SafeAreaProvider>
-            <GestureHandlerRootView style={styles.root}>
-              <KeyboardProvider>
-                <NavigationRoot />
-                <StatusBar style="light" />
-              </KeyboardProvider>
-            </GestureHandlerRootView>
-          </SafeAreaProvider>
-        </QueryClientProvider>
-      </RevenueCatProvider>
+      <OnboardingProvider>
+        <RevenueCatProvider>
+          <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider>
+              <GestureHandlerRootView style={styles.root}>
+                <KeyboardProvider>
+                  <NavigationRoot />
+                  <StatusBar style="light" />
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </SafeAreaProvider>
+          </QueryClientProvider>
+        </RevenueCatProvider>
+      </OnboardingProvider>
     </ErrorBoundary>
   );
 }
