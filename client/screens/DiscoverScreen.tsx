@@ -283,10 +283,14 @@ export default function DiscoverScreen() {
           ]}
         >
           <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
-          <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
-          <ThemedText style={styles.heroSubtitle}>
-            Your personal fitness journey starts here
-          </ThemedText>
+          <View style={{ width: "100%" }}>
+            <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
+          </View>
+          <View style={{ width: "100%" }}>
+            <ThemedText style={styles.heroSubtitle}>
+              Your personal fitness journey starts here
+            </ThemedText>
+          </View>
         </Animated.View>
 
         <View style={styles.section}>
@@ -391,6 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     letterSpacing: -1,
     flexWrap: "wrap",
+    flex: 1,
   },
   heroSubtitle: {
     fontSize: 16,
@@ -398,6 +403,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 24,
     flexWrap: "wrap",
+    flex: 1,
   },
   section: {
     marginBottom: Spacing.xl,

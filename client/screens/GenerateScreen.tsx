@@ -204,12 +204,16 @@ export default function GenerateScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedText style={styles.screenTagline}>CREATE YOUR</ThemedText>
-        <ThemedText style={styles.screenTitle}>
-          Custom <ThemedText style={styles.screenTitleAccent}>Workout</ThemedText>
-        </ThemedText>
-        <ThemedText style={styles.screenSubtitle}>
-          Select muscle groups and equipment to generate your perfect routine
-        </ThemedText>
+        <View style={{ width: "100%" }}>
+          <ThemedText style={styles.screenTitle}>
+            Custom <ThemedText style={styles.screenTitleAccent}>Workout</ThemedText>
+          </ThemedText>
+        </View>
+        <View style={{ width: "100%" }}>
+          <ThemedText style={styles.screenSubtitle}>
+            Select muscle groups and equipment to generate your perfect routine
+          </ThemedText>
+        </View>
 
         <View style={styles.muscleImageContainer}>
           <Image
@@ -388,6 +392,7 @@ const styles = StyleSheet.create({
     letterSpacing: -0.5,
     lineHeight: 42,
     flexWrap: "wrap",
+    flex: 1,
   },
   screenTitleAccent: {
     fontSize: 36,
@@ -401,6 +406,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     lineHeight: 24,
     flexWrap: "wrap",
+    flex: 1,
   },
   muscleImageContainer: {
     width: "100%",
