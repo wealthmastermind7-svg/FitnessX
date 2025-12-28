@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.h3,
     marginBottom: Spacing.xs,
+    flexWrap: "wrap",
   },
   cardDifficulty: {
     fontSize: 12,

@@ -426,14 +426,17 @@ const styles = StyleSheet.create({
   workoutCardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: Spacing.sm,
+    gap: Spacing.sm,
   },
   workoutCardTitle: {
     fontSize: 20,
     fontWeight: "700",
     color: Colors.dark.text,
     letterSpacing: -0.3,
+    flex: 1,
+    flexWrap: "wrap",
   },
   difficultyBadge: {
     backgroundColor: Colors.dark.accent + "20",

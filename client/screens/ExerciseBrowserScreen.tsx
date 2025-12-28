@@ -494,6 +494,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     textTransform: "capitalize",
     marginBottom: Spacing.xs,
+    flexWrap: "wrap",
   },
   exerciseMeta: {
     flexDirection: "row",

@@ -657,6 +657,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     fontWeight: "600",
     textTransform: "capitalize",
+    flexWrap: "wrap",
   },
   exerciseTags: {
     flexDirection: "row",
