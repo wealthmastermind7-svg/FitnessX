@@ -57,6 +57,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "At least one muscle group is required" });
       }
 
+      // Check if API key is configured
+      if (!RAPIDAPI_KEY) {
+        console.warn("RAPIDAPI_KEY not configured, using fallback exercises");
+        const workout: Workout = {
+          id: Date.now().toString(),
+          name: `${muscleGroups[0]} Workout`,
+          description: description || `A workout targeting ${muscleGroups.join(", ")}`,
+          muscleGroups,
+          equipment: equipment || ["any"],
+          exercises: generateFallbackExercises(muscleGroups),
+          difficulty: "Intermediate",
+        };
+        return res.json(workout);
+      }
+
       const response = await fetch(
         "https://muscle-group-image-generator.p.rapidapi.com/workout",
         {
@@ -64,7 +79,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           headers: {
             "Content-Type": "application/json",
             "x-rapidapi-host": RAPIDAPI_HOST,
-            "x-rapidapi-key": RAPIDAPI_KEY || "",
+            "x-rapidapi-key": RAPIDAPI_KEY,
           },
           body: JSON.stringify({
             muscleGroups,
@@ -75,8 +90,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
 
       if (!response.ok) {
-        console.error("API Error:", await response.text());
-        return res.status(500).json({ error: "Failed to generate workout" });
+        const errorText = await response.text();
+        console.error("API Error - Status:", response.status, "Response:", errorText);
+        // Fall back to generating basic workout
+        const workout: Workout = {
+          id: Date.now().toString(),
+          name: `${muscleGroups[0]} Workout`,
+          description: description || `A workout targeting ${muscleGroups.join(", ")}`,
+          muscleGroups,
+          equipment: equipment || ["any"],
+          exercises: generateFallbackExercises(muscleGroups),
+          difficulty: "Intermediate",
+        };
+        return res.json(workout);
       }
 
       const data = await response.json();
@@ -94,7 +120,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(workout);
     } catch (error) {
       console.error("Error generating workout:", error);
-      res.status(500).json({ error: "Failed to generate workout" });
+      // Return fallback workout instead of error
+      const body = req.body as WorkoutRequest;
+      const workout: Workout = {
+        id: Date.now().toString(),
+        name: `${body.muscleGroups[0]} Workout`,
+        description: body.description || `A workout targeting ${body.muscleGroups.join(", ")}`,
+        muscleGroups: body.muscleGroups,
+        equipment: body.equipment || ["any"],
+        exercises: generateFallbackExercises(body.muscleGroups),
+        difficulty: "Intermediate",
+      };
+      res.json(workout);
     }
   });
 
