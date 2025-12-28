@@ -169,9 +169,23 @@ export default function GenerateScreen() {
       if (response.ok) {
         const workout = await response.json();
         navigation.navigate("WorkoutDetail", { workout });
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        Alert.alert(
+          "Generation Failed",
+          errorData.error || "Unable to generate workout. Please try again.",
+          [{ text: "OK", style: "default" }]
+        );
       }
     } catch (error) {
       console.error("Error generating workout:", error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      Alert.alert(
+        "Error",
+        "Failed to generate workout. Please check your connection and try again.",
+        [{ text: "OK", style: "default" }]
+      );
     } finally {
       setIsGenerating(false);
     }
