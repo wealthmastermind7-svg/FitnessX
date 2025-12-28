@@ -279,11 +279,13 @@ const styles = StyleSheet.create({
     fontSize: 28,
     color: "#333",
     textAlign: "center",
+    lineHeight: 36,
   },
   titleItalic: {
     fontSize: 28,
     fontStyle: "italic",
     color: "#333",
+    lineHeight: 36,
   },
   mainTitleBold: {
     fontSize: 28,
@@ -291,6 +293,7 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     color: "#333",
     marginBottom: Spacing.md,
+    lineHeight: 36,
   },
   description: {
     fontSize: 15,

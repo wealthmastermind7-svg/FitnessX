@@ -104,10 +104,10 @@ export default function OnboardingWorkoutScreen() {
 
         <View style={styles.descriptionSection}>
           <ThemedText style={styles.mainTitle}>Create Custom</ThemedText>
-          <ThemedText style={styles.mainTitleHighlight}>
+          <View style={styles.workoutTitleRow}>
             <ThemedText style={styles.highlightText}>Workouts</ThemedText>
             <ThemedText style={styles.mainTitle}> in Seconds</ThemedText>
-          </ThemedText>
+          </View>
 
           <ThemedText style={styles.description}>
             Select your muscle groups, equipment, and goals. Let our AI build the perfect routine for you instantly.
@@ -323,22 +323,23 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: Spacing.xl,
   },
+  workoutTitleRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+    marginBottom: Spacing.md,
+  },
   mainTitle: {
     fontSize: 28,
     fontWeight: "700",
     color: "#333",
     textAlign: "center",
-  },
-  mainTitleHighlight: {
-    fontSize: 28,
-    fontWeight: "700",
-    textAlign: "center",
-    marginBottom: Spacing.md,
+    lineHeight: 36,
   },
   highlightText: {
     fontSize: 28,
     fontWeight: "700",
     color: "#FF4D4D",
+    lineHeight: 36,
   },
   description: {
     fontSize: 15,

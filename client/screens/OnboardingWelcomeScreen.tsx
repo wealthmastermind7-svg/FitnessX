@@ -76,7 +76,7 @@ export default function OnboardingWelcomeScreen() {
               </View>
               <View style={styles.badge}>
                 <Feather name="book" size={14} color="#FF4D4D" />
-                <ThemedText style={styles.badgeText}>1,300+ EXERCISES</ThemedText>
+                <ThemedText style={styles.badgeText}>1,500+ EXERCISES</ThemedText>
               </View>
               <View style={styles.badge}>
                 <Feather name="heart" size={14} color="#FF4D4D" />

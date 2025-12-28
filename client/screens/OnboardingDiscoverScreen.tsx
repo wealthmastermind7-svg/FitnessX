@@ -120,11 +120,10 @@ export default function OnboardingDiscoverScreen() {
             </View>
             <View style={styles.titleRow}>
               <ThemedText style={styles.mainTitle}>Discover</ThemedText>
-              <ThemedText style={styles.mainTitle}>
-                <ThemedText style={styles.highlightNumber}>1,300+</ThemedText>
-                {" "}
-                <ThemedText style={styles.highlightText}>Exercises</ThemedText>
-              </ThemedText>
+              <View style={styles.exerciseRow}>
+                <ThemedText style={styles.highlightNumber}>1,500+</ThemedText>
+                <ThemedText style={styles.highlightText}> Exercises</ThemedText>
+              </View>
             </View>
             <ThemedText style={styles.description}>
               Explore our comprehensive library. Filter by muscle group, equipment, or difficulty to build your perfect routine.
@@ -332,21 +331,27 @@ const styles = StyleSheet.create({
   titleRow: {
     marginBottom: Spacing.md,
   },
+  exerciseRow: {
+    flexDirection: "row",
+    alignItems: "baseline",
+  },
   mainTitle: {
     fontSize: 36,
     fontWeight: "800",
     color: "white",
-    lineHeight: 40,
+    lineHeight: 44,
   },
   highlightNumber: {
     fontSize: 36,
     fontWeight: "800",
     color: "white",
+    lineHeight: 44,
   },
   highlightText: {
     fontSize: 36,
     fontWeight: "800",
     color: "#FF4D4D",
+    lineHeight: 44,
   },
   description: {
     fontSize: 15,
