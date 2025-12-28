@@ -8,7 +8,6 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
-  Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -176,7 +175,7 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           colors={["transparent", "rgba(10,14,26,0.95)"]}
           style={styles.muscleGradient}
         >
-          <Text style={styles.muscleName}>{muscle}</Text>
+          <ThemedText style={styles.muscleName}>{muscle}</ThemedText>
         </LinearGradient>
       </Animated.View>
     </Pressable>
@@ -283,14 +282,10 @@ export default function DiscoverScreen() {
           ]}
         >
           <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
-          <View style={{ width: "100%" }}>
-            <ThemedText style={styles.heroTitle} numberOfLines={0}>FitForge</ThemedText>
-          </View>
-          <View style={{ width: "100%" }}>
-            <ThemedText style={styles.heroSubtitle} numberOfLines={0}>
-              Your personal fitness journey starts here
-            </ThemedText>
-          </View>
+          <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
+          <ThemedText style={styles.heroSubtitle}>
+            Your personal fitness journey starts here
+          </ThemedText>
         </Animated.View>
 
         <View style={styles.section}>
@@ -376,12 +371,10 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
-    width: "100%",
   },
   heroSection: {
     marginBottom: Spacing.xxl,
     paddingTop: Spacing.lg,
-    width: "100%",
   },
   heroTagline: {
     fontSize: 12,
@@ -391,19 +384,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   heroTitle: {
-    fontSize: 42,
+    fontSize: 48,
     fontWeight: "800",
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
     letterSpacing: -1,
-    flexWrap: "wrap",
   },
   heroSubtitle: {
     fontSize: 16,
     color: Colors.dark.textSecondary,
     fontWeight: "400",
     lineHeight: 24,
-    flexWrap: "wrap",
   },
   section: {
     marginBottom: Spacing.xl,

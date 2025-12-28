@@ -204,16 +204,12 @@ export default function GenerateScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedText style={styles.screenTagline}>CREATE YOUR</ThemedText>
-        <View style={{ width: "100%" }}>
-          <ThemedText style={styles.screenTitle} numberOfLines={0}>
-            Custom <ThemedText style={styles.screenTitleAccent}>Workout</ThemedText>
-          </ThemedText>
-        </View>
-        <View style={{ width: "100%" }}>
-          <ThemedText style={styles.screenSubtitle} numberOfLines={0}>
-            Select muscle groups and equipment to generate your perfect routine
-          </ThemedText>
-        </View>
+        <ThemedText style={styles.screenTitle}>
+          Custom <ThemedText style={styles.screenTitleAccent}>Workout</ThemedText>
+        </ThemedText>
+        <ThemedText style={styles.screenSubtitle}>
+          Select muscle groups and equipment to generate your perfect routine
+        </ThemedText>
 
         <View style={styles.muscleImageContainer}>
           <Image
@@ -376,7 +372,6 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
-    width: "100%",
   },
   screenTagline: {
     fontSize: 12,
@@ -386,16 +381,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   screenTitle: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "800",
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
     letterSpacing: -0.5,
-    lineHeight: 38,
-    flexWrap: "wrap",
+    lineHeight: 42,
   },
   screenTitleAccent: {
-    fontSize: 32,
+    fontSize: 36,
     fontWeight: "800",
     color: Colors.dark.accent,
     letterSpacing: -0.5,
@@ -405,7 +399,6 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xl,
     lineHeight: 24,
-    flexWrap: "wrap",
   },
   muscleImageContainer: {
     width: "100%",
