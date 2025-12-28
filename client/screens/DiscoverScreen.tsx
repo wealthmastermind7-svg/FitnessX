@@ -8,6 +8,7 @@ import {
   Dimensions,
   Image,
   ActivityIndicator,
+  Text,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -175,7 +176,7 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           colors={["transparent", "rgba(10,14,26,0.95)"]}
           style={styles.muscleGradient}
         >
-          <ThemedText style={styles.muscleName}>{muscle}</ThemedText>
+          <Text style={styles.muscleName}>{muscle}</Text>
         </LinearGradient>
       </Animated.View>
     </Pressable>
