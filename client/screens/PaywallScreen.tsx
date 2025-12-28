@@ -99,7 +99,7 @@ export default function PaywallScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsPurchasing(true);
 
-    const success = await purchasePackage(selectedPkg);
+    const success = await purchasePackage(selectedPkg, enableFreeTrial);
     
     if (success) {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -107,7 +107,7 @@ export default function PaywallScreen() {
     }
     
     setIsPurchasing(false);
-  }, [currentOffering, selectedPackageId, purchasePackage, navigation, handlePresentPaywall]);
+  }, [currentOffering, selectedPackageId, purchasePackage, navigation, handlePresentPaywall, enableFreeTrial]);
 
   const handleRestore = useCallback(async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

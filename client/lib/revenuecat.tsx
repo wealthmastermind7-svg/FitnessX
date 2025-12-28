@@ -17,7 +17,7 @@ interface RevenueCatContextType {
   isLoading: boolean;
   isInitialized: boolean;
   isWebPlatform: boolean;
-  purchasePackage: (pkg: PurchasesPackage) => Promise<boolean>;
+  purchasePackage: (pkg: PurchasesPackage, enableTrial?: boolean) => Promise<boolean>;
   restorePurchases: () => Promise<boolean>;
   refreshCustomerInfo: () => Promise<void>;
   checkEntitlement: () => boolean;
@@ -119,7 +119,7 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
     };
   }, [isWebPlatform]);
 
-  const purchasePackage = useCallback(async (pkg: PurchasesPackage): Promise<boolean> => {
+  const purchasePackage = useCallback(async (pkg: PurchasesPackage, enableTrial?: boolean): Promise<boolean> => {
     if (isWebPlatform) {
       Alert.alert(
         'Not Available',
@@ -130,7 +130,7 @@ export function RevenueCatProvider({ children }: RevenueCatProviderProps) {
 
     try {
       setIsLoading(true);
-      console.log(`[RevenueCat] Starting purchase for package: ${pkg.identifier}`);
+      console.log(`[RevenueCat] Starting purchase for package: ${pkg.identifier}`, { enableTrial });
       console.log(`[RevenueCat] Package details:`, {
         identifier: pkg.identifier,
         product: pkg.product?.title,
