@@ -522,14 +522,17 @@ const styles = StyleSheet.create({
   buttonTabContainer: {
     flexDirection: "row",
     gap: Spacing.xs,
+    flexShrink: 0,
   },
   buttonTab: {
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.sm,
     backgroundColor: Colors.dark.border,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     borderColor: Colors.dark.border,
+    minWidth: 40,
+    alignItems: "center",
   },
   buttonTabActive: {
     backgroundColor: Colors.dark.accent,
