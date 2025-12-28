@@ -431,6 +431,7 @@ const styles = StyleSheet.create({
   displayName: {
     ...Typography.h1,
     color: Colors.dark.text,
+    lineHeight: 40,
   },
   experienceLevel: {
     ...Typography.body,
