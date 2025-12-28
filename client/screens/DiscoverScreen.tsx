@@ -390,12 +390,14 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
     letterSpacing: -1,
+    flexWrap: "wrap",
   },
   heroSubtitle: {
     fontSize: 16,
     color: Colors.dark.textSecondary,
     fontWeight: "400",
     lineHeight: 24,
+    flexWrap: "wrap",
   },
   section: {
     marginBottom: Spacing.xl,

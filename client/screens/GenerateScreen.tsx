@@ -387,6 +387,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     letterSpacing: -0.5,
     lineHeight: 42,
+    flexWrap: "wrap",
   },
   screenTitleAccent: {
     fontSize: 36,
@@ -399,6 +400,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xl,
     lineHeight: 24,
+    flexWrap: "wrap",
   },
   muscleImageContainer: {
     width: "100%",
