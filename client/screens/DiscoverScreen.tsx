@@ -284,10 +284,10 @@ export default function DiscoverScreen() {
         >
           <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
           <View style={{ width: "100%" }}>
-            <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
+            <ThemedText style={styles.heroTitle} numberOfLines={0}>FitForge</ThemedText>
           </View>
           <View style={{ width: "100%" }}>
-            <ThemedText style={styles.heroSubtitle}>
+            <ThemedText style={styles.heroSubtitle} numberOfLines={0}>
               Your personal fitness journey starts here
             </ThemedText>
           </View>
@@ -376,10 +376,12 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
+    width: "100%",
   },
   heroSection: {
     marginBottom: Spacing.xxl,
     paddingTop: Spacing.lg,
+    width: "100%",
   },
   heroTagline: {
     fontSize: 12,
@@ -389,13 +391,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   heroTitle: {
-    fontSize: 48,
+    fontSize: 42,
     fontWeight: "800",
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
     letterSpacing: -1,
     flexWrap: "wrap",
-    flex: 1,
   },
   heroSubtitle: {
     fontSize: 16,
@@ -403,7 +404,6 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     lineHeight: 24,
     flexWrap: "wrap",
-    flex: 1,
   },
   section: {
     marginBottom: Spacing.xl,
