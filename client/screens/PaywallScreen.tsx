@@ -51,7 +51,7 @@ export default function PaywallScreen() {
   const { currentOffering, purchasePackage, restorePurchases, isLoading, isProUser } = useRevenueCat();
   const [selectedPackageId, setSelectedPackageId] = useState<string>('yearly');
   const [isPurchasing, setIsPurchasing] = useState(false);
-  const [enableFreeTrial, setEnableFreeTrial] = useState(true);
+  const [enableFreeTrial, setEnableFreeTrial] = useState(false);
 
   const handlePresentPaywall = useCallback(async () => {
     try {
@@ -201,7 +201,7 @@ export default function PaywallScreen() {
         </View>
 
         <View style={styles.trialToggleContainer}>
-          <ThemedText style={styles.trialToggleLabel}>Enable free trial</ThemedText>
+          <ThemedText style={styles.trialToggleLabel}>Not sure yet? Enable free trial</ThemedText>
           <Switch
             value={enableFreeTrial}
             onValueChange={setEnableFreeTrial}
