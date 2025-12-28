@@ -39,16 +39,17 @@ const MUSCLE_GROUPS = [
   "Cardio",
 ];
 
-// Map display names to RapidAPI muscle group names
-const getMuscleApiName = (displayName: string): string => {
-  const muscleMap: Record<string, string> = {
-    "Arms": "biceps",
-    "Legs": "quadriceps",
-    "Core": "abs",
-    "Cardio": "chest",
-    "Calves": "soleus",
-  };
-  return muscleMap[displayName] || displayName.toLowerCase();
+// Hardcoded muscle group images
+const muscleGroupImages: Record<string, any> = {
+  "Chest": require("../assets/muscle-groups/chest.jpeg"),
+  "Back": require("../assets/muscle-groups/back.jpeg"),
+  "Shoulders": require("../assets/muscle-groups/shoulders.jpeg"),
+  "Arms": require("../assets/muscle-groups/arms.jpeg"),
+  "Forearms": require("../assets/muscle-groups/forearms.jpeg"),
+  "Legs": require("../assets/muscle-groups/legs.jpeg"),
+  "Calves": require("../assets/muscle-groups/calves.jpeg"),
+  "Core": require("../assets/muscle-groups/core.jpeg"),
+  "Cardio": require("../assets/muscle-groups/cardio.jpeg"),
 };
 
 const POPULAR_WORKOUTS = [
@@ -107,11 +108,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [imageLoaded, setImageLoaded] = React.useState(false);
-  const baseUrl = getApiUrl();
-  const apiMuscleName = getMuscleApiName(muscle);
-  const imageUrl = `${baseUrl}api/muscle-image?muscles=${apiMuscleName}&color=255,107,107`;
-  const useStaticImage = muscle === "Calves";
-  const calfImageUri = require("../assets/calf-muscles.png");
+  const muscleImagePath = muscleGroupImages[muscle];
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -165,7 +162,7 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           />
         )}
         <ExpoImage
-          source={useStaticImage ? calfImageUri : { uri: imageUrl }}
+          source={muscleImagePath}
           style={[styles.muscleImage, { opacity: imageLoaded ? 1 : 0 }]}
           contentFit="contain"
           onLoad={() => setImageLoaded(true)}
