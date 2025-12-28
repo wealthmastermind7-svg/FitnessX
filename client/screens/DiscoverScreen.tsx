@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
     letterSpacing: -1,
-    lineHeight: 56,
+    lineHeight: 60,
   },
   heroSubtitle: {
     fontSize: 16,

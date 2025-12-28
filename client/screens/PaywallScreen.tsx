@@ -375,6 +375,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     textAlign: 'center',
     marginBottom: Spacing.sm,
+    lineHeight: 42,
   },
   subtitle: {
     fontSize: 16,
