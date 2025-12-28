@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     marginBottom: Spacing.xl,
     letterSpacing: -0.5,
-    lineHeight: 50,
+    lineHeight: 54,
   },
   avatarSection: {
     alignItems: "center",
