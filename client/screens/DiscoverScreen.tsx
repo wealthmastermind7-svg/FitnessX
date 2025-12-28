@@ -284,9 +284,10 @@ export default function DiscoverScreen() {
             { transform: [{ translateY: parallaxTransform }] },
           ]}
         >
+          <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
           <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
           <ThemedText style={styles.heroSubtitle}>
-            Forge your perfect workout
+            Your personal fitness journey starts here
           </ThemedText>
         </Animated.View>
 
@@ -376,17 +377,27 @@ const styles = StyleSheet.create({
   },
   heroSection: {
     marginBottom: Spacing.xxl,
-    paddingTop: Spacing.xl,
+    paddingTop: Spacing.lg,
   },
-  heroTitle: {
-    ...Typography.display,
-    color: Colors.dark.text,
+  heroTagline: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 2,
+    color: Colors.dark.accent,
     marginBottom: Spacing.xs,
   },
+  heroTitle: {
+    fontSize: 48,
+    fontWeight: "800",
+    color: Colors.dark.text,
+    marginBottom: Spacing.sm,
+    letterSpacing: -1,
+  },
   heroSubtitle: {
-    ...Typography.h3,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     fontWeight: "400",
+    lineHeight: 24,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -398,8 +409,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   sectionTitle: {
-    ...Typography.h2,
+    fontSize: 22,
+    fontWeight: "700",
     color: Colors.dark.text,
+    letterSpacing: -0.3,
   },
   horizontalScroll: {
     paddingRight: Spacing.lg,
@@ -420,8 +433,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   workoutCardTitle: {
-    ...Typography.h3,
+    fontSize: 20,
+    fontWeight: "700",
     color: Colors.dark.text,
+    letterSpacing: -0.3,
   },
   difficultyBadge: {
     backgroundColor: Colors.dark.accent + "20",
@@ -483,8 +498,10 @@ const styles = StyleSheet.create({
     height: "50%",
   },
   muscleName: {
-    ...Typography.h3,
+    fontSize: 18,
+    fontWeight: "700",
     color: Colors.dark.text,
+    letterSpacing: -0.2,
   },
   exerciseLibraryCard: {
     marginBottom: Spacing.xl,
@@ -522,9 +539,11 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   exerciseLibraryTitle: {
-    ...Typography.h2,
+    fontSize: 24,
+    fontWeight: "700",
     color: Colors.dark.text,
     marginBottom: Spacing.xs,
+    letterSpacing: -0.3,
   },
   exerciseLibrarySubtitle: {
     ...Typography.body,

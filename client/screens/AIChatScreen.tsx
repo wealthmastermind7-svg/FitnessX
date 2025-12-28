@@ -179,6 +179,7 @@ export default function AIChatScreen({ navigation }: any) {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               navigation.goBack();
             }}
+            style={styles.backButton}
           >
             <Feather name="arrow-left" size={24} color={Colors.dark.text} />
           </Pressable>
@@ -191,8 +192,8 @@ export default function AIChatScreen({ navigation }: any) {
             </LinearGradient>
             <View>
               <ThemedText style={styles.headerTitle}>AI Coach</ThemedText>
-              <ThemedText style={[styles.headerSubtitle, { color: modeConfig.color }]}>
-                {modeConfig.label} Mode
+              <ThemedText style={styles.headerSubtitle}>
+                Your personal fitness assistant
               </ThemedText>
             </View>
           </View>
@@ -208,6 +209,7 @@ export default function AIChatScreen({ navigation }: any) {
                 },
               ]);
             }}
+            style={styles.refreshButton}
           >
             <Feather name="refresh-cw" size={20} color={Colors.dark.textSecondary} />
           </Pressable>
@@ -415,13 +417,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  backButton: {
+    padding: Spacing.xs,
+  },
+  refreshButton: {
+    padding: Spacing.xs,
+  },
   headerTitle: {
-    ...Typography.body,
+    fontSize: 18,
     color: Colors.dark.text,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   headerSubtitle: {
-    ...Typography.small,
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
   },
   modeTabsContainer: {
     borderBottomWidth: 1,

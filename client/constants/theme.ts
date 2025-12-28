@@ -55,22 +55,44 @@ export const BorderRadius = {
   lg: 20,
   xl: 24,
   xxl: 32,
+  pill: 28,
   full: 9999,
 };
 
 export const Typography = {
-  display: {
-    fontSize: 56,
-    fontWeight: "700" as const,
+  displayHero: {
+    fontSize: 48,
+    fontWeight: "800" as const,
     letterSpacing: -1,
+    lineHeight: 52,
+  },
+  display: {
+    fontSize: 36,
+    fontWeight: "800" as const,
+    letterSpacing: -0.5,
+    lineHeight: 42,
+  },
+  displayLarge: {
+    fontSize: 32,
+    fontWeight: "800" as const,
+    letterSpacing: -0.5,
+    lineHeight: 38,
+  },
+  tagline: {
+    fontSize: 12,
+    fontWeight: "600" as const,
+    letterSpacing: 2,
+    textTransform: "uppercase" as const,
   },
   h1: {
     fontSize: 32,
-    fontWeight: "600" as const,
+    fontWeight: "700" as const,
+    letterSpacing: -0.3,
   },
   h2: {
     fontSize: 24,
-    fontWeight: "600" as const,
+    fontWeight: "700" as const,
+    letterSpacing: -0.2,
   },
   h3: {
     fontSize: 20,
@@ -79,16 +101,27 @@ export const Typography = {
   body: {
     fontSize: 16,
     fontWeight: "400" as const,
+    lineHeight: 24,
+  },
+  bodyLarge: {
+    fontSize: 17,
+    fontWeight: "400" as const,
+    lineHeight: 26,
   },
   caption: {
-    fontSize: 13,
-    fontWeight: "500" as const,
-    letterSpacing: 0.8,
+    fontSize: 12,
+    fontWeight: "600" as const,
+    letterSpacing: 1.5,
     textTransform: "uppercase" as const,
   },
   small: {
     fontSize: 14,
-    fontWeight: "400" as const,
+    fontWeight: "500" as const,
+  },
+  button: {
+    fontSize: 15,
+    fontWeight: "700" as const,
+    letterSpacing: 0.5,
   },
 };
 

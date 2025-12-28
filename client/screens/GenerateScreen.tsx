@@ -203,9 +203,12 @@ export default function GenerateScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
-        <ThemedText style={styles.screenTitle}>Generate Workout</ThemedText>
+        <ThemedText style={styles.screenTagline}>CREATE YOUR</ThemedText>
+        <ThemedText style={styles.screenTitle}>
+          Custom <ThemedText style={styles.screenTitleAccent}>Workout</ThemedText>
+        </ThemedText>
         <ThemedText style={styles.screenSubtitle}>
-          Select muscle groups and equipment
+          Select muscle groups and equipment to generate your perfect routine
         </ThemedText>
 
         <View style={styles.muscleImageContainer}>
@@ -370,15 +373,32 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.lg,
   },
-  screenTitle: {
-    ...Typography.display,
-    color: Colors.dark.text,
+  screenTagline: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 2,
+    color: Colors.dark.accent,
     marginBottom: Spacing.xs,
   },
+  screenTitle: {
+    fontSize: 36,
+    fontWeight: "800",
+    color: Colors.dark.text,
+    marginBottom: Spacing.sm,
+    letterSpacing: -0.5,
+    lineHeight: 42,
+  },
+  screenTitleAccent: {
+    fontSize: 36,
+    fontWeight: "800",
+    color: Colors.dark.accent,
+    letterSpacing: -0.5,
+  },
   screenSubtitle: {
-    ...Typography.body,
+    fontSize: 16,
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xl,
+    lineHeight: 24,
   },
   muscleImageContainer: {
     width: "100%",
@@ -480,14 +500,15 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     height: Spacing.buttonHeight,
-    borderRadius: BorderRadius.md,
+    borderRadius: BorderRadius.full,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
   floatingButtonText: {
-    ...Typography.body,
+    fontSize: 16,
     color: "#FFF",
-    fontWeight: "600",
+    fontWeight: "700",
+    letterSpacing: 0.5,
   },
 });

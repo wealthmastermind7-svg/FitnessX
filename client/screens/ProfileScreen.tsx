@@ -214,6 +214,7 @@ export default function ProfileScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        <ThemedText style={styles.screenTagline}>YOUR</ThemedText>
         <ThemedText style={styles.screenTitle}>Profile</ThemedText>
 
         <View style={styles.avatarSection}>
@@ -400,10 +401,19 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: Spacing.lg,
   },
+  screenTagline: {
+    fontSize: 12,
+    fontWeight: "600",
+    letterSpacing: 2,
+    color: Colors.dark.accent,
+    marginBottom: Spacing.xs,
+  },
   screenTitle: {
-    ...Typography.display,
+    fontSize: 42,
+    fontWeight: "800",
     color: Colors.dark.text,
     marginBottom: Spacing.xl,
+    letterSpacing: -0.5,
   },
   avatarSection: {
     alignItems: "center",
