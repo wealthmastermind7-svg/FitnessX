@@ -25,7 +25,29 @@ import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
 import { Image as ExpoImage } from "expo-image";
 
+const ChestImage = require("../assets/muscle-groups/chest_muscle_anatomical_diagram.png");
+const BackImage = require("../assets/muscle-groups/back_muscle_anatomical_diagram.png");
+const ShouldersImage = require("../assets/muscle-groups/shoulders_muscle_anatomical_diagram.png");
+const ArmsImage = require("../assets/muscle-groups/arms_muscle_anatomical_diagram.png");
+const ForearmsImage = require("../assets/muscle-groups/forearms_muscle_anatomical_diagram.png");
+const LegsImage = require("../assets/muscle-groups/legs_muscle_anatomical_diagram.png");
+const CalvesImage = require("../assets/muscle-groups/calves_muscle_anatomical_diagram.png");
+const CoreImage = require("../assets/muscle-groups/core_muscle_anatomical_diagram.png");
+const CardioImage = require("../assets/muscle-groups/cardio_heart_anatomical_diagram.png");
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+const MUSCLE_IMAGES: Record<string, any> = {
+  Chest: ChestImage,
+  Back: BackImage,
+  Shoulders: ShouldersImage,
+  Arms: ArmsImage,
+  Forearms: ForearmsImage,
+  Legs: LegsImage,
+  Calves: CalvesImage,
+  Core: CoreImage,
+  Cardio: CardioImage,
+};
 
 const MUSCLE_GROUPS = [
   "Chest",
@@ -38,18 +60,6 @@ const MUSCLE_GROUPS = [
   "Core",
   "Cardio",
 ];
-
-// Map display names to RapidAPI muscle group names
-const getMuscleApiName = (displayName: string): string => {
-  const muscleMap: Record<string, string> = {
-    "Arms": "biceps",
-    "Legs": "quadriceps",
-    "Core": "abs",
-    "Cardio": "chest",
-    "Calves": "soleus",
-  };
-  return muscleMap[displayName] || displayName.toLowerCase();
-};
 
 const POPULAR_WORKOUTS = [
   {
@@ -106,12 +116,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
-  const [imageLoaded, setImageLoaded] = React.useState(false);
-  const baseUrl = getApiUrl();
-  const apiMuscleName = getMuscleApiName(muscle);
-  const imageUrl = `${baseUrl}api/muscle-image?muscles=${apiMuscleName}&color=255,107,107`;
-  const useStaticImage = muscle === "Calves";
-  const calfImageUri = require("../assets/calf-muscles.png");
+  const muscleImage = MUSCLE_IMAGES[muscle];
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -132,18 +137,6 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
     navigation.navigate("ExerciseBrowser", { filterByMuscle: muscle });
   };
 
-  // Gradient colors for fallback background
-  const gradientColors = [
-    ["#FF6B6B", "#FF8C8C"],
-    ["#4ECDC4", "#6FE4DD"],
-    ["#9D4EDD", "#B480E8"],
-    ["#FFB347", "#FFD9A4"],
-    ["#FF6B9D", "#FF8FB3"],
-    ["#6BCB77", "#9AED9A"],
-  ];
-  
-  const gradientColor = gradientColors[index % gradientColors.length];
-
   return (
     <Pressable
       onPressIn={handlePressIn}
@@ -156,23 +149,10 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           { transform: [{ scale: scaleAnim }] },
         ]}
       >
-        {!imageLoaded && (
-          <LinearGradient
-            colors={gradientColor as any}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.muscleImage}
-          />
-        )}
         <ExpoImage
-          source={useStaticImage ? calfImageUri : { uri: imageUrl }}
-          style={[styles.muscleImage, { opacity: imageLoaded ? 1 : 0 }]}
-          contentFit="contain"
-          onLoad={() => setImageLoaded(true)}
-          onError={() => {
-            console.log(`Failed to load image for ${muscle}`);
-            setImageLoaded(false);
-          }}
+          source={muscleImage}
+          style={styles.muscleImage}
+          contentFit="cover"
         />
         <LinearGradient
           colors={["transparent", "rgba(10,14,26,0.95)"]}
