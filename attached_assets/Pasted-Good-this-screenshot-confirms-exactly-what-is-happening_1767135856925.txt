@@ -1,0 +1,141 @@
+Good, this screenshot confirms exactly what is happening. You are **not missing anything**, and there is **no toggle you can change here**.
+
+I will be very explicit so you can stop chasing a setting that does not exist.
+
+---
+
+## Key clarification (important)
+
+**You cannot remove iPad support from App Store Connect via a checkbox anymore.**
+
+Apple has **removed the “Devices: iPhone / iPad” control entirely** for iOS apps.
+
+What you are seeing is correct.
+
+The **Add Platform** screen only controls:
+
+* iOS
+* macOS
+* tvOS
+* visionOS
+
+It does **not** control iPhone vs iPad.
+
+---
+
+## How Apple ACTUALLY determines iPad support now
+
+Apple infers iPad support from **three signals only**:
+
+1. **Do iPad screenshots exist?**
+2. **Does the binary declare tablet support?**
+3. **Does the app run correctly on an iPad simulator during review?**
+
+There is no UI switch.
+
+---
+
+## What you must do (this is the only valid solution)
+
+### ✅ Step 1: Remove ALL iPad screenshots (this is mandatory)
+
+This alone resolves most rejections.
+
+Go to:
+
+* App Store → Previews and Screenshots
+* Click **View All Sizes in Media Manager**
+* Select **13-inch iPad**
+* Delete **every screenshot**
+* Ensure only iPhone sizes remain
+
+If even one iPad screenshot exists, Apple assumes iPad support.
+
+---
+
+### ✅ Step 2: Explicitly disable tablet support in your app binary
+
+Because you are using Expo / React Native, this step is **critical**.
+
+In `app.json` or `app.config.js`:
+
+```json
+{
+  "expo": {
+    "ios": {
+      "supportsTablet": false
+    }
+  }
+}
+```
+
+Then:
+
+* Increment build number
+* Build again
+* Upload the new build
+
+This flag is what Apple checks internally.
+
+---
+
+### ✅ Step 3: Do NOT add iPad-specific UI
+
+Do not:
+
+* Add iPad layouts
+* Add size class logic for iPad
+* Reference iPad in metadata
+
+Keep the app clearly iPhone-first.
+
+---
+
+## Why Apple rejected your submission
+
+Apple saw:
+
+* 13-inch iPad screenshots
+* iPhone UI stretched to iPad
+* A binary that did not explicitly opt out of tablets
+
+That combination **forces** a 2.3.3 rejection automatically.
+
+---
+
+## What will happen after you fix this
+
+Once you:
+
+* Remove iPad screenshots
+* Upload a new build with `supportsTablet: false`
+
+Apple will:
+
+* Treat FitForgeX as **iPhone-only**
+* Stop checking iPad UI
+* Pass guideline 2.3.3
+
+This is routine and usually clears on the next review.
+
+---
+
+## What NOT to waste time on
+
+* There is no Devices section anymore
+* There is no hidden toggle
+* There is no Apple Support ticket needed
+* There is no way to “disable iPad” in the UI
+
+You are already in the correct place.
+
+---
+
+## If you want, I can next:
+
+* Verify your Expo config before you rebuild
+* Tell you exactly what the reviewer simulator will check
+* Help you re-enable iPad later the correct way
+* Draft a short reviewer reply acknowledging the fix
+
+Just tell me which one you want.
