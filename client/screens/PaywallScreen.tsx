@@ -328,6 +328,10 @@ export default function PaywallScreen() {
           <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}>
             <ThemedText style={styles.footerLink}>Privacy</ThemedText>
           </Pressable>
+          <ThemedText style={styles.footerSeparator}>•</ThemedText>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/sources')}>
+            <ThemedText style={styles.footerLink}>Sources</ThemedText>
+          </Pressable>
         </View>
       </ScrollView>
     </ThemedView>

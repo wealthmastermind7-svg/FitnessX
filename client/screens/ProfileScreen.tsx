@@ -7,6 +7,7 @@ import {
   Alert,
   Platform,
 } from "react-native";
+import * as WebBrowser from "expo-web-browser";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
@@ -384,6 +385,33 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Legal</ThemedText>
+          
+          <View style={styles.legalLinksContainer}>
+            <Pressable 
+              style={styles.legalLink}
+              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}
+            >
+              <ThemedText style={styles.legalLinkText}>Terms of Use</ThemedText>
+            </Pressable>
+            
+            <Pressable 
+              style={styles.legalLink}
+              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}
+            >
+              <ThemedText style={styles.legalLinkText}>Privacy Policy</ThemedText>
+            </Pressable>
+            
+            <Pressable 
+              style={styles.legalLink}
+              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/sources')}
+            >
+              <ThemedText style={styles.legalLinkText}>Sources & Citations</ThemedText>
+            </Pressable>
+          </View>
+        </View>
+
         <View style={styles.footer}>
           <ThemedText style={styles.footerText}>FitForge v1.0.0</ThemedText>
           <ThemedText style={styles.footerText}>Built with care</ThemedText>
@@ -568,5 +596,23 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontWeight: "700" as const,
     fontSize: 10,
+  },
+  legalLinksContainer: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  legalLink: {
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
+  legalLinkText: {
+    ...Typography.body,
+    color: Colors.dark.accent,
+    fontWeight: "500",
   },
 });
