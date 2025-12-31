@@ -8,7 +8,7 @@ import {
   Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Haptics from "expo-haptics";
@@ -30,6 +30,12 @@ export default function SavedWorkoutsScreen() {
   useEffect(() => {
     loadSavedWorkouts();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadSavedWorkouts();
+    }, [])
+  );
 
   const loadSavedWorkouts = async () => {
     try {

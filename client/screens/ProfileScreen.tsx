@@ -10,7 +10,7 @@ import {
 import * as WebBrowser from "expo-web-browser";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -103,6 +103,12 @@ export default function ProfileScreen() {
     loadStats();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      loadStats();
+    }, [])
+  );
+
   const loadProfile = async () => {
     try {
       const savedProfile = await AsyncStorage.getItem("userProfile");
@@ -116,10 +122,18 @@ export default function ProfileScreen() {
 
   const loadStats = async () => {
     try {
+      // Always get the true count from saved workouts to ensure accuracy
+      const savedWorkouts = await AsyncStorage.getItem("savedWorkouts");
+      const workoutsList = savedWorkouts ? JSON.parse(savedWorkouts) : [];
+      const actualWorkoutCount = workoutsList.length;
+
       const savedStats = await AsyncStorage.getItem("workoutStats");
-      if (savedStats) {
-        setStats(JSON.parse(savedStats));
-      }
+      const stats = savedStats ? JSON.parse(savedStats) : { totalWorkouts: 0, favoriteMuscle: "None yet", currentStreak: 0 };
+      
+      // Update totalWorkouts to match actual saved count
+      stats.totalWorkouts = actualWorkoutCount;
+      
+      setStats(stats);
     } catch (error) {
       console.error("Error loading stats:", error);
     }
