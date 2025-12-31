@@ -69,15 +69,18 @@ export default function ExerciseBrowserScreen() {
   );
   const [refreshing, setRefreshing] = useState(false);
 
+  // Pro users see more exercises (1000+) to showcase the full library
+  const exerciseLimit = isProUser ? 1000 : 100;
+
   const fetchUrl = useMemo(() => {
     if (searchQuery.trim()) {
-      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=100`;
+      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=${exerciseLimit}`;
     }
     if (selectedBodyPart !== "all") {
-      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=100`;
+      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=${exerciseLimit}`;
     }
-    return `${baseUrl}api/exercises?limit=100`;
-  }, [baseUrl, searchQuery, selectedBodyPart]);
+    return `${baseUrl}api/exercises?limit=${exerciseLimit}`;
+  }, [baseUrl, searchQuery, selectedBodyPart, exerciseLimit]);
 
   const {
     data: exercises,
