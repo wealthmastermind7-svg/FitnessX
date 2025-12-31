@@ -104,7 +104,7 @@ export default function ExerciseBrowserScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       Alert.alert(
         "Pro Feature",
-        "Free users can browse the first 10 exercises. Upgrade to Pro to access all 1,300+ exercises.",
+        "Free users can browse the first 10 exercises. Upgrade to Pro to access all 1,300+ exercises and save up to 100 workouts.",
         [
           { text: "Cancel", style: "cancel" },
           { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
