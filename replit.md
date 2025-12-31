@@ -12,11 +12,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (v1.0.1 Build 3)
 
-**Freemium Model Update:**
-- Free users now limited to **5 generated and saved workouts** (previously unlimited generation, 5 save limit)
-- Pro users can **generate and save up to 100 workouts** (vs 5)
-- Messaging updated across all screens to reflect "generate and save" framing
-- Paywall feature list updated: AI Chat Coach, Full Exercise Library (1,300+), Unlimited Workouts (generate & save up to 100)
+**Paywall & Messaging Standardization:**
+- Updated paywall to clearly compare Free Users vs Pro Users with exact same wording as App Store
+- Free Users: Browse first 10 exercises, Generate and save up to 5 workouts
+- Pro Users: AI Chat Coach (receive personalized fitness guidance), Full Exercise Library (1,300+), Generate and save up to 100 workouts
+- All in-app alerts and paywall now use consistent, Apple Store-compliant language
+- App Store description added to app.json matching paywall positioning
 
 ## System Architecture
 

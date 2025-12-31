@@ -3,6 +3,7 @@
     "name": "FitForge",
     "slug": "fitforge",
     "version": "1.0.1",
+    "description": "FitForge is your AI-powered fitness companion. Free users can browse the first 10 exercises and generate and save up to 5 workouts. Pro users unlock the AI Chat Coach, access all 1,300+ exercises, and generate and save up to 100 workouts.",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "fitforge",
