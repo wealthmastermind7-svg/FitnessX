@@ -202,7 +202,7 @@ export default function PaywallScreen() {
 
         <View style={styles.trialToggleContainer}>
           <View style={styles.trialToggleLabelContainer}>
-            <ThemedText style={styles.trialToggleLabel}>Enable free trial (7 days)</ThemedText>
+            <ThemedText style={styles.trialToggleLabel}>Not sure yet? Enable free trial (7 days)</ThemedText>
             <ThemedText style={styles.trialToggleSubtitle}>You will not be charged until the trial ends</ThemedText>
           </View>
           <Switch
