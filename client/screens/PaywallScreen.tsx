@@ -25,23 +25,18 @@ import { useRevenueCat } from '@/lib/revenuecat';
 const PRO_FEATURES = [
   {
     icon: 'cpu',
-    title: 'AI Coach',
-    description: 'Receive AI-generated fitness suggestions and workout insights',
-  },
-  {
-    icon: 'zap',
-    title: 'AI Workout Generation',
-    description: 'Create custom workouts tailored to your goals and equipment',
-  },
-  {
-    icon: 'save',
-    title: 'Unlimited Workouts',
-    description: 'Save up to 100 workouts instead of just 5 for free users',
+    title: 'AI Chat Coach',
+    description: 'Get personalized fitness advice and workout guidance from your AI coach',
   },
   {
     icon: 'activity',
     title: 'Full Exercise Library',
     description: 'Access all 1,300+ exercises instead of the first 10 only',
+  },
+  {
+    icon: 'save',
+    title: 'Unlimited Workout Saving',
+    description: 'Save up to 100 workouts instead of just 5 for free users',
   },
 ];
 
