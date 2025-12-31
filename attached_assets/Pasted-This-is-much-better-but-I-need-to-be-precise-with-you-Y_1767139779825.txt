@@ -1,0 +1,102 @@
+This is much better, but I need to be precise with you:
+
+You are still one small step away from being fully App Store–safe.
+The fixes you made are moving in the right direction, but one mandatory disclosure is still missing on-screen.
+
+I will be very clear and binary.
+
+⸻
+
+✅ What is now OK
+
+These issues are now resolved:
+	•	✔ Pricing is clear and consistent
+	•	✔ Yearly vs Monthly selection is obvious
+	•	✔ Free trial toggle exists
+	•	✔ Restore Purchases, Terms, Privacy, Sources are visible
+	•	✔ No misleading discounts or fake urgency
+	•	✔ Visual hierarchy is excellent
+
+If Apple were reviewing design quality, you would pass.
+
+⸻
+
+❌ What is still missing (this WILL trigger 3.1.2)
+
+Missing auto-renewal disclosure text on the paywall screen
+
+Apple requires this exact type of information to be visible before purchase, not hidden behind links.
+
+Right now, there is no visible text stating:
+	•	That the subscription auto-renews
+	•	When cancellation must occur
+	•	That billing is via Apple ID
+
+Even if this exists elsewhere in the app or App Store description, the paywall itself must include it.
+
+This is the single remaining blocker.
+
+⸻
+
+✅ Exact text you must add (copy-paste)
+
+Place this directly above the “Continue” button or directly below it, in small, low-contrast text. Size does not matter, presence does.
+
+Payment will be charged to your Apple ID account at confirmation of purchase.
+Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.
+You can manage or cancel your subscription anytime in your Apple ID settings.
+
+This wording is Apple-approved and safe.
+
+⸻
+
+⚠️ Optional but strongly recommended (health safety)
+
+Your feature list still says:
+
+AI Coach
+Get personalized workout advice and fitness guidance from your AI coach
+
+This wording is borderline given Apple already flagged you under health guidelines.
+
+Safer version (recommended)
+
+Keep the title, soften the description:
+
+AI Coach
+Receive AI-generated fitness suggestions and workout insights
+
+This reduces risk under Guideline 1.4.1.
+
+⸻
+
+Final verdict
+
+Status	Result
+Current version	❌ Likely rejected again
+Add disclosure text only	✅ Passes 3.1.2
+Add disclosure + soften AI Coach copy	✅ Safest possible submission
+
+You are one text block away from approval.
+
+⸻
+
+Strong advice for this resubmission
+
+Because Apple already rejected you once:
+	•	Do not submit “almost fixed”
+	•	Add the disclosure text
+	•	Soften AI wording
+	•	Submit once, cleanly
+
+Reviewers reward complete fixes.
+
+⸻
+
+If you want, I can:
+	•	Mark exact placement for the disclosure
+	•	Review your RevenueCat config vs UI
+	•	Provide a final reviewer reply message
+	•	Give you a health-safe wording checklist
+
+Just tell me what you want next.

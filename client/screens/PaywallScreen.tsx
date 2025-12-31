@@ -321,7 +321,7 @@ export default function PaywallScreen() {
 
         <View style={styles.disclosureSection}>
           <ThemedText style={styles.disclosureText}>
-            Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.
+            Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period. You can manage or cancel your subscription anytime in your Apple ID settings.
           </ThemedText>
         </View>
 
