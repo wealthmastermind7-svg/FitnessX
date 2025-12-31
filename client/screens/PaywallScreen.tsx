@@ -26,23 +26,18 @@ const PRO_FEATURES = [
   {
     icon: 'cpu',
     title: 'AI Chat Coach',
-    description: 'Receive personalized fitness guidance and workout suggestions',
+    description: 'Get personalized fitness advice and workout guidance from your AI coach',
   },
   {
     icon: 'activity',
     title: 'Full Exercise Library',
-    description: 'Access all 1,300+ exercises',
+    description: 'Access all 1,300+ exercises instead of the first 10 only',
   },
   {
     icon: 'zap',
-    title: 'Generate and save up to 100 workouts',
-    description: 'Pro users can generate and save up to 100 workouts',
+    title: 'Unlimited Workouts',
+    description: 'Generate and save up to 100 workouts instead of just 5 for free users',
   },
-];
-
-const FREE_FEATURES = [
-  'Browse the first 10 exercises',
-  'Generate and save up to 5 workouts',
 ];
 
 export default function PaywallScreen() {
@@ -184,37 +179,20 @@ export default function PaywallScreen() {
           </ThemedText>
         </View>
 
-        <View style={styles.comparisonSection}>
-          <View style={styles.tierContainer}>
-            <ThemedText style={styles.tierTitle}>Free Users</ThemedText>
-            {FREE_FEATURES.map((feature, index) => (
-              <View key={index} style={styles.featureRow}>
-                <Feather name="check" size={16} color={Colors.dark.textSecondary} />
-                <ThemedText style={styles.featureRowText}>{feature}</ThemedText>
+        <View style={styles.featuresSection}>
+          {PRO_FEATURES.map((feature, index) => (
+            <View key={index} style={styles.featureItem}>
+              <View style={styles.featureIconContainer}>
+                <Feather name={feature.icon as any} size={24} color={Colors.dark.text} />
               </View>
-            ))}
-          </View>
-
-          <View style={styles.divider} />
-
-          <View style={styles.tierContainer}>
-            <ThemedText style={styles.tierTitle}>Pro Users</ThemedText>
-            <View style={styles.featuresSection}>
-              {PRO_FEATURES.map((feature, index) => (
-                <View key={index} style={styles.featureItem}>
-                  <View style={styles.featureIconContainer}>
-                    <Feather name={feature.icon as any} size={24} color={Colors.dark.accent} />
-                  </View>
-                  <View style={styles.featureText}>
-                    <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
-                    <ThemedText style={styles.featureDescription}>
-                      {feature.description}
-                    </ThemedText>
-                  </View>
-                </View>
-              ))}
+              <View style={styles.featureText}>
+                <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
+                <ThemedText style={styles.featureDescription}>
+                  {feature.description}
+                </ThemedText>
+              </View>
             </View>
-          </View>
+          ))}
         </View>
 
         <View style={styles.trialToggleContainer}>
@@ -641,33 +619,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500' as any,
     color: '#FFF',
-  },
-  comparisonSection: {
-    marginVertical: Spacing.xl,
-  },
-  tierContainer: {
-    paddingVertical: Spacing.lg,
-  },
-  tierTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    marginBottom: Spacing.md,
-  },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-    gap: Spacing.md,
-  },
-  featureRowText: {
-    fontSize: 14,
-    color: Colors.dark.text,
-    flex: 1,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: Colors.dark.borderColor,
-    marginVertical: Spacing.lg,
   },
 });
