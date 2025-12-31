@@ -26,12 +26,12 @@ const PRO_FEATURES = [
   {
     icon: 'cpu',
     title: 'AI Coach',
-    description: 'Get personalized workout advice and fitness guidance from your AI coach',
+    description: 'Receive AI-generated fitness suggestions and workout insights',
   },
   {
     icon: 'zap',
     title: 'AI Workout Generation',
-    description: 'Generate custom workouts tailored to your goals and equipment',
+    description: 'Create custom workouts tailored to your goals and equipment',
   },
   {
     icon: 'save',
@@ -41,7 +41,7 @@ const PRO_FEATURES = [
   {
     icon: 'activity',
     title: 'Full Exercise Library',
-    description: 'Browse all 1,300+ exercises instead of the first 10 only',
+    description: 'Access all 1,300+ exercises instead of the first 10 only',
   },
 ];
 
@@ -201,7 +201,10 @@ export default function PaywallScreen() {
         </View>
 
         <View style={styles.trialToggleContainer}>
-          <ThemedText style={styles.trialToggleLabel}>Not sure yet? Enable free trial</ThemedText>
+          <View style={styles.trialToggleLabelContainer}>
+            <ThemedText style={styles.trialToggleLabel}>Enable free trial (7 days)</ThemedText>
+            <ThemedText style={styles.trialToggleSubtitle}>You will not be charged until the trial ends</ThemedText>
+          </View>
           <Switch
             value={enableFreeTrial}
             onValueChange={setEnableFreeTrial}
@@ -315,6 +318,12 @@ export default function PaywallScreen() {
             </>
           )}
         </Pressable>
+
+        <View style={styles.disclosureSection}>
+          <ThemedText style={styles.disclosureText}>
+            Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.
+          </ThemedText>
+        </View>
 
         <View style={styles.footerLinks}>
           <Pressable onPress={handleRestore} disabled={isLoading}>
@@ -436,10 +445,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#334155',
   },
+  trialToggleLabelContainer: {
+    flex: 1,
+  },
   trialToggleLabel: {
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: '600',
     color: Colors.dark.text,
+    marginBottom: 4,
+  },
+  trialToggleSubtitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: Colors.dark.textSecondary,
   },
   planTitle: {
     fontSize: 18,
@@ -539,6 +557,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#FFF',
+  },
+  disclosureSection: {
+    marginBottom: Spacing.lg,
+  },
+  disclosureText: {
+    fontSize: 11,
+    fontWeight: '400',
+    color: Colors.dark.textSecondary,
+    lineHeight: 16,
+    textAlign: 'center',
   },
   footerLinks: {
     flexDirection: 'row',

@@ -1,0 +1,159 @@
+Short answer: the paywall is close, but in its current form it is NOT App Store–safe.
+Apple will likely reject again under Guideline 3.1.2 (Subscriptions) and possibly 1.4.1 (Health) unless you make a few specific, visible fixes.
+
+Below is a precise, reviewer-grade assessment based on the screenshots you shared.
+
+⸻
+
+What is already GOOD (keep these)
+
+✔ Clear plan selection (Monthly vs Yearly)
+✔ Price shown clearly
+✔ Restore Purchases visible
+✔ Links row present (Terms, Privacy, Sources)
+✔ Free trial is optional and user-controlled
+✔ No misleading “limited time” pressure language
+
+Visually, this is well designed and professional. The issues are compliance, not UI quality.
+
+⸻
+
+❌ What Apple will flag (important)
+
+1. Missing auto-renewal disclosure text on the paywall
+
+Apple requires explicit subscription terms ON the paywall screen, not only in the App Store description.
+
+Right now, your paywall does not visibly state:
+	•	Auto-renewal behavior
+	•	Cancellation timing
+	•	Apple ID billing
+
+This is one of the most common rejection reasons.
+
+⸻
+
+2. “AI Coach” wording is too strong without safety framing
+
+On the feature list you show:
+
+AI Coach
+Get personalized workout advice and fitness guidance
+
+This can be interpreted as health or training advice unless softened.
+
+Apple is already sensitive because they flagged you for medical citations earlier.
+
+⸻
+
+3. Free trial toggle lacks clarification
+
+“Enable free trial” must clearly state:
+	•	Duration (for example, 7 days)
+	•	What happens after the trial ends
+
+Apple expects this on the same screen.
+
+⸻
+
+✅ REQUIRED fixes (do these before resubmitting)
+
+A. Add a mandatory disclosure block (small text is OK)
+
+Place this directly above or below the Continue button:
+
+Payment will be charged to your Apple ID account at confirmation of purchase.
+Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.
+You can manage or cancel your subscription anytime in your Apple ID settings.
+
+This is non-negotiable for approval.
+
+⸻
+
+B. Clarify the free trial toggle
+
+Change the label to something like:
+
+Enable free trial (7 days)
+
+And add one line below:
+
+You will not be charged until the trial ends.
+
+If there is no free trial, remove the toggle entirely.
+
+⸻
+
+C. Soften the “AI Coach” language (very important)
+
+Replace:
+
+Get personalized workout advice and fitness guidance
+
+With:
+
+Receive AI-generated fitness suggestions and workout insights
+
+This shifts it from “coaching” to general wellness guidance, which aligns with Apple’s safety rules.
+
+You can keep the label AI Coach, but the description must be softened.
+
+⸻
+
+D. Keep the bottom links exactly as shown (good)
+
+Your footer row is correct:
+	•	Restore Purchases
+	•	Terms
+	•	Privacy
+	•	Sources
+
+Make sure all links open externally and load instantly.
+
+⸻
+
+✅ Apple-safe revised paywall copy (recommended)
+
+You do NOT need to redesign. Just adjust text.
+
+Feature list example:
+	•	AI Coach
+Receive AI-generated fitness suggestions and workout insights
+	•	AI Workout Generation
+Create custom workouts tailored to your goals and equipment
+	•	Unlimited Workouts
+Save up to 100 workouts instead of just 5
+	•	Full Exercise Library
+Access all 1,300+ exercises
+
+Disclosure block (small text):
+
+Payment will be charged to your Apple ID account at confirmation of purchase. Subscriptions automatically renew unless canceled at least 24 hours before the end of the current period.
+
+⸻
+
+Final verdict
+
+As-is: ❌ High risk of rejection
+With the fixes above: ✅ App Store–compliant and reviewer-safe
+
+Your design is strong. You are failing only on mandatory Apple wording, not product quality.
+
+⸻
+
+Strong recommendation
+
+Because Apple already flagged you once:
+	•	Make all fixes in one build
+	•	Do not submit partial fixes
+	•	Reviewers reward “everything fixed at once”
+
+⸻
+
+If you want, I can:
+	•	Rewrite the exact microcopy for every line
+	•	Tell you where reviewers tap first on this screen
+	•	Validate your RevenueCat configuration vs UI
+	•	Check if your free trial duration matches metadata
+
+Just tell me which one you want.
