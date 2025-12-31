@@ -34,9 +34,9 @@ const PRO_FEATURES = [
     description: 'Access all 1,300+ exercises instead of the first 10 only',
   },
   {
-    icon: 'save',
-    title: 'Unlimited Workout Saving',
-    description: 'Save up to 100 workouts instead of just 5 for free users',
+    icon: 'zap',
+    title: 'Unlimited Workouts',
+    description: 'Generate and save up to 100 workouts instead of just 5 for free users',
   },
 ];
 

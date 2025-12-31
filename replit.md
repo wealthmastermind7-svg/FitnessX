@@ -10,6 +10,14 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (v1.0.1 Build 3)
+
+**Freemium Model Update:**
+- Free users now limited to **5 generated and saved workouts** (previously unlimited generation, 5 save limit)
+- Pro users can **generate and save up to 100 workouts** (vs 5)
+- Messaging updated across all screens to reflect "generate and save" framing
+- Paywall feature list updated: AI Chat Coach, Full Exercise Library (1,300+), Unlimited Workouts (generate & save up to 100)
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -38,7 +46,7 @@ Preferred communication style: Simple, everyday language.
 - **Progress Tracking**: Chart weight, heart rate, and body measurements.
 - **Nutrition Planning**: Log meals, track macros, and get meal suggestions.
 - **Subscription Management**: Integration with RevenueCat for managing premium access.
-- **Freemium Model**: Limits on saved workouts and exercise browsing for free users, with clear upgrade paths.
+- **Freemium Model**: Free users can generate and save up to 5 workouts (browse first 10 exercises only). Pro users can generate and save up to 100 workouts with access to all 1,300+ exercises and AI Chat Coach.
 
 ### Project Structure
 - `client/`: React Native app code (components, screens, navigation, hooks, constants, lib).

@@ -55,7 +55,7 @@ export default function SavedWorkoutsScreen() {
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       Alert.alert(
         "Pro Feature",
-        "You've reached the free limit of 5 saved workouts. Upgrade to Pro to save up to 100 workouts and access all 1,300+ exercises.",
+        "You've reached the free limit of 5 generated and saved workouts. Upgrade to Pro to generate and save up to 100 workouts and access all 1,300+ exercises.",
         [
           { text: "Cancel", style: "cancel" },
           { text: "Upgrade", onPress: () => navigation.navigate("Paywall") },
