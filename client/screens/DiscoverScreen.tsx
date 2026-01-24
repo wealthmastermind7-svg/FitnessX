@@ -179,6 +179,16 @@ export default function DiscoverScreen() {
     navigation.navigate("WorkoutDetail", { workout });
   }, [navigation]);
 
+  const { data: bodyParts, isLoading: isLoadingBodyParts } = useQuery<string[]>({
+    queryKey: [getApiUrl() + "api/exercises/bodyPartList"],
+  });
+
+  const muscleGroups = bodyParts?.slice(0, 5).map((part, index) => ({
+    name: part.charAt(0).toUpperCase() + part.slice(1),
+    sets: 10 + index * 2,
+    progress: 0.4 + (index * 0.1),
+  })) || MUSCLE_GROUPS;
+
   return (
     <ThemedView style={styles.container}>
       <Image 
@@ -272,7 +282,7 @@ export default function DiscoverScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.horizontalScroll}
           >
-            {MUSCLE_GROUPS.map((item) => (
+            {muscleGroups.map((item) => (
               <MuscleCard key={item.name} item={item} navigation={navigation} />
             ))}
           </ScrollView>
