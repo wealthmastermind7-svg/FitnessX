@@ -12,12 +12,13 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Colors, Spacing, BorderRadius } from "@/constants/theme";
+import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { useOnboarding } from "@/contexts/OnboardingContext";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
 type OnboardingNavigationProp = NativeStackNavigationProp<any, "OnboardingWelcome">;
 
@@ -27,61 +28,64 @@ export default function OnboardingWelcomeScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleGetStarted = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate("OnboardingDiscover");
   };
 
   const handleSkip = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     completeOnboarding();
   };
 
   return (
     <View style={styles.root}>
       <ImageBackground
-        source={{ uri: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80" }}
+        source={{ uri: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=1200&q=90" }}
         style={styles.backgroundImage}
         imageStyle={styles.backgroundImageStyle}
       >
         <LinearGradient
-          colors={["rgba(0,0,0,0.3)", "rgba(0,0,0,0.6)", "rgba(0,0,0,0.95)"]}
-          locations={[0, 0.5, 1]}
+          colors={["rgba(13, 2, 33, 0.4)", "rgba(26, 11, 46, 0.8)", "#0D0221"]}
+          locations={[0, 0.4, 0.9]}
           style={styles.gradient}
         />
 
         <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
           <View style={styles.header}>
-            <View style={styles.logo}>
-              <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.logoIcon} />
-              <ThemedText style={styles.logoText}>FITFORGE</ThemedText>
-            </View>
-            <Pressable onPress={handleSkip}>
-              <ThemedText style={styles.skipText}>Skip Intro</ThemedText>
+            <BlurView intensity={20} tint="dark" style={styles.logoBlur}>
+              <View style={styles.logo}>
+                <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.logoIcon} />
+                <ThemedText style={styles.logoText}>FITFORGE</ThemedText>
+              </View>
+            </BlurView>
+            <Pressable onPress={handleSkip} style={styles.skipButton}>
+              <ThemedText style={styles.skipText}>Skip</ThemedText>
             </Pressable>
           </View>
 
           <View style={styles.content}>
             <View style={styles.titleContainer}>
-              <ThemedText style={styles.title}>UNLEASH</ThemedText>
-              <ThemedText style={styles.titleFaded}>YOUR TRUE</ThemedText>
-              <ThemedText style={styles.title}>POTENTIAL</ThemedText>
+              <ThemedText style={styles.titleLine1}>BEYOND</ThemedText>
+              <ThemedText style={styles.titleLine2}>LIMITS</ThemedText>
             </View>
 
             <ThemedText style={styles.subtitle}>
-              Join the elite community. AI-driven workouts tailored to your exact physiology.
+              Experience the future of fitness with AI-driven training tailored to your exact physiology.
             </ThemedText>
 
             <View style={styles.badges}>
-              <View style={styles.badge}>
-                <Feather name="zap" size={14} color="#FF4D4D" />
+              <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
+                <Feather name="zap" size={14} color="#9D4EDD" />
                 <ThemedText style={styles.badgeText}>AI COACH</ThemedText>
-              </View>
-              <View style={styles.badge}>
-                <Feather name="book" size={14} color="#FF4D4D" />
-                <ThemedText style={styles.badgeText}>1,500+ EXERCISES</ThemedText>
-              </View>
-              <View style={styles.badge}>
-                <Feather name="heart" size={14} color="#FF4D4D" />
-                <ThemedText style={styles.badgeText}>CUSTOM PLANS</ThemedText>
-              </View>
+              </BlurView>
+              <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
+                <Feather name="book" size={14} color="#9D4EDD" />
+                <ThemedText style={styles.badgeText}>1,300+ EXERCISES</ThemedText>
+              </BlurView>
+              <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
+                <Feather name="target" size={14} color="#9D4EDD" />
+                <ThemedText style={styles.badgeText}>ELITE PLANS</ThemedText>
+              </BlurView>
             </View>
           </View>
 
@@ -93,6 +97,12 @@ export default function OnboardingWelcomeScreen() {
                 pressed && styles.buttonPressed,
               ]}
             >
+              <LinearGradient
+                colors={["#9D4EDD", "#5A189A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
               <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
               <Feather name="arrow-right" size={20} color="white" />
             </Pressable>
@@ -108,20 +118,20 @@ export default function OnboardingWelcomeScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#0A0A0A",
+    backgroundColor: "#0D0221",
   },
   backgroundImage: {
     flex: 1,
   },
   backgroundImageStyle: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
   },
   container: {
     flex: 1,
-    paddingHorizontal: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     justifyContent: "space-between",
   },
   header: {
@@ -129,92 +139,107 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  logoBlur: {
+    borderRadius: BorderRadius.full,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
   logo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 8,
+    gap: Spacing.xs,
   },
   logoIcon: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     resizeMode: "contain",
   },
   logoText: {
-    fontSize: 18,
-    fontWeight: "700",
+    fontSize: 16,
+    fontWeight: "800",
     color: "white",
     letterSpacing: 2,
   },
+  skipButton: {
+    padding: Spacing.sm,
+  },
   skipText: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.7)",
+    color: "rgba(255,255,255,0.5)",
+    fontWeight: "600",
   },
   content: {
     flex: 1,
-    justifyContent: "flex-end",
-    paddingBottom: Spacing.xl,
+    justifyContent: "center",
+    paddingTop: 100,
   },
   titleContainer: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
-  title: {
-    fontSize: 56,
-    fontWeight: "800",
+  titleLine1: {
+    fontSize: 64,
+    fontWeight: "900",
     color: "white",
-    lineHeight: 58,
-    letterSpacing: -1,
+    lineHeight: 64,
+    letterSpacing: -2,
   },
-  titleFaded: {
-    fontSize: 56,
-    fontWeight: "800",
-    color: "rgba(255,255,255,0.5)",
-    lineHeight: 58,
-    letterSpacing: -1,
+  titleLine2: {
+    fontSize: 64,
+    fontWeight: "900",
+    color: "#9D4EDD",
+    lineHeight: 64,
+    letterSpacing: -2,
   },
   subtitle: {
-    fontSize: 17,
+    fontSize: 18,
     color: "rgba(255,255,255,0.7)",
-    lineHeight: 26,
+    lineHeight: 28,
     marginBottom: Spacing.xl,
-    maxWidth: 320,
+    fontWeight: "500",
   },
   badges: {
     flexDirection: "row",
     flexWrap: "wrap",
     gap: Spacing.sm,
   },
-  badge: {
+  badgeGlass: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    backgroundColor: "rgba(255,255,255,0.08)",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: "rgba(255,255,255,0.15)",
+    overflow: "hidden",
   },
   badgeText: {
     fontSize: 11,
-    fontWeight: "600",
+    fontWeight: "700",
     color: "white",
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
   ctaContainer: {
-    gap: Spacing.md,
+    paddingBottom: Spacing.xl,
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FF4D4D",
-    paddingVertical: 18,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: 20,
+    height: 64,
+    borderRadius: 24,
+    overflow: "hidden",
     gap: Spacing.sm,
+    shadowColor: "#9D4EDD",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
   },
   buttonPressed: {
-    opacity: 0.9,
     transform: [{ scale: 0.98 }],
   },
   primaryButtonText: {
@@ -229,7 +254,7 @@ const styles = StyleSheet.create({
     marginLeft: -50,
     width: 100,
     height: 5,
-    backgroundColor: "rgba(255,255,255,0.3)",
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 3,
   },
 });
