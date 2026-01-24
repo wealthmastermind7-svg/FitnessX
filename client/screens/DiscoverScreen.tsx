@@ -71,24 +71,29 @@ const POPULAR_WORKOUTS = [
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function MuscleCard({ item }: { item: typeof MUSCLE_GROUPS[0] }) {
+function MuscleCard({ item, navigation }: { item: typeof MUSCLE_GROUPS[0]; navigation: NavigationProp }) {
   const muscleImagePath = muscleGroupImages[item.name];
   
   return (
-    <GlassView glassEffectStyle="regular" style={styles.muscleCard}>
-      <View style={styles.muscleProgressContainer}>
-        <ExpoImage
-          source={muscleImagePath}
-          style={styles.muscleAnatomyImage}
-          contentFit="contain"
-        />
-        <View style={styles.progressRing}>
-           <ThemedText style={styles.progressText}>{Math.round(item.progress * 100)}%</ThemedText>
+    <Pressable onPress={() => {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      navigation.navigate("ExerciseBrowser", { filterByMuscle: item.name });
+    }}>
+      <GlassView glassEffectStyle="regular" style={styles.muscleCard}>
+        <View style={styles.muscleProgressContainer}>
+          <ExpoImage
+            source={muscleImagePath}
+            style={styles.muscleAnatomyImage}
+            contentFit="contain"
+          />
+          <View style={styles.progressRing}>
+             <ThemedText style={styles.progressText}>{Math.round(item.progress * 100)}%</ThemedText>
+          </View>
         </View>
-      </View>
-      <ThemedText style={styles.muscleCardTitle}>{item.name}</ThemedText>
-      <ThemedText style={styles.muscleCardSub}>{item.sets} SETS WEEKLY</ThemedText>
-    </GlassView>
+        <ThemedText style={styles.muscleCardTitle}>{item.name}</ThemedText>
+        <ThemedText style={styles.muscleCardSub}>{item.sets} SETS WEEKLY</ThemedText>
+      </GlassView>
+    </Pressable>
   );
 }
 
@@ -256,7 +261,7 @@ export default function DiscoverScreen() {
             contentContainerStyle={styles.horizontalScroll}
           >
             {MUSCLE_GROUPS.map((item) => (
-              <MuscleCard key={item.name} item={item} />
+              <MuscleCard key={item.name} item={item} navigation={navigation} />
             ))}
           </ScrollView>
         </View>
