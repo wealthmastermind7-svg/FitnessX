@@ -205,7 +205,7 @@ export default function DiscoverScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Popular Workouts</ThemedText>
-            <Pressable onPress={() => navigation.navigate("Generate")}>
+            <Pressable onPress={() => navigation.navigate("Main", { screen: "Generate" })}>
               <ThemedText style={styles.seeAll}>SEE ALL</ThemedText>
             </Pressable>
           </View>
@@ -328,11 +328,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   heroTitle: {
-    fontSize: 80,
+    fontSize: 64,
     fontWeight: "900",
     color: "#fff",
-    letterSpacing: -4,
-    lineHeight: 80,
+    letterSpacing: -2,
+    lineHeight: 64,
   },
   heroSubtitle: {
     fontSize: 16,
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   workoutCardTitle: {
-    fontSize: 40,
+    fontSize: 32,
     fontWeight: "900",
     color: "#fff",
     marginBottom: 4,
@@ -443,11 +443,11 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
   },
   aiCoachTitle: {
-    fontSize: 60,
+    fontSize: 48,
     fontWeight: "900",
     color: "#fff",
-    letterSpacing: -2,
-    lineHeight: 60,
+    letterSpacing: -1,
+    lineHeight: 48,
     marginBottom: 8,
   },
   aiCoachDesc: {
