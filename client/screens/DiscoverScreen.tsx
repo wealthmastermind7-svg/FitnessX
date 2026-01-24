@@ -205,7 +205,7 @@ export default function DiscoverScreen() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Popular Workouts</ThemedText>
-            <Pressable onPress={() => navigation.navigate("Main", { screen: "Generate" })}>
+            <Pressable onPress={() => (navigation as any).navigate("Main", { screen: "Generate" })}>
               <ThemedText style={styles.seeAll}>SEE ALL</ThemedText>
             </Pressable>
           </View>
