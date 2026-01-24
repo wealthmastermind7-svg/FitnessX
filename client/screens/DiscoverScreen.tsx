@@ -83,8 +83,8 @@ const POPULAR_WORKOUTS = [
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function MuscleCard({ item, navigation }: { item: typeof MUSCLE_GROUPS[0]; navigation: NavigationProp }) {
-  const muscleImagePath = muscleGroupImages[item.name];
+function MuscleCard({ item, navigation }: { item: any; navigation: NavigationProp }) {
+  const muscleImagePath = muscleGroupImages[item.name] || muscleGroupImages["Chest"];
   
   return (
     <Pressable onPress={() => {
@@ -102,7 +102,7 @@ function MuscleCard({ item, navigation }: { item: typeof MUSCLE_GROUPS[0]; navig
              <ThemedText style={styles.progressText}>{Math.round(item.progress * 100)}%</ThemedText>
           </View>
         </View>
-        <ThemedText style={styles.muscleCardTitle}>{item.name}</ThemedText>
+        <ThemedText style={styles.muscleCardTitle} numberOfLines={1}>{item.name}</ThemedText>
         <ThemedText style={styles.muscleCardSub}>{item.sets} SETS WEEKLY</ThemedText>
       </GlassView>
     </Pressable>
