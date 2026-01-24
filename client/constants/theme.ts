@@ -98,6 +98,10 @@ export const Typography = {
     fontSize: 20,
     fontWeight: "600" as const,
   },
+  h4: {
+    fontSize: 18,
+    fontWeight: "600" as const,
+  },
   body: {
     fontSize: 16,
     fontWeight: "400" as const,
@@ -122,6 +126,11 @@ export const Typography = {
     fontSize: 15,
     fontWeight: "700" as const,
     letterSpacing: 0.5,
+  },
+  link: {
+    fontSize: 16,
+    fontWeight: "600" as const,
+    color: "#FF6B6B",
   },
 };
 

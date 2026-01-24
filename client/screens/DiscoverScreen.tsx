@@ -109,11 +109,16 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
     }).start();
   };
 
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    onPress();
+  };
+
   return (
     <Pressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={onPress}
+      onPress={handlePress}
     >
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         <GlassView glassEffectStyle="regular" style={styles.workoutCard}>
@@ -143,13 +148,26 @@ export default function DiscoverScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
 
+  const handleWorkoutPress = useCallback((workoutTemplate: typeof POPULAR_WORKOUTS[0]) => {
+    const workout = {
+      id: workoutTemplate.id,
+      name: workoutTemplate.name,
+      description: workoutTemplate.description,
+      muscleGroups: workoutTemplate.muscleGroups,
+      equipment: workoutTemplate.equipment,
+      exercises: workoutTemplate.exercises,
+      difficulty: workoutTemplate.difficulty,
+    } as Workout;
+    
+    navigation.navigate("WorkoutDetail", { workout });
+  }, [navigation]);
+
   return (
     <ThemedView style={styles.container}>
       <Image 
         source={{ uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBme9Gva_wwuvfxHgjWuuqJFLGiNpOZigc3wPpjYth5CwmcZVZVsgPJmu5w_KCDw-Uh8T9liHT9jIATxZlk6_l4rrShbOO_Y5BouTR2Yh4vq-bmOWGD4T5JHSkYTS1wdDOwYFNMlsLwA2RaVjiiRLCETlQQjvQXr5u02yjcscQpYtv9_h9VRSiAbmBE8ZMsy5IcJU_EEevGYFQXDvQSS_OeJIV1cOcEjGSf0ZozLWWuMlpHrAxf4yrYHtHFkKDWf3j99SKRYeOU_YiQ" }}
-        style={StyleSheet.absoluteFill}
+        style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}
         blurRadius={10}
-        opacity={0.4}
       />
       
       <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
@@ -195,14 +213,17 @@ export default function DiscoverScreen() {
               <WorkoutCard
                 key={workout.id}
                 workout={workout}
-                onPress={() => {}}
+                onPress={() => handleWorkoutPress(workout)}
               />
             ))}
           </ScrollView>
         </View>
 
         <Pressable 
-          onPress={() => navigation.navigate("AIChat")}
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate("AIChat");
+          }}
           style={styles.aiCoachCardContainer}
         >
           <LinearGradient
