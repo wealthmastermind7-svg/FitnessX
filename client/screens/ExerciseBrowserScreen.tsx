@@ -30,6 +30,8 @@ import { getApiUrl } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 import { useRevenueCat } from "@/lib/revenuecat";
 
+type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
+
 const { width } = Dimensions.get("window");
 const COLUMN_WIDTH = (width - Spacing.lg * 3) / 2;
 
