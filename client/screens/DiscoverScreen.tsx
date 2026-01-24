@@ -17,7 +17,6 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { GlassView } from "expo-glass-effect";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -29,37 +28,45 @@ import { Image as ExpoImage } from "expo-image";
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const MUSCLE_GROUPS = [
-  { name: "Chest", sets: 12, progress: 0.75 },
-  { name: "Back", sets: 8, progress: 0.4 },
-  { name: "Shoulders", sets: 10, progress: 0.6 },
-  { name: "Arms", sets: 14, progress: 0.9 },
-  { name: "Legs", sets: 16, progress: 0.8 },
+  "Chest",
+  "Back",
+  "Shoulders",
+  "Arms",
+  "Forearms",
+  "Legs",
+  "Calves",
+  "Core",
+  "Cardio",
 ];
 
+// Hardcoded muscle group images
 const muscleGroupImages: Record<string, any> = {
   "Chest": require("../assets/muscle-groups/chest.jpeg"),
   "Back": require("../assets/muscle-groups/back.jpeg"),
   "Shoulders": require("../assets/muscle-groups/shoulders.jpeg"),
   "Arms": require("../assets/muscle-groups/arms.jpeg"),
+  "Forearms": require("../assets/muscle-groups/forearms.jpeg"),
   "Legs": require("../assets/muscle-groups/legs.jpeg"),
+  "Calves": require("../assets/muscle-groups/calves.jpeg"),
+  "Core": require("../assets/muscle-groups/core.jpeg"),
+  "Cardio": require("../assets/muscle-groups/cardio.jpeg"),
 };
 
 const POPULAR_WORKOUTS = [
   {
     id: "1",
     name: "Push Day",
-    description: "Chest, shoulders, and triceps focus.",
+    description: "Chest, shoulders, and triceps",
     muscleGroups: ["Chest", "Shoulders", "Triceps"],
-    equipment: ["Dumbbell", "Barbell"],
+    equipment: ["any"],
     difficulty: "Intermediate",
-    duration: "45 MIN",
-    calories: "520 KCAL",
     exercises: [
       { name: "Bench Press", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Chest" },
       { name: "Incline Dumbbell Press", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Chest" },
       { name: "Overhead Press", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Shoulders" },
       { name: "Lateral Raises", sets: 3, reps: "12-15", restSeconds: 45, muscleGroup: "Shoulders" },
       { name: "Tricep Pushdowns", sets: 3, reps: "12-15", restSeconds: 60, muscleGroup: "Triceps" },
+      { name: "Skull Crushers", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Triceps" },
     ],
   },
   {
@@ -67,44 +74,110 @@ const POPULAR_WORKOUTS = [
     name: "Pull Day",
     description: "Back and biceps focus",
     muscleGroups: ["Back", "Biceps"],
-    equipment: ["Dumbbell", "Barbell", "Cable"],
-    difficulty: "Advanced",
-    duration: "60 MIN",
-    calories: "680 KCAL",
+    equipment: ["any"],
+    difficulty: "Intermediate",
     exercises: [
       { name: "Barbell Rows", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Back" },
       { name: "Lat Pulldown", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Back" },
       { name: "Seated Cable Row", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Back" },
+      { name: "Face Pulls", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Back" },
       { name: "Barbell Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Biceps" },
       { name: "Hammer Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Biceps" },
+    ],
+  },
+  {
+    id: "3",
+    name: "Leg Day",
+    description: "Complete lower body",
+    muscleGroups: ["Quads", "Hamstrings", "Glutes", "Calves"],
+    equipment: ["any"],
+    difficulty: "Advanced",
+    exercises: [
+      { name: "Squats", sets: 4, reps: "8-10", restSeconds: 120, muscleGroup: "Quads" },
+      { name: "Leg Press", sets: 3, reps: "10-12", restSeconds: 90, muscleGroup: "Quads" },
+      { name: "Romanian Deadlifts", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Hamstrings" },
+      { name: "Leg Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Hamstrings" },
+      { name: "Hip Thrusts", sets: 4, reps: "10-12", restSeconds: 90, muscleGroup: "Glutes" },
+      { name: "Standing Calf Raises", sets: 4, reps: "15-20", restSeconds: 45, muscleGroup: "Calves" },
     ],
   },
 ];
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-function MuscleCard({ item, navigation }: { item: any; navigation: NavigationProp }) {
-  const muscleImagePath = muscleGroupImages[item.name] || muscleGroupImages["Chest"];
+function MuscleCard({ muscle, index, navigation }: { muscle: string; index: number; navigation: NavigationProp }) {
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const muscleImagePath = muscleGroupImages[muscle];
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.98,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePress = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate("ExerciseBrowser", { filterByMuscle: muscle });
+  };
+
+  // Gradient colors for fallback background
+  const gradientColors = [
+    ["#FF6B6B", "#FF8C8C"],
+    ["#4ECDC4", "#6FE4DD"],
+    ["#9D4EDD", "#B480E8"],
+    ["#FFB347", "#FFD9A4"],
+    ["#FF6B9D", "#FF8FB3"],
+    ["#6BCB77", "#9AED9A"],
+  ];
   
+  const gradientColor = gradientColors[index % gradientColors.length];
+
   return (
-    <Pressable onPress={() => {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      navigation.navigate("ExerciseBrowser", { filterByMuscle: item.name });
-    }}>
-      <GlassView glassEffectStyle="regular" style={styles.muscleCard}>
-        <View style={styles.muscleProgressContainer}>
-          <ExpoImage
-            source={muscleImagePath}
-            style={styles.muscleAnatomyImage}
-            contentFit="contain"
+    <Pressable
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      onPress={handlePress}
+    >
+      <Animated.View
+        style={[
+          styles.muscleCard,
+          { transform: [{ scale: scaleAnim }] },
+        ]}
+      >
+        {!imageLoaded && (
+          <LinearGradient
+            colors={gradientColor as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.muscleImage}
           />
-          <View style={styles.progressRing}>
-             <ThemedText style={styles.progressText}>{Math.round(item.progress * 100)}%</ThemedText>
-          </View>
-        </View>
-        <ThemedText style={styles.muscleCardTitle} numberOfLines={1}>{item.name}</ThemedText>
-        <ThemedText style={styles.muscleCardSub}>{item.sets} SETS WEEKLY</ThemedText>
-      </GlassView>
+        )}
+        <ExpoImage
+          source={muscleImagePath}
+          style={[styles.muscleImage, { opacity: imageLoaded ? 1 : 0 }]}
+          contentFit="contain"
+          onLoad={() => setImageLoaded(true)}
+          onError={() => {
+            console.log(`Failed to load image for ${muscle}`);
+            setImageLoaded(false);
+          }}
+        />
+        <LinearGradient
+          colors={["transparent", "rgba(10,14,26,0.95)"]}
+          style={styles.muscleGradient}
+        >
+          <ThemedText style={styles.muscleName}>{muscle}</ThemedText>
+        </LinearGradient>
+      </Animated.View>
     </Pressable>
   );
 }
@@ -126,35 +199,31 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
     }).start();
   };
 
-  const handlePress = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onPress();
-  };
-
   return (
     <Pressable
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      onPress={handlePress}
+      onPress={onPress}
     >
-      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <GlassView glassEffectStyle="regular" style={styles.workoutCard}>
-          <View style={styles.workoutCardBadge}>
-            <ThemedText style={styles.workoutCardBadgeText}>{workout.difficulty.toUpperCase()}</ThemedText>
+      <Animated.View
+        style={[styles.workoutCard, { transform: [{ scale: scaleAnim }] }]}
+      >
+        <View style={styles.workoutCardHeader}>
+          <ThemedText style={styles.workoutCardTitle}>{workout.name}</ThemedText>
+          <View style={styles.difficultyBadge}>
+            <ThemedText style={styles.difficultyText}>{workout.difficulty}</ThemedText>
           </View>
-          <View>
-            <ThemedText style={styles.workoutCardTitle}>{workout.name}</ThemedText>
-            <ThemedText style={styles.workoutCardDesc}>{workout.description}</ThemedText>
-          </View>
-          <View style={styles.workoutStatsRow}>
-            <GlassView glassEffectStyle="clear" style={styles.statPill}>
-              <ThemedText style={styles.statPillText}>{workout.duration}</ThemedText>
-            </GlassView>
-            <GlassView glassEffectStyle="clear" style={styles.statPill}>
-              <ThemedText style={styles.statPillText}>{workout.calories}</ThemedText>
-            </GlassView>
-          </View>
-        </GlassView>
+        </View>
+        <ThemedText style={styles.workoutCardDescription}>
+          {workout.description}
+        </ThemedText>
+        <View style={styles.workoutCardMuscles}>
+          {workout.muscleGroups.slice(0, 3).map((muscle, idx) => (
+            <View key={idx} style={styles.musclePill}>
+              <ThemedText style={styles.musclePillText}>{muscle}</ThemedText>
+            </View>
+          ))}
+        </View>
       </Animated.View>
     </Pressable>
   );
@@ -163,9 +232,16 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
 export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
+  const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NavigationProp>();
 
+  const { data: generatedWorkouts, isLoading } = useQuery<Workout[]>({
+    queryKey: ["/api/workouts"],
+  });
+
   const handleWorkoutPress = useCallback((workoutTemplate: typeof POPULAR_WORKOUTS[0]) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     const workout = {
       id: workoutTemplate.id,
       name: workoutTemplate.name,
@@ -174,62 +250,48 @@ export default function DiscoverScreen() {
       equipment: workoutTemplate.equipment,
       exercises: workoutTemplate.exercises,
       difficulty: workoutTemplate.difficulty,
-    } as Workout;
+    };
     
     navigation.navigate("WorkoutDetail", { workout });
   }, [navigation]);
 
-  const { data: bodyParts, isLoading: isLoadingBodyParts } = useQuery<string[]>({
-    queryKey: [getApiUrl() + "api/exercises/bodyPartList"],
+  const parallaxTransform = scrollY.interpolate({
+    inputRange: [-100, 0, 200],
+    outputRange: [50, 0, -100],
+    extrapolate: "clamp",
   });
-
-  const muscleGroups = bodyParts?.slice(0, 5).map((part, index) => ({
-    name: part.charAt(0).toUpperCase() + part.slice(1),
-    sets: 10 + index * 2,
-    progress: 0.4 + (index * 0.1),
-  })) || MUSCLE_GROUPS;
 
   return (
     <ThemedView style={styles.container}>
-      <Image 
-        source={{ uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBme9Gva_wwuvfxHgjWuuqJFLGiNpOZigc3wPpjYth5CwmcZVZVsgPJmu5w_KCDw-Uh8T9liHT9jIATxZlk6_l4rrShbOO_Y5BouTR2Yh4vq-bmOWGD4T5JHSkYTS1wdDOwYFNMlsLwA2RaVjiiRLCETlQQjvQXr5u02yjcscQpYtv9_h9VRSiAbmBE8ZMsy5IcJU_EEevGYFQXDvQSS_OeJIV1cOcEjGSf0ZozLWWuMlpHrAxf4yrYHtHFkKDWf3j99SKRYeOU_YiQ" }}
-        style={[StyleSheet.absoluteFill, { opacity: 0.4 }]}
-        blurRadius={10}
-      />
-      
-      <View style={[styles.header, { paddingTop: insets.top + Spacing.md }]}>
-        <ThemedText style={styles.brandTitle}>FITFORGE PREMIUM</ThemedText>
-        <View style={styles.headerRight}>
-          <GlassView glassEffectStyle="regular" style={styles.iconButton}>
-            <Feather name="bell" size={18} color="#fff" />
-          </GlassView>
-          <View style={styles.avatar}>
-            <ThemedText style={styles.avatarText}>JD</ThemedText>
-          </View>
-        </View>
-      </View>
-
-      <ScrollView
+      <Animated.ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingBottom: tabBarHeight + Spacing.xl },
+          { paddingTop: insets.top + Spacing.lg, paddingBottom: tabBarHeight + Spacing.xl },
         ]}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
       >
-        <View style={styles.heroSection}>
-          <ThemedText style={styles.dateText}>Monday, June 20</ThemedText>
-          <ThemedText style={styles.heroTitle}>DISCOVER</ThemedText>
+        <Animated.View
+          style={[
+            styles.heroSection,
+            { transform: [{ translateY: parallaxTransform }] },
+          ]}
+        >
+          <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
+          <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
           <ThemedText style={styles.heroSubtitle}>
-            Elite performance starts with precision planning.
+            Your personal fitness journey starts here
           </ThemedText>
-        </View>
+        </Animated.View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Popular Workouts</ThemedText>
-            <Pressable onPress={() => (navigation as any).navigate("Main", { screen: "Generate" })}>
-              <ThemedText style={styles.seeAll}>SEE ALL</ThemedText>
-            </Pressable>
+            <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
           </View>
           <ScrollView
             horizontal
@@ -246,48 +308,58 @@ export default function DiscoverScreen() {
           </ScrollView>
         </View>
 
-        <Pressable 
+        <Pressable
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
             navigation.navigate("AIChat");
           }}
-          style={styles.aiCoachCardContainer}
+          style={({ pressed }) => [
+            styles.aiChatCard,
+            pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+          ]}
         >
           <LinearGradient
-            colors={["rgba(255,255,255,0.05)", "rgba(0,0,0,0.3)"]}
-            style={styles.aiCoachCard}
+            colors={["#9D4EDD", "#5A189A"] as any}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.exerciseLibraryGradient}
           >
-            <View style={styles.aiCoachBadgeRow}>
-              <View style={styles.aiEliteBadge}>
-                <ThemedText style={styles.aiEliteText}>AI ELITE</ThemedText>
+            <View style={styles.exerciseLibraryContent}>
+              <View style={styles.exerciseLibraryText}>
+                <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                  <Feather name="zap" size={14} color="#fff" />
+                  <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#fff" }]}>
+                    PRO
+                  </ThemedText>
+                </View>
+                <ThemedText style={styles.exerciseLibraryTitle}>
+                  AI Coach
+                </ThemedText>
+                <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                  Programs, feedback, recovery & coaching
+                </ThemedText>
               </View>
-              <ThemedText style={styles.aiCoachSub}>ACTIVE NEURAL LINK</ThemedText>
+              <View style={styles.exerciseLibraryPreview}>
+                <Feather name="message-circle" size={40} color="rgba(255,255,255,0.6)" />
+              </View>
             </View>
-            <ThemedText style={styles.aiCoachTitle}>AI COACH</ThemedText>
-            <ThemedText style={styles.aiCoachDesc}>Personalized recovery insights</ThemedText>
+            <View style={styles.exerciseLibraryArrow}>
+              <Feather name="arrow-right" size={20} color="#fff" />
+            </View>
           </LinearGradient>
         </Pressable>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
-            <View style={styles.pageIndicator}>
-              <View style={styles.indicatorActive} />
-              <View style={styles.indicatorInactive} />
-              <View style={styles.indicatorInactive} />
-            </View>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScroll}
-          >
-            {muscleGroups.map((item) => (
-              <MuscleCard key={item.name} item={item} navigation={navigation} />
+          <View style={styles.muscleGrid}>
+            {MUSCLE_GROUPS.map((muscle, index) => (
+              <MuscleCard key={muscle} muscle={muscle} index={index} navigation={navigation} />
             ))}
-          </ScrollView>
+          </View>
         </View>
-      </ScrollView>
+      </Animated.ScrollView>
     </ThemedView>
   );
 }
@@ -295,73 +367,35 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
-  },
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.md,
-    zIndex: 10,
-  },
-  brandTitle: {
-    fontSize: 10,
-    fontWeight: "800",
-    letterSpacing: 3,
-    color: "rgba(255,255,255,0.4)",
-  },
-  headerRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: "#fff",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  avatarText: {
-    color: "#000",
-    fontSize: 12,
-    fontWeight: "800",
+    backgroundColor: Colors.dark.backgroundRoot,
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
   },
   heroSection: {
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.xl * 1.5,
+    marginBottom: Spacing.xxl,
+    paddingTop: Spacing.lg,
   },
-  dateText: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.5)",
+  heroTagline: {
+    fontSize: 12,
     fontWeight: "600",
+    letterSpacing: 2,
+    color: Colors.dark.accent,
     marginBottom: Spacing.xs,
   },
   heroTitle: {
-    fontSize: 64,
-    fontWeight: "900",
-    color: "#fff",
-    letterSpacing: -2,
-    lineHeight: 64,
+    fontSize: 48,
+    fontWeight: "800",
+    color: Colors.dark.text,
+    marginBottom: Spacing.sm,
+    letterSpacing: -1,
+    lineHeight: 60,
   },
   heroSubtitle: {
     fontSize: 16,
-    color: "rgba(255,255,255,0.5)",
-    fontWeight: "500",
-    marginTop: Spacing.sm,
-    maxWidth: "80%",
+    color: Colors.dark.textSecondary,
+    fontWeight: "400",
+    lineHeight: 24,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -369,175 +403,220 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "flex-end",
-    marginBottom: Spacing.lg,
+    alignItems: "center",
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "700",
-    color: "#fff",
-  },
-  seeAll: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "rgba(255,255,255,0.3)",
-    letterSpacing: 1,
+    color: Colors.dark.text,
+    letterSpacing: -0.3,
   },
   horizontalScroll: {
-    gap: Spacing.md,
     paddingRight: Spacing.lg,
+    gap: Spacing.md,
   },
   workoutCard: {
-    width: SCREEN_WIDTH * 0.75,
-    height: 380,
-    borderRadius: 40,
-    padding: Spacing.xl,
+    width: SCREEN_WIDTH * 0.7,
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  workoutCardHeader: {
+    flexDirection: "row",
     justifyContent: "space-between",
-  },
-  workoutCardBadge: {
-    backgroundColor: "rgba(255,255,255,0.1)",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    alignSelf: "flex-start",
-  },
-  workoutCardBadgeText: {
-    fontSize: 10,
-    fontWeight: "900",
-    color: "#fff",
-    letterSpacing: 1,
+    alignItems: "flex-start",
+    marginBottom: Spacing.sm,
+    gap: Spacing.sm,
   },
   workoutCardTitle: {
-    fontSize: 32,
-    fontWeight: "900",
-    color: "#fff",
-    marginBottom: 4,
-  },
-  workoutCardDesc: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.6)",
-    fontWeight: "500",
-  },
-  workoutStatsRow: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  statPill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
-  },
-  statPillText: {
-    fontSize: 10,
-    fontWeight: "800",
-    color: "#fff",
-  },
-  aiCoachCardContainer: {
-    marginBottom: Spacing.xl,
-  },
-  aiCoachCard: {
-    padding: 30,
-    borderRadius: 40,
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-  },
-  aiCoachBadgeRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 12,
-    marginBottom: 20,
-  },
-  aiEliteBadge: {
-    backgroundColor: "#fff",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 20,
-  },
-  aiEliteText: {
-    color: "#000",
-    fontSize: 11,
-    fontWeight: "900",
-  },
-  aiCoachSub: {
-    fontSize: 10,
+    fontSize: 20,
     fontWeight: "700",
-    color: "rgba(255,255,255,0.4)",
-    letterSpacing: 2,
+    color: Colors.dark.text,
+    letterSpacing: -0.3,
+    flex: 1,
+    flexWrap: "wrap",
   },
-  aiCoachTitle: {
-    fontSize: 48,
-    fontWeight: "900",
-    color: "#fff",
-    letterSpacing: -1,
-    lineHeight: 48,
-    marginBottom: 8,
+  difficultyBadge: {
+    backgroundColor: Colors.dark.accent + "20",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.xs,
   },
-  aiCoachDesc: {
-    fontSize: 14,
-    color: "rgba(255,255,255,0.6)",
+  difficultyText: {
+    ...Typography.small,
+    color: Colors.dark.accent,
     fontWeight: "600",
   },
+  workoutCardDescription: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+    marginBottom: Spacing.md,
+  },
+  workoutCardMuscles: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.xs,
+  },
+  musclePill: {
+    backgroundColor: Colors.dark.backgroundSecondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+  },
+  musclePillText: {
+    ...Typography.small,
+    color: Colors.dark.text,
+  },
+  muscleGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+  },
   muscleCard: {
-    width: 200,
-    padding: 24,
-    borderRadius: 40,
-    alignItems: "center",
-  },
-  muscleProgressContainer: {
-    width: "100%",
+    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
     aspectRatio: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 16,
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
   },
-  muscleAnatomyImage: {
-    width: "80%",
-    height: "80%",
-    position: "absolute",
-    opacity: 0.8,
-  },
-  progressRing: {
+  muscleImage: {
     width: "100%",
     height: "100%",
-    borderWidth: 2,
-    borderColor: "rgba(255,255,255,0.05)",
-    borderRadius: 100,
+    position: "absolute",
+  },
+  muscleGradient: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: Spacing.md,
+    justifyContent: "flex-end",
+    height: "50%",
+  },
+  muscleName: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    letterSpacing: -0.2,
+  },
+  exerciseLibraryCard: {
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  exerciseLibraryGradient: {
+    padding: Spacing.lg,
+  },
+  exerciseLibraryContent: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  exerciseLibraryText: {
+    flex: 1,
+    marginRight: Spacing.md,
+  },
+  exerciseLibraryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    backgroundColor: Colors.dark.accent + "20",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.full,
+    alignSelf: "flex-start",
+    marginBottom: Spacing.sm,
+  },
+  exerciseLibraryBadgeText: {
+    ...Typography.small,
+    color: Colors.dark.accent,
+    fontWeight: "600",
+  },
+  exerciseLibraryTitle: {
+    fontSize: 24,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    marginBottom: Spacing.xs,
+    letterSpacing: -0.3,
+  },
+  exerciseLibrarySubtitle: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+  },
+  exerciseLibraryPreview: {
+    width: 80,
+    height: 80,
     justifyContent: "center",
     alignItems: "center",
   },
-  progressText: {
-    fontSize: 14,
-    fontWeight: "900",
-    color: "#fff",
+  previewStack: {
+    width: 60,
+    height: 60,
+    position: "relative",
   },
-  muscleCardTitle: {
-    fontSize: 20,
-    fontWeight: "800",
-    color: "#fff",
-    marginBottom: 4,
+  previewCard: {
+    position: "absolute",
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius.md,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
   },
-  muscleCardSub: {
-    fontSize: 10,
-    fontWeight: "900",
-    color: "rgba(255,255,255,0.4)",
-    letterSpacing: 2,
+  previewCard1: {
+    top: 0,
+    left: 0,
+    zIndex: 2,
   },
-  pageIndicator: {
+  previewCard2: {
+    bottom: 0,
+    right: 0,
+    zIndex: 1,
+    backgroundColor: "#9D4EDD20",
+  },
+  exerciseLibraryArrow: {
+    position: "absolute",
+    right: Spacing.lg,
+    bottom: Spacing.lg,
+  },
+  aiChatCard: {
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  socialRow: {
     flexDirection: "row",
-    gap: 6,
-    marginBottom: 6,
+    gap: Spacing.md,
   },
-  indicatorActive: {
-    width: 30,
-    height: 2,
-    backgroundColor: "#fff",
-    borderRadius: 1,
+  socialCard: {
+    flex: 1,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
   },
-  indicatorInactive: {
-    width: 8,
-    height: 2,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    borderRadius: 1,
+  socialCardGradient: {
+    padding: Spacing.lg,
+    alignItems: "center",
+  },
+  socialCardTitle: {
+    ...Typography.body,
+    color: Colors.dark.text,
+    fontWeight: "600",
+    marginTop: Spacing.sm,
+  },
+  socialCardSubtitle: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: Spacing.xs,
   },
 });
-
