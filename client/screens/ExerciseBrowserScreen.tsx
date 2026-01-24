@@ -9,6 +9,7 @@ import {
   RefreshControl,
   ScrollView,
   Alert,
+  Dimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -18,6 +19,8 @@ import { Image } from "expo-image";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RouteProp } from "@react-navigation/native";
+import { BlurView } from "expo-blur";
+import { LinearGradient } from "expo-linear-gradient";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -27,7 +30,8 @@ import { getApiUrl } from "@/lib/query-client";
 import { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
 import { useRevenueCat } from "@/lib/revenuecat";
 
-type RoutePropType = RouteProp<RootStackParamList, "ExerciseBrowser">;
+const { width } = Dimensions.get("window");
+const COLUMN_WIDTH = (width - Spacing.lg * 3) / 2;
 
 const BODY_PARTS = [
   { id: "all", label: "All", icon: "grid" },
@@ -42,7 +46,6 @@ const BODY_PARTS = [
   { id: "cardio", label: "Cardio", icon: "heart" },
 ];
 
-// Map display names from DiscoverScreen to ExerciseDB body part names
 const normalizeBodyPartName = (name: string): string => {
   const nameMap: Record<string, string> = {
     "arms": "upper arms",
@@ -69,7 +72,6 @@ export default function ExerciseBrowserScreen() {
   );
   const [refreshing, setRefreshing] = useState(false);
 
-  // Pro users see more exercises (1000+) to showcase the full library
   const exerciseLimit = isProUser ? 1000 : 100;
 
   const fetchUrl = useMemo(() => {
@@ -133,84 +135,71 @@ export default function ExerciseBrowserScreen() {
   const renderExerciseCard = ({ item, index }: { item: ExerciseDBExercise; index: number }) => {
     const isLocked = !isProUser && index >= 10;
     return (
-    <Pressable
-      onPress={() => handleExercisePress(item, index)}
-      style={({ pressed }) => [
-        styles.exerciseCard,
-        isLocked && styles.exerciseCardLocked,
-        pressed && styles.exerciseCardPressed,
-      ]}
-    >
-      <View style={styles.exerciseImageContainer}>
-        <Image
-          source={{ uri: getExerciseImageUrl(item.id, "180") }}
-          style={[styles.exerciseImage, isLocked && styles.exerciseImageLocked]}
-          contentFit="cover"
-          transition={200}
-          placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
-          onError={(error) => {
-            console.warn(`Failed to load GIF for exercise ${item.id}:`, error);
-          }}
-        />
-        <View style={styles.exerciseOverlay}>
-          <View style={styles.targetBadge}>
-            <ThemedText style={styles.targetBadgeText}>{item.target}</ThemedText>
-          </View>
-          {isLocked && (
-            <View style={styles.lockOverlay}>
-              <Feather name="lock" size={24} color="#9D4EDD" />
+      <Pressable
+        onPress={() => handleExercisePress(item, index)}
+        style={({ pressed }) => [
+          styles.exerciseCard,
+          pressed && styles.exerciseCardPressed,
+        ]}
+      >
+        <BlurView intensity={20} tint="dark" style={styles.glassCard}>
+          <View style={styles.exerciseImageContainer}>
+            <Image
+              source={{ uri: getExerciseImageUrl(item.id, "360") }}
+              style={[styles.exerciseImage, isLocked && styles.exerciseImageLocked]}
+              contentFit="cover"
+              transition={200}
+              placeholder={{ blurhash: "L6PZfSi_.AyE_3t7t7R**0o#DgR4" }}
+            />
+            <LinearGradient
+              colors={["transparent", "rgba(13, 2, 33, 0.8)"]}
+              style={styles.imageOverlay}
+            />
+            {isLocked && (
+              <View style={styles.lockOverlay}>
+                <BlurView intensity={30} tint="dark" style={styles.lockBlur}>
+                  <Feather name="lock" size={24} color="#9D4EDD" />
+                </BlurView>
+              </View>
+            )}
+            <View style={styles.targetBadge}>
+              <ThemedText style={styles.targetBadgeText}>{item.target}</ThemedText>
             </View>
-          )}
-        </View>
-      </View>
-      <View style={styles.exerciseInfo}>
-        <ThemedText style={styles.exerciseName} numberOfLines={2}>
-          {item.name}
-        </ThemedText>
-        <View style={styles.exerciseMeta}>
-          <View style={styles.metaItem}>
-            <Feather name="target" size={12} color={Colors.dark.accent} />
-            <ThemedText style={styles.metaText}>{item.bodyPart}</ThemedText>
           </View>
-          <View style={styles.metaItem}>
-            <Feather name="tool" size={12} color={Colors.dark.textSecondary} />
-            <ThemedText style={styles.metaText}>{item.equipment}</ThemedText>
+          <View style={styles.exerciseInfo}>
+            <ThemedText style={styles.exerciseName} numberOfLines={2}>
+              {item.name}
+            </ThemedText>
+            <View style={styles.exerciseMeta}>
+              <Feather name="activity" size={12} color="#9D4EDD" />
+              <ThemedText style={styles.metaText}>{item.bodyPart}</ThemedText>
+            </View>
           </View>
-        </View>
-      </View>
-      <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
-    </Pressable>
+        </BlurView>
+      </Pressable>
     );
   };
 
   const ListHeader = () => (
-    <View>
-      <View style={styles.searchContainer}>
-        <Feather
-          name="search"
-          size={20}
-          color={Colors.dark.textSecondary}
-          style={styles.searchIcon}
-        />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Search 1,300+ exercises..."
-          placeholderTextColor={Colors.dark.textSecondary}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          returnKeyType="search"
-        />
-        {searchQuery.length > 0 && (
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              setSearchQuery("");
-            }}
-          >
-            <Feather name="x" size={20} color={Colors.dark.textSecondary} />
-          </Pressable>
-        )}
-      </View>
+    <View style={styles.listHeader}>
+      <BlurView intensity={30} tint="dark" style={styles.searchBlur}>
+        <View style={styles.searchContainer}>
+          <Feather name="search" size={20} color="rgba(255,255,255,0.6)" />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search 1,300+ exercises..."
+            placeholderTextColor="rgba(255,255,255,0.4)"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+          />
+          {searchQuery.length > 0 && (
+            <Pressable onPress={() => setSearchQuery("")}>
+              <Feather name="x" size={20} color="rgba(255,255,255,0.6)" />
+            </Pressable>
+          )}
+        </View>
+      </BlurView>
 
       <ScrollView
         horizontal
@@ -221,17 +210,26 @@ export default function ExerciseBrowserScreen() {
           <Pressable
             key={part.id}
             onPress={() => handleBodyPartSelect(part.id)}
-            style={[
+            style={({ pressed }) => [
               styles.bodyPartChip,
               selectedBodyPart === part.id && styles.bodyPartChipSelected,
+              pressed && { scale: 0.95 },
             ]}
           >
+            {selectedBodyPart === part.id ? (
+              <LinearGradient
+                colors={["#9D4EDD", "#5A189A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            ) : (
+              <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
+            )}
             <Feather
               name={part.icon as any}
               size={14}
-              color={
-                selectedBodyPart === part.id ? "#FFF" : Colors.dark.textSecondary
-              }
+              color={selectedBodyPart === part.id ? "#FFF" : "rgba(255,255,255,0.6)"}
             />
             <ThemedText
               style={[
@@ -249,74 +247,45 @@ export default function ExerciseBrowserScreen() {
         <ThemedText style={styles.resultsCount}>
           {exercises?.length || 0} exercises found
         </ThemedText>
-        {selectedBodyPart !== "all" && (
-          <Pressable
-            onPress={() => handleBodyPartSelect("all")}
-            style={styles.clearFilter}
-          >
-            <ThemedText style={styles.clearFilterText}>Clear filter</ThemedText>
-          </Pressable>
-        )}
       </View>
-    </View>
-  );
-
-  const ListEmpty = () => (
-    <View style={styles.emptyContainer}>
-      {isLoading ? (
-        <ActivityIndicator size="large" color={Colors.dark.accent} />
-      ) : error ? (
-        <>
-          <Feather name="alert-circle" size={48} color={Colors.dark.textSecondary} />
-          <ThemedText style={styles.emptyTitle}>Unable to load exercises</ThemedText>
-          <ThemedText style={styles.emptySubtitle}>
-            Check your connection and try again
-          </ThemedText>
-          <Pressable onPress={onRefresh} style={styles.retryButton}>
-            <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
-          </Pressable>
-        </>
-      ) : (
-        <>
-          <Feather name="search" size={48} color={Colors.dark.textSecondary} />
-          <ThemedText style={styles.emptyTitle}>No exercises found</ThemedText>
-          <ThemedText style={styles.emptySubtitle}>
-            Try a different search term or filter
-          </ThemedText>
-        </>
-      )}
     </View>
   );
 
   return (
     <ThemedView style={styles.container}>
+      <LinearGradient
+        colors={["#0D0221", "#1A0B2E"]}
+        style={StyleSheet.absoluteFill}
+      />
+      
       <View style={[styles.header, { paddingTop: insets.top }]}>
+        <BlurView intensity={40} tint="dark" style={StyleSheet.absoluteFill} />
         <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.goBack();
-          }}
+          onPress={() => navigation.goBack()}
           style={styles.headerButton}
         >
-          <Feather name="x" size={24} color={Colors.dark.text} />
+          <Feather name="chevron-left" size={28} color="#FFF" />
         </Pressable>
-        <ThemedText style={styles.headerTitle}>Exercise Library</ThemedText>
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            navigation.navigate("Main");
-          }}
-          style={styles.headerButton}
-        >
-          <Feather name="home" size={24} color={Colors.dark.text} />
-        </Pressable>
+        <ThemedText style={styles.headerTitle}>Discover</ThemedText>
+        <View style={styles.headerButton} />
       </View>
+
       <FlatList
         data={exercises || []}
         renderItem={renderExerciseCard}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeader}
-        ListEmptyComponent={ListEmpty}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            {isLoading ? (
+              <ActivityIndicator size="large" color="#9D4EDD" />
+            ) : (
+              <ThemedText style={styles.emptyText}>No exercises found</ThemedText>
+            )}
+          </View>
+        )}
+        numColumns={2}
+        columnWrapperStyle={styles.columnWrapper}
         contentContainerStyle={[
           styles.listContent,
           { paddingBottom: insets.bottom + Spacing.xl },
@@ -326,11 +295,9 @@ export default function ExerciseBrowserScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor={Colors.dark.accent}
-            progressViewOffset={0}
+            tintColor="#9D4EDD"
           />
         }
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
     </ThemedView>
   );
@@ -339,7 +306,6 @@ export default function ExerciseBrowserScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
   },
   header: {
     flexDirection: "row",
@@ -347,202 +313,170 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
+    overflow: "hidden",
     borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
+    borderBottomColor: "rgba(255,255,255,0.1)",
   },
   headerButton: {
-    padding: Spacing.sm,
+    width: 44,
+    height: 44,
     justifyContent: "center",
     alignItems: "center",
   },
   headerTitle: {
-    ...Typography.h3,
-    color: Colors.dark.text,
-    flex: 1,
-    textAlign: "center",
+    ...Typography.h2,
+    color: "#FFF",
+    fontWeight: "700",
+    letterSpacing: -0.5,
   },
   listContent: {
     paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.md,
+    paddingTop: Spacing.xl,
+  },
+  listHeader: {
+    marginBottom: Spacing.lg,
+  },
+  searchBlur: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.md,
-    marginBottom: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  searchIcon: {
-    marginRight: Spacing.sm,
+    height: 54,
   },
   searchInput: {
     flex: 1,
-    paddingVertical: Spacing.md,
-    color: Colors.dark.text,
+    marginLeft: Spacing.sm,
+    color: "#FFF",
     fontSize: 16,
   },
   bodyPartScroll: {
-    paddingBottom: Spacing.lg,
     gap: Spacing.sm,
+    paddingBottom: Spacing.md,
   },
   bodyPartChip: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.dark.backgroundDefault,
     borderRadius: BorderRadius.full,
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: "rgba(255,255,255,0.1)",
     gap: Spacing.xs,
   },
   bodyPartChipSelected: {
-    backgroundColor: Colors.dark.accent,
-    borderColor: Colors.dark.accent,
+    borderColor: "#9D4EDD",
   },
   bodyPartText: {
     ...Typography.small,
-    color: Colors.dark.textSecondary,
+    color: "rgba(255,255,255,0.6)",
+    fontWeight: "600",
   },
   bodyPartTextSelected: {
     color: "#FFF",
-    fontWeight: "600",
   },
-  resultsHeader: {
-    flexDirection: "row",
+  columnWrapper: {
     justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: Spacing.md,
-  },
-  resultsCount: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-  },
-  clearFilter: {
-    paddingVertical: Spacing.xs,
-    paddingHorizontal: Spacing.sm,
-  },
-  clearFilterText: {
-    ...Typography.small,
-    color: Colors.dark.accent,
+    marginBottom: Spacing.lg,
   },
   exerciseCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    gap: Spacing.md,
+    width: COLUMN_WIDTH,
   },
   exerciseCardPressed: {
-    opacity: 0.8,
-    transform: [{ scale: 0.98 }],
+    transform: [{ scale: 0.97 }],
   },
-  exerciseCardLocked: {
-    opacity: 0.6,
-  },
-  exerciseImageLocked: {
-    opacity: 0.6,
-  },
-  lockOverlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.4)",
+  glassCard: {
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.15)",
   },
   exerciseImageContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.md,
-    overflow: "hidden",
-    backgroundColor: Colors.dark.backgroundDefault,
+    width: "100%",
+    aspectRatio: 1,
+    backgroundColor: "rgba(255,255,255,0.05)",
   },
   exerciseImage: {
     width: "100%",
     height: "100%",
   },
-  exerciseOverlay: {
+  exerciseImageLocked: {
+    opacity: 0.4,
+  },
+  imageOverlay: {
     position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
-    padding: Spacing.xs,
+    height: "50%",
+  },
+  lockOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  lockBlur: {
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.full,
+    overflow: "hidden",
   },
   targetBadge: {
-    backgroundColor: "rgba(0,0,0,0.7)",
-    paddingHorizontal: Spacing.xs,
-    paddingVertical: 2,
+    position: "absolute",
+    top: Spacing.sm,
+    right: Spacing.sm,
+    backgroundColor: "rgba(157, 78, 221, 0.8)",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
     borderRadius: BorderRadius.sm,
-    alignSelf: "flex-start",
   },
   targetBadgeText: {
     fontSize: 10,
     color: "#FFF",
-    fontWeight: "600",
-    textTransform: "capitalize",
+    fontWeight: "700",
+    textTransform: "uppercase",
   },
   exerciseInfo: {
-    flex: 1,
+    padding: Spacing.sm,
   },
   exerciseName: {
-    ...Typography.body,
-    color: Colors.dark.text,
+    fontSize: 14,
+    color: "#FFF",
     fontWeight: "600",
     textTransform: "capitalize",
-    marginBottom: Spacing.xs,
-    flexWrap: "wrap",
+    marginBottom: 4,
   },
   exerciseMeta: {
     flexDirection: "row",
-    gap: Spacing.md,
-  },
-  metaItem: {
-    flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
+    gap: 4,
   },
   metaText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
+    fontSize: 11,
+    color: "rgba(255,255,255,0.5)",
     textTransform: "capitalize",
   },
-  separator: {
-    height: Spacing.sm,
+  resultsHeader: {
+    marginTop: Spacing.sm,
+  },
+  resultsCount: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.4)",
+    fontWeight: "600",
+    textTransform: "uppercase",
+    letterSpacing: 1,
   },
   emptyContainer: {
-    flex: 1,
+    paddingTop: 100,
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: Spacing.xl * 3,
   },
-  emptyTitle: {
-    ...Typography.h3,
-    color: Colors.dark.text,
-    marginTop: Spacing.lg,
-    marginBottom: Spacing.sm,
-  },
-  emptySubtitle: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-    textAlign: "center",
-  },
-  retryButton: {
-    marginTop: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
-    backgroundColor: Colors.dark.accent,
-    borderRadius: BorderRadius.md,
-  },
-  retryButtonText: {
-    ...Typography.body,
-    color: "#FFF",
-    fontWeight: "600",
+  emptyText: {
+    color: "rgba(255,255,255,0.4)",
+    fontSize: 16,
   },
 });
