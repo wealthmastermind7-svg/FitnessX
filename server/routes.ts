@@ -264,25 +264,129 @@ export async function registerRoutes(app: Express): Promise<Server> {
         targetMuscles,
         sessionsPerWeek,
         sessionLength,
+        goal,
       } = req.body;
 
-      if (!weeks || !experience || !equipment || !targetMuscles) {
-        return res.status(400).json({ error: "Missing required fields" });
+      if (!RAPIDAPI_KEY) {
+        // Fallback to OpenAI if RapidAPI is not available
+        const program = await generateTrainingProgram({
+          weeks,
+          experience,
+          equipment,
+          targetMuscles,
+          sessionsPerWeek: sessionsPerWeek || 4,
+          sessionLength: sessionLength || 45,
+        });
+        return res.json(program);
       }
 
-      const program = await generateTrainingProgram({
-        weeks,
-        experience,
-        equipment,
-        targetMuscles,
-        sessionsPerWeek: sessionsPerWeek || 4,
-        sessionLength: sessionLength || 45,
-      });
+      const response = await fetch(
+        `https://${NUTRITION_HOST}/generateWorkoutPlan`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-rapidapi-host": NUTRITION_HOST,
+            "x-rapidapi-key": RAPIDAPI_KEY,
+          },
+          body: JSON.stringify({
+            goal: goal || "Build muscle",
+            fitness_level: experience || "Intermediate",
+            preferences: ["Weight training"],
+            health_conditions: ["None"],
+            schedule: {
+              days_per_week: sessionsPerWeek || 4,
+              session_duration: sessionLength || 60
+            },
+            plan_duration_weeks: weeks || 4,
+            lang: "en"
+          }),
+        }
+      );
 
-      res.json(program);
+      if (!response.ok) {
+        throw new Error(`RapidAPI Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data.result);
     } catch (error) {
       console.error("Error generating AI program:", error);
       res.status(500).json({ error: "Failed to generate training program" });
+    }
+  });
+
+  app.post("/api/nutrition/suggestions", async (req, res) => {
+    try {
+      const { goal, dietary_restrictions, health_conditions } = req.body;
+
+      if (!RAPIDAPI_KEY) {
+        return res.status(500).json({ error: "RapidAPI key not configured" });
+      }
+
+      const response = await fetch(
+        `https://${NUTRITION_HOST}/nutritionAdvice`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-rapidapi-host": NUTRITION_HOST,
+            "x-rapidapi-key": RAPIDAPI_KEY,
+          },
+          body: JSON.stringify({
+            goal: goal || "Healthy eating",
+            dietary_restrictions: dietary_restrictions || ["None"],
+            health_conditions: health_conditions || ["None"],
+            lang: "en"
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`RapidAPI Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data.result);
+    } catch (error) {
+      console.error("Error fetching nutrition advice:", error);
+      res.status(500).json({ error: "Failed to fetch nutrition advice" });
+    }
+  });
+
+  app.get("/api/exercises/details/:name", async (req, res) => {
+    try {
+      const { name } = req.params;
+
+      if (!RAPIDAPI_KEY) {
+        return res.status(500).json({ error: "RapidAPI key not configured" });
+      }
+
+      const response = await fetch(
+        `https://${NUTRITION_HOST}/exerciseDetails`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-rapidapi-host": NUTRITION_HOST,
+            "x-rapidapi-key": RAPIDAPI_KEY,
+          },
+          body: JSON.stringify({
+            exercise_name: name,
+            lang: "en"
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`RapidAPI Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      res.json(data.result);
+    } catch (error) {
+      console.error("Error fetching exercise details:", error);
+      res.status(500).json({ error: "Failed to fetch exercise details" });
     }
   });
 
