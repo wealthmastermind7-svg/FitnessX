@@ -447,6 +447,38 @@ export default function WorkoutDetailScreen() {
             </View>
           </View>
 
+          <View style={styles.socialActions}>
+            <Pressable style={styles.socialButton}>
+              <Feather name="thumbs-up" size={20} color={Colors.dark.textSecondary} />
+              <ThemedText style={styles.socialButtonText}>Like</ThemedText>
+            </Pressable>
+            <Pressable style={styles.socialButton}>
+              <Feather name="message-circle" size={20} color={Colors.dark.textSecondary} />
+              <ThemedText style={styles.socialButtonText}>Comment</ThemedText>
+            </Pressable>
+            <Pressable style={styles.socialButton}>
+              <Feather name="share" size={20} color={Colors.dark.textSecondary} />
+              <ThemedText style={styles.socialButtonText}>Share</ThemedText>
+            </Pressable>
+          </View>
+
+          <View style={styles.muscleSplitCard}>
+            <ThemedText style={styles.muscleSplitTitle}>Muscle Split</ThemedText>
+            {workout.muscleGroups.map((muscle, idx) => {
+              const percentage = Math.round(100 / workout.muscleGroups.length);
+              const adjustedPercent = idx === 0 ? Math.min(percentage + (100 % workout.muscleGroups.length), 100) : percentage;
+              return (
+                <View key={muscle} style={styles.muscleSplitRow}>
+                  <ThemedText style={styles.muscleSplitLabel}>{muscle}</ThemedText>
+                  <View style={styles.muscleSplitBarContainer}>
+                    <View style={[styles.muscleSplitBar, { width: `${adjustedPercent}%` }]} />
+                  </View>
+                  <ThemedText style={styles.muscleSplitPercent}>{adjustedPercent}%</ThemedText>
+                </View>
+              );
+            })}
+          </View>
+
           <ThemedText style={styles.exercisesTitle}>Exercises</ThemedText>
 
           {workout.exercises.map((exercise, index) => {
@@ -676,5 +708,68 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: "#FFF",
     fontWeight: "600",
+  },
+  socialActions: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingVertical: Spacing.md,
+    marginBottom: Spacing.lg,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  socialButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  socialButtonText: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+  },
+  muscleSplitCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  muscleSplitTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.dark.text,
+    marginBottom: Spacing.md,
+  },
+  muscleSplitRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.sm,
+  },
+  muscleSplitLabel: {
+    width: 80,
+    fontSize: 14,
+    color: Colors.dark.text,
+  },
+  muscleSplitBarContainer: {
+    flex: 1,
+    height: 8,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: 4,
+    marginHorizontal: Spacing.md,
+    overflow: "hidden",
+  },
+  muscleSplitBar: {
+    height: "100%",
+    backgroundColor: Colors.dark.accent,
+    borderRadius: 4,
+  },
+  muscleSplitPercent: {
+    width: 40,
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: "right",
   },
 });
