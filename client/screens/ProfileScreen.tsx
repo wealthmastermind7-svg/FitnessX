@@ -36,6 +36,25 @@ interface WorkoutStats {
   currentStreak: number;
 }
 
+interface MuscleDistribution {
+  back: number;
+  chest: number;
+  core: number;
+  legs: number;
+  arms: number;
+}
+
+interface SavedWorkout {
+  id: string;
+  name: string;
+  savedAt: string;
+  muscleGroups: string[];
+  exercises: Array<{
+    name: string;
+    muscleGroup: string;
+  }>;
+}
+
 interface HealthSyncSettings {
   appleHealth: boolean;
   googleFit: boolean;
@@ -111,18 +130,92 @@ export default function ProfileScreen() {
     googleFit: false,
     syncEnabled: false,
   });
+  const [workoutDates, setWorkoutDates] = useState<number[]>([]);
+  const [muscleDistribution, setMuscleDistribution] = useState<MuscleDistribution>({
+    back: 0,
+    chest: 0,
+    core: 0,
+    legs: 0,
+    arms: 0,
+  });
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   useEffect(() => {
     loadProfile();
     loadStats();
     loadHealthSyncSettings();
+    loadWorkoutData();
   }, []);
 
   useFocusEffect(
     useCallback(() => {
       loadStats();
+      loadWorkoutData();
     }, [])
   );
+
+  const loadWorkoutData = async () => {
+    try {
+      const savedWorkouts = await AsyncStorage.getItem("savedWorkouts");
+      const workouts: SavedWorkout[] = savedWorkouts ? JSON.parse(savedWorkouts) : [];
+      
+      const now = new Date();
+      const currentMonthDates: number[] = [];
+      const muscleCount: Record<string, number> = {
+        back: 0,
+        chest: 0,
+        core: 0,
+        legs: 0,
+        arms: 0,
+      };
+
+      workouts.forEach((workout) => {
+        if (workout.savedAt) {
+          const workoutDate = new Date(workout.savedAt);
+          if (
+            workoutDate.getMonth() === now.getMonth() &&
+            workoutDate.getFullYear() === now.getFullYear()
+          ) {
+            const dayOfMonth = workoutDate.getDate();
+            if (!currentMonthDates.includes(dayOfMonth - 1)) {
+              currentMonthDates.push(dayOfMonth - 1);
+            }
+          }
+        }
+
+        const muscleGroups = workout.muscleGroups || [];
+        muscleGroups.forEach((muscle) => {
+          const lowerMuscle = muscle.toLowerCase();
+          if (lowerMuscle.includes("back") || lowerMuscle.includes("lats")) {
+            muscleCount.back++;
+          } else if (lowerMuscle.includes("chest") || lowerMuscle.includes("pec")) {
+            muscleCount.chest++;
+          } else if (lowerMuscle.includes("core") || lowerMuscle.includes("abs") || lowerMuscle.includes("abdominal")) {
+            muscleCount.core++;
+          } else if (lowerMuscle.includes("leg") || lowerMuscle.includes("quad") || lowerMuscle.includes("hamstring") || lowerMuscle.includes("glute") || lowerMuscle.includes("calf")) {
+            muscleCount.legs++;
+          } else if (lowerMuscle.includes("arm") || lowerMuscle.includes("bicep") || lowerMuscle.includes("tricep") || lowerMuscle.includes("shoulder")) {
+            muscleCount.arms++;
+          }
+        });
+      });
+
+      setWorkoutDates(currentMonthDates);
+
+      const totalMuscleHits = Object.values(muscleCount).reduce((a, b) => a + b, 0);
+      if (totalMuscleHits > 0) {
+        setMuscleDistribution({
+          back: Math.round((muscleCount.back / totalMuscleHits) * 100),
+          chest: Math.round((muscleCount.chest / totalMuscleHits) * 100),
+          core: Math.round((muscleCount.core / totalMuscleHits) * 100),
+          legs: Math.round((muscleCount.legs / totalMuscleHits) * 100),
+          arms: Math.round((muscleCount.arms / totalMuscleHits) * 100),
+        });
+      }
+    } catch (error) {
+      console.error("Error loading workout data:", error);
+    }
+  };
 
   const loadProfile = async () => {
     try {
@@ -295,77 +388,83 @@ export default function ProfileScreen() {
             <StatCard label="Top Muscle" value={stats.favoriteMuscle} icon="award" />
           </View>
         </Pressable>
-        {/* Workout Days Log (Calendar Mock) */}
+        {/* Workout Days Log - Real Data */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Workout Days Log</ThemedText>
             <View style={styles.streakBadge}>
               <Feather name="zap" size={14} color="#FF6B6B" />
-              <ThemedText style={styles.streakBadgeText}>{stats.currentStreak} Week Streak</ThemedText>
+              <ThemedText style={styles.streakBadgeText}>{workoutDates.length} this month</ThemedText>
             </View>
           </View>
           <View style={styles.calendarCard}>
+            <ThemedText style={styles.calendarMonthLabel}>
+              {currentMonth.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </ThemedText>
             <View style={styles.calendarHeader}>
               {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
                 <ThemedText key={i} style={styles.calendarDayLabel}>{day}</ThemedText>
               ))}
             </View>
             <View style={styles.calendarGrid}>
-              {Array.from({ length: 31 }).map((_, i) => (
+              {Array.from({ length: new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate() }).map((_, i) => (
                 <View key={i} style={[
                   styles.calendarDay,
-                  [2, 5, 8, 12, 15, 19, 22, 26].includes(i) && styles.calendarDayActive
+                  workoutDates.includes(i) && styles.calendarDayActive
                 ]}>
                   <ThemedText style={[
                     styles.calendarDayText,
-                    [2, 5, 8, 12, 15, 19, 22, 26].includes(i) && styles.calendarDayTextActive
+                    workoutDates.includes(i) && styles.calendarDayTextActive
                   ]}>{i + 1}</ThemedText>
                 </View>
               ))}
             </View>
+            {workoutDates.length === 0 && (
+              <ThemedText style={styles.calendarEmptyText}>
+                No workouts saved this month yet
+              </ThemedText>
+            )}
           </View>
         </View>
 
-        {/* Muscle Distribution (Radar Mock) */}
+        {/* Muscle Distribution - Real Data */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Muscle Distribution</ThemedText>
-          <View style={styles.radarCard}>
-            <View style={styles.radarContainer}>
-              <View style={styles.radarWebContainer}>
-                {[1, 0.8, 0.6, 0.4, 0.2].map((scale) => (
-                  <View 
-                    key={scale} 
-                    style={[
-                      styles.radarWebLine, 
-                      { transform: [{ scale }] }
-                    ]} 
-                  />
+          <View style={styles.muscleDistCard}>
+            {Object.values(muscleDistribution).some(v => v > 0) ? (
+              <>
+                {[
+                  { label: 'Back', value: muscleDistribution.back, color: '#FF6B6B' },
+                  { label: 'Chest', value: muscleDistribution.chest, color: '#FFB347' },
+                  { label: 'Core', value: muscleDistribution.core, color: '#87CEEB' },
+                  { label: 'Legs', value: muscleDistribution.legs, color: '#98D8AA' },
+                  { label: 'Arms', value: muscleDistribution.arms, color: '#DDA0DD' },
+                ].map((muscle) => (
+                  <View key={muscle.label} style={styles.muscleBarRow}>
+                    <ThemedText style={styles.muscleBarLabel}>{muscle.label}</ThemedText>
+                    <View style={styles.muscleBarContainer}>
+                      <View 
+                        style={[
+                          styles.muscleBarFill, 
+                          { 
+                            width: `${muscle.value}%`,
+                            backgroundColor: muscle.color,
+                          }
+                        ]} 
+                      />
+                    </View>
+                    <ThemedText style={styles.muscleBarValue}>{muscle.value}%</ThemedText>
+                  </View>
                 ))}
-                {/* Visual indicators for muscle groups */}
-                <View style={[styles.radarPoint, { top: '10%', left: '50%' }]} />
-                <View style={[styles.radarPoint, { top: '30%', right: '10%' }]} />
-                <View style={[styles.radarPoint, { bottom: '20%', right: '25%' }]} />
-                <View style={[styles.radarPoint, { bottom: '20%', left: '25%' }]} />
-                <View style={[styles.radarPoint, { top: '30%', left: '10%' }]} />
+              </>
+            ) : (
+              <View style={styles.muscleDistEmpty}>
+                <Feather name="pie-chart" size={32} color={Colors.dark.textSecondary} />
+                <ThemedText style={styles.muscleDistEmptyText}>
+                  Save workouts to see your muscle distribution
+                </ThemedText>
               </View>
-              <View style={styles.radarLabels}>
-                <ThemedText style={[styles.radarLabelText, { top: -20 }]}>Back</ThemedText>
-                <ThemedText style={[styles.radarLabelText, { top: '30%', right: -40 }]}>Chest</ThemedText>
-                <ThemedText style={[styles.radarLabelText, { bottom: '15%', right: -20 }]}>Core</ThemedText>
-                <ThemedText style={[styles.radarLabelText, { bottom: '15%', left: -20 }]}>Legs</ThemedText>
-                <ThemedText style={[styles.radarLabelText, { top: '30%', left: -40 }]}>Arms</ThemedText>
-              </View>
-            </View>
-            <View style={styles.radarLegend}>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#8E8E93' }]} />
-                <ThemedText style={styles.legendText}>Previous</ThemedText>
-              </View>
-              <View style={styles.legendItem}>
-                <View style={[styles.legendDot, { backgroundColor: '#FF6B6B' }]} />
-                <ThemedText style={styles.legendText}>Current</ThemedText>
-              </View>
-            </View>
+            )}
           </View>
         </View>
 
@@ -738,6 +837,66 @@ const styles = StyleSheet.create({
   calendarDayTextActive: {
     color: '#FFF',
     fontWeight: '700',
+  },
+  calendarMonthLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: Colors.dark.text,
+    textAlign: 'center',
+    marginBottom: Spacing.md,
+  },
+  calendarEmptyText: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: 'center',
+    marginTop: Spacing.md,
+    fontStyle: 'italic',
+  },
+  muscleDistCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  muscleBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
+  muscleBarLabel: {
+    width: 50,
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+  },
+  muscleBarContainer: {
+    flex: 1,
+    height: 12,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: 6,
+    marginHorizontal: Spacing.sm,
+    overflow: 'hidden',
+  },
+  muscleBarFill: {
+    height: '100%',
+    borderRadius: 6,
+  },
+  muscleBarValue: {
+    width: 40,
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.dark.text,
+    textAlign: 'right',
+  },
+  muscleDistEmpty: {
+    alignItems: 'center',
+    paddingVertical: Spacing.xl,
+    gap: Spacing.md,
+  },
+  muscleDistEmptyText: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: 'center',
   },
   radarCard: {
     backgroundColor: Colors.dark.backgroundDefault,
