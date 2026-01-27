@@ -212,10 +212,9 @@ export default function ExerciseBrowserScreen() {
           <Pressable
             key={part.id}
             onPress={() => handleBodyPartSelect(part.id)}
-            style={({ pressed }) => [
+            style={[
               styles.bodyPartChip,
               selectedBodyPart === part.id && styles.bodyPartChipSelected,
-              pressed && { scale: 0.95 },
             ]}
           >
             {selectedBodyPart === part.id ? (
