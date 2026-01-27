@@ -66,26 +66,27 @@ export default function OnboardingWelcomeScreen() {
 
           <View style={styles.content}>
             <View style={styles.titleContainer}>
-              <ThemedText style={styles.titleLine1}>BEYOND</ThemedText>
-              <ThemedText style={styles.titleLine2}>LIMITS</ThemedText>
+              <ThemedText style={styles.titleLine1}>UNLEASH</ThemedText>
+              <ThemedText style={styles.titleLine2}>YOUR TRUE</ThemedText>
+              <ThemedText style={styles.titleLine3}>POTENTIAL</ThemedText>
             </View>
 
             <ThemedText style={styles.subtitle}>
-              Experience the future of fitness with AI-driven training tailored to your exact physiology.
+              Join the elite community. AI-driven workouts tailored to your exact physiology.
             </ThemedText>
 
             <View style={styles.badges}>
               <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
-                <Feather name="zap" size={14} color="#9D4EDD" />
+                <Feather name="zap" size={14} color="#FF6B6B" />
                 <ThemedText style={styles.badgeText}>AI COACH</ThemedText>
               </BlurView>
               <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
-                <Feather name="book" size={14} color="#9D4EDD" />
+                <Feather name="book" size={14} color="#FF6B6B" />
                 <ThemedText style={styles.badgeText}>1,300+ EXERCISES</ThemedText>
               </BlurView>
               <BlurView intensity={20} tint="dark" style={styles.badgeGlass}>
-                <Feather name="target" size={14} color="#9D4EDD" />
-                <ThemedText style={styles.badgeText}>ELITE PLANS</ThemedText>
+                <Feather name="target" size={14} color="#FF6B6B" />
+                <ThemedText style={styles.badgeText}>CUSTOM PLANS</ThemedText>
               </BlurView>
             </View>
           </View>
@@ -99,7 +100,7 @@ export default function OnboardingWelcomeScreen() {
               ]}
             >
               <LinearGradient
-                colors={["#9D4EDD", "#5A189A"]}
+                colors={["#FF6B6B", "#FF4B4B"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
@@ -181,17 +182,24 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   titleLine1: {
-    fontSize: 64,
+    fontSize: 56,
     fontWeight: "900",
     color: "white",
-    lineHeight: 64,
+    lineHeight: 56,
     letterSpacing: -2,
   },
   titleLine2: {
-    fontSize: 64,
+    fontSize: 56,
     fontWeight: "900",
-    color: "#9D4EDD",
-    lineHeight: 64,
+    color: "rgba(255,255,255,0.6)",
+    lineHeight: 56,
+    letterSpacing: -2,
+  },
+  titleLine3: {
+    fontSize: 56,
+    fontWeight: "900",
+    color: "white",
+    lineHeight: 56,
     letterSpacing: -2,
   },
   subtitle: {
@@ -234,7 +242,7 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: "hidden",
     gap: Spacing.sm,
-    shadowColor: "#9D4EDD",
+    shadowColor: "#FF6B6B",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 12,

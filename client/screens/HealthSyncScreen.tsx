@@ -19,7 +19,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
-const PRIMARY_BLUE = "#1754cf";
+const PRIMARY_ACCENT = "#FF6B6B";
 
 interface HealthPlatform {
   id: string;
@@ -160,7 +160,7 @@ export default function HealthSyncScreen() {
                 <ThemedText style={styles.platformSubtitle}>{platform.subtitle}</ThemedText>
                 {selectedPlatforms.has(platform.id) && (
                   <View style={styles.checkmark}>
-                    <Feather name="check" size={16} color={PRIMARY_BLUE} />
+                    <Feather name="check" size={16} color={PRIMARY_ACCENT} />
                   </View>
                 )}
               </BlurView>
@@ -176,7 +176,7 @@ export default function HealthSyncScreen() {
               {BENEFITS.map((benefit, index) => (
                 <View key={index} style={styles.benefitRow}>
                   <View style={styles.benefitIconContainer}>
-                    <Feather name={benefit.icon} size={18} color={PRIMARY_BLUE} />
+                    <Feather name={benefit.icon} size={18} color={PRIMARY_ACCENT} />
                   </View>
                   <View style={styles.benefitTextContainer}>
                     <ThemedText style={styles.benefitTitle}>{benefit.title}</ThemedText>
@@ -197,7 +197,7 @@ export default function HealthSyncScreen() {
             onPress={handleConnectAll}
           >
             <LinearGradient
-              colors={[PRIMARY_BLUE, "#1244a8"]}
+              colors={[PRIMARY_ACCENT, "#FF4B4B"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     borderRadius: 9999,
     opacity: 0.15,
-    shadowColor: PRIMARY_BLUE,
+    shadowColor: PRIMARY_ACCENT,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 150,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "700",
     letterSpacing: 2,
-    color: `${PRIMARY_BLUE}cc`,
+    color: `${PRIMARY_ACCENT}cc`,
   },
   headerSpacer: {
     width: 40,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(255,255,255,0.1)",
   },
   platformCardSelected: {
-    borderColor: PRIMARY_BLUE,
+    borderColor: PRIMARY_ACCENT,
   },
   platformCardInner: {
     flex: 1,
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: "rgba(23, 84, 207, 0.3)",
+    backgroundColor: "rgba(255, 107, 107, 0.3)",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   benefitsTitle: {
     fontSize: 12,
     fontWeight: "700",
-    color: PRIMARY_BLUE,
+    color: PRIMARY_ACCENT,
     letterSpacing: 1.5,
     textAlign: "center",
     marginBottom: Spacing.lg,
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.lg,
-    backgroundColor: `${PRIMARY_BLUE}33`,
+    backgroundColor: `${PRIMARY_ACCENT}33`,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     overflow: "hidden",
     gap: Spacing.sm,
-    shadowColor: PRIMARY_BLUE,
+    shadowColor: PRIMARY_ACCENT,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.4,
     shadowRadius: 20,
