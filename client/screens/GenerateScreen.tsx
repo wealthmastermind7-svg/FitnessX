@@ -19,6 +19,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { Card } from "@/components/Card";
 import KeyboardAwareScrollViewCompat from "@/components/KeyboardAwareScrollViewCompat";
 import { Colors, Spacing, BorderRadius, Typography, Shadows, Gradients } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";

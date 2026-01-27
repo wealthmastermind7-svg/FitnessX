@@ -295,7 +295,6 @@ export default function ProfileScreen() {
             <StatCard label="Top Muscle" value={stats.favoriteMuscle} icon="award" />
           </View>
         </Pressable>
-
         {/* Workout Days Log (Calendar Mock) */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
