@@ -15,6 +15,7 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { LinearGradient } from "expo-linear-gradient";
+import { BlurView } from "expo-blur";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
@@ -34,6 +35,14 @@ interface WorkoutStats {
   favoriteMuscle: string;
   currentStreak: number;
 }
+
+interface HealthSyncSettings {
+  appleHealth: boolean;
+  googleFit: boolean;
+  syncEnabled: boolean;
+}
+
+const HEALTH_SYNC_BLUE = "#1754cf";
 
 function SettingsRow({
   icon,
@@ -97,10 +106,16 @@ export default function ProfileScreen() {
     favoriteMuscle: "None yet",
     currentStreak: 0,
   });
+  const [healthSync, setHealthSync] = useState<HealthSyncSettings>({
+    appleHealth: false,
+    googleFit: false,
+    syncEnabled: false,
+  });
 
   useEffect(() => {
     loadProfile();
     loadStats();
+    loadHealthSyncSettings();
   }, []);
 
   useFocusEffect(
@@ -137,6 +152,28 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error("Error loading stats:", error);
     }
+  };
+
+  const loadHealthSyncSettings = async () => {
+    try {
+      const settings = await AsyncStorage.getItem("healthSyncSettings");
+      if (settings) {
+        setHealthSync(JSON.parse(settings));
+      }
+    } catch (error) {
+      console.error("Error loading health sync settings:", error);
+    }
+  };
+
+  const toggleHealthService = async (service: "appleHealth" | "googleFit") => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const newSettings = {
+      ...healthSync,
+      [service]: !healthSync[service],
+      syncEnabled: true,
+    };
+    setHealthSync(newSettings);
+    await AsyncStorage.setItem("healthSyncSettings", JSON.stringify(newSettings));
   };
 
   const saveProfile = async (newProfile: UserProfile) => {
@@ -388,6 +425,63 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Health Data Sync</ThemedText>
+          
+          <View style={styles.healthSyncCard}>
+            <Pressable
+              style={styles.healthSyncRow}
+              onPress={() => toggleHealthService("appleHealth")}
+            >
+              <View style={styles.healthSyncRowLeft}>
+                <View style={[styles.healthSyncIconContainer, healthSync.appleHealth && styles.healthSyncIconActive]}>
+                  <Feather name="heart" size={20} color={healthSync.appleHealth ? HEALTH_SYNC_BLUE : Colors.dark.textSecondary} />
+                </View>
+                <View>
+                  <ThemedText style={styles.settingsLabel}>Apple Health</ThemedText>
+                  <ThemedText style={styles.healthSyncSubtitle}>iOS Native</ThemedText>
+                </View>
+              </View>
+              <View style={[styles.healthSyncToggle, healthSync.appleHealth && styles.healthSyncToggleActive]}>
+                <View style={[styles.healthSyncToggleKnob, healthSync.appleHealth && styles.healthSyncToggleKnobActive]} />
+              </View>
+            </Pressable>
+            
+            <View style={styles.settingsDivider} />
+            
+            <Pressable
+              style={styles.healthSyncRow}
+              onPress={() => toggleHealthService("googleFit")}
+            >
+              <View style={styles.healthSyncRowLeft}>
+                <View style={[styles.healthSyncIconContainer, healthSync.googleFit && styles.healthSyncIconActive]}>
+                  <Feather name="activity" size={20} color={healthSync.googleFit ? HEALTH_SYNC_BLUE : Colors.dark.textSecondary} />
+                </View>
+                <View>
+                  <ThemedText style={styles.settingsLabel}>Google Fit</ThemedText>
+                  <ThemedText style={styles.healthSyncSubtitle}>Cross-platform</ThemedText>
+                </View>
+              </View>
+              <View style={[styles.healthSyncToggle, healthSync.googleFit && styles.healthSyncToggleActive]}>
+                <View style={[styles.healthSyncToggleKnob, healthSync.googleFit && styles.healthSyncToggleKnobActive]} />
+              </View>
+            </Pressable>
+            
+            <View style={styles.settingsDivider} />
+            
+            <Pressable
+              style={styles.healthSyncSetupRow}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("HealthSync");
+              }}
+            >
+              <ThemedText style={styles.healthSyncSetupText}>Configure Health Sync</ThemedText>
+              <Feather name="chevron-right" size={18} color={HEALTH_SYNC_BLUE} />
+            </Pressable>
+          </View>
+        </View>
+
+        <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Data</ThemedText>
           
           <View style={styles.settingsCard}>
@@ -628,5 +722,75 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: Colors.dark.accent,
     fontWeight: "500",
+  },
+  healthSyncCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  healthSyncRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: Spacing.md,
+  },
+  healthSyncRowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  healthSyncIconContainer: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  healthSyncIconActive: {
+    backgroundColor: `${HEALTH_SYNC_BLUE}20`,
+    borderColor: `${HEALTH_SYNC_BLUE}40`,
+  },
+  healthSyncSubtitle: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
+  },
+  healthSyncToggle: {
+    width: 50,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "rgba(255,255,255,0.1)",
+    padding: 3,
+    justifyContent: "center",
+  },
+  healthSyncToggleActive: {
+    backgroundColor: HEALTH_SYNC_BLUE,
+  },
+  healthSyncToggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: "rgba(255,255,255,0.5)",
+  },
+  healthSyncToggleKnobActive: {
+    backgroundColor: "white",
+    alignSelf: "flex-end",
+  },
+  healthSyncSetupRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.md,
+    gap: Spacing.xs,
+  },
+  healthSyncSetupText: {
+    ...Typography.body,
+    color: HEALTH_SYNC_BLUE,
+    fontWeight: "600",
   },
 });
