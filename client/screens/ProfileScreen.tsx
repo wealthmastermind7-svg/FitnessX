@@ -42,7 +42,7 @@ interface HealthSyncSettings {
   syncEnabled: boolean;
 }
 
-const HEALTH_SYNC_BLUE = "#1754cf";
+const HEALTH_SYNC_BLUE = "#FF6B6B";
 
 function SettingsRow({
   icon,

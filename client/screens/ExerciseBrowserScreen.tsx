@@ -160,7 +160,7 @@ export default function ExerciseBrowserScreen() {
             {isLocked && (
               <View style={styles.lockOverlay}>
                 <BlurView intensity={30} tint="dark" style={styles.lockBlur}>
-                  <Feather name="lock" size={24} color="#9D4EDD" />
+                  <Feather name="lock" size={24} color="#FF6B6B" />
                 </BlurView>
               </View>
             )}
@@ -173,7 +173,7 @@ export default function ExerciseBrowserScreen() {
               {item.name}
             </ThemedText>
             <View style={styles.exerciseMeta}>
-              <Feather name="activity" size={12} color="#9D4EDD" />
+              <Feather name="activity" size={12} color="#FF6B6B" />
               <ThemedText style={styles.metaText}>{item.bodyPart}</ThemedText>
             </View>
           </View>
@@ -220,7 +220,7 @@ export default function ExerciseBrowserScreen() {
           >
             {selectedBodyPart === part.id ? (
               <LinearGradient
-                colors={["#9D4EDD", "#5A189A"]}
+                colors={["#FF6B6B", "#FF4B4B"]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
@@ -280,7 +280,7 @@ export default function ExerciseBrowserScreen() {
         ListEmptyComponent={() => (
           <View style={styles.emptyContainer}>
             {isLoading ? (
-              <ActivityIndicator size="large" color="#9D4EDD" />
+              <ActivityIndicator size="large" color="#FF6B6B" />
             ) : (
               <ThemedText style={styles.emptyText}>No exercises found</ThemedText>
             )}
@@ -297,7 +297,7 @@ export default function ExerciseBrowserScreen() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#9D4EDD"
+            tintColor="#FF6B6B"
           />
         }
       />
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   bodyPartChipSelected: {
-    borderColor: "#9D4EDD",
+    borderColor: "#FF6B6B",
   },
   bodyPartText: {
     ...Typography.small,
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: "rgba(157, 78, 221, 0.8)",
+    backgroundColor: "rgba(255, 107, 107, 0.8)",
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: BorderRadius.sm,

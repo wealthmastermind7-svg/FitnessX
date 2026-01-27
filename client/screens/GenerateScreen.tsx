@@ -354,7 +354,7 @@ export default function GenerateScreen() {
           disabled={isGenerating || selectedMuscles.length === 0}
         >
           <LinearGradient
-            colors={(selectedMuscles.length > 0 ? Gradients.accent : ["#555", "#444"]) as any}
+            colors={["#FF6B6B", "#FF4B4B"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   screenTitleAccent: {
     fontSize: 36,
     fontWeight: "800",
-    color: Colors.dark.accent,
+    color: "#FF6B6B",
     letterSpacing: -0.5,
   },
   screenSubtitle: {
@@ -460,8 +460,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.border,
   },
   chipSelected: {
-    backgroundColor: Colors.dark.accent,
-    borderColor: Colors.dark.accent,
+    backgroundColor: "#FF6B6B",
+    borderColor: "#FF6B6B",
   },
   chipText: {
     ...Typography.body,
@@ -485,8 +485,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.border,
   },
   difficultyOptionSelected: {
-    backgroundColor: Colors.dark.accent,
-    borderColor: Colors.dark.accent,
+    backgroundColor: "#FF6B6B",
+    borderColor: "#FF6B6B",
   },
   difficultyText: {
     ...Typography.body,
