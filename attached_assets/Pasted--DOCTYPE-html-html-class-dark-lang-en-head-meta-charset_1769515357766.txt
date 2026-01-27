@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cinematic Health Sync Onboarding</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1754cf",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#000000",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .cinematic-gradient {
+            background: radial-gradient(circle at center, rgba(23, 84, 207, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+        }
+        .glow-button {
+            box-shadow: 0 0 20px rgba(23, 84, 207, 0.4);
+        }
+        .particle-bg {
+            background-image: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px, 150px 150px, 200px 200px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white selection:bg-primary/30">
+<!-- Cinematic Background -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none">
+<div class="absolute inset-0 particle-bg opacity-40"></div>
+<div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-full h-full cinematic-gradient"></div>
+<!-- Abstract data particle simulation representation -->
+<div class="absolute inset-0 bg-[url('https://placeholder.pics/svg/1200x1200/000000/333333/abstract-particle-wave')] opacity-10 bg-cover bg-center" data-alt="Subtle abstract data particles flowing in space"></div>
+</div>
+<div class="relative z-10 flex min-h-screen flex-col px-6 pb-12 pt-4">
+<!-- Top App Bar (Minimalist) -->
+<div class="flex items-center justify-between py-4">
+<div class="flex h-10 w-10 items-center justify-center rounded-full glass-card">
+<span class="material-symbols-outlined text-white">chevron_left</span>
+</div>
+<div class="text-xs font-bold tracking-[0.2em] uppercase text-primary/80">Premium Access</div>
+<div class="w-10"></div> <!-- Spacer -->
+</div>
+<!-- Headline -->
+<div class="mt-8 mb-12">
+<h1 class="text-center text-[44px] font-bold leading-[1.1] tracking-tighter text-white">
+                Sync Your<br/><span class="text-white/60">Health Data</span>
+</h1>
+<p class="mt-4 text-center text-sm font-medium text-white/40 tracking-wide">
+                INTEGRATE YOUR FAVORITE ECOSYSTEMS
+            </p>
+</div>
+<!-- Integration Grid -->
+<div class="grid grid-cols-2 gap-4 mb-6">
+<!-- Apple Health -->
+<div class="glass-card flex flex-col items-center justify-center rounded-xl p-6 aspect-square transition-transform active:scale-95">
+<div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+<span class="material-symbols-outlined text-4xl text-white">favorite</span>
+</div>
+<p class="text-base font-bold text-white">Apple Health</p>
+<p class="text-[10px] uppercase tracking-widest text-white/40 mt-1">iOS Native</p>
+</div>
+<!-- Google Fit -->
+<div class="glass-card flex flex-col items-center justify-center rounded-xl p-6 aspect-square transition-transform active:scale-95">
+<div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/5">
+<span class="material-symbols-outlined text-4xl text-white">fitness_center</span>
+</div>
+<p class="text-base font-bold text-white">Google Fit</p>
+<p class="text-[10px] uppercase tracking-widest text-white/40 mt-1">Cross-platform</p>
+</div>
+</div>
+<!-- Benefits Section -->
+<div class="glass-card mb-12 rounded-xl p-2">
+<div class="bg-white/5 rounded-lg p-6">
+<h4 class="mb-6 text-center text-xs font-bold uppercase tracking-[0.15em] text-primary">Why Synchronize?</h4>
+<div class="space-y-6">
+<!-- Benefit 1 -->
+<div class="flex items-start gap-4">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">ecg</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Track Heart Rate</p>
+<p class="text-xs leading-relaxed text-white/50">Analyze cardiovascular health with high-precision data logs.</p>
+</div>
+</div>
+<!-- Benefit 2 -->
+<div class="flex items-start gap-4">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">directions_run</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Sync Daily Steps</p>
+<p class="text-xs leading-relaxed text-white/50">Consolidate movement patterns from all your wearable devices.</p>
+</div>
+</div>
+<!-- Benefit 3 -->
+<div class="flex items-start gap-4">
+<div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/20">
+<span class="material-symbols-outlined text-primary text-xl">auto_awesome</span>
+</div>
+<div>
+<p class="text-sm font-bold text-white">Auto-Log Activity</p>
+<p class="text-xs leading-relaxed text-white/50">Never miss a workout with intelligent automated detection.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-auto space-y-4">
+<button class="glow-button flex w-full items-center justify-center rounded-full bg-primary py-5 text-base font-bold tracking-tight text-white transition-all active:scale-[0.98] active:brightness-90">
+                Connect All &amp; Start Syncing
+                <span class="material-symbols-outlined ml-2 text-xl">arrow_forward</span>
+</button>
+<button class="w-full py-2 text-center text-sm font-medium text-white/40 transition-colors hover:text-white/60">
+                Maybe Later
+            </button>
+</div>
+<!-- Bottom Indicator (iOS style) -->
+<div class="mx-auto mt-6 h-1 w-32 rounded-full bg-white/20"></div>
+</div>
+</body></html>
