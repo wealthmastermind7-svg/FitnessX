@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Pressable,
   Platform,
+  ScrollView,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -115,7 +116,11 @@ export default function HealthSyncScreen() {
       <View style={styles.cinematicGradient} />
       <View style={styles.particleBg} />
 
-      <View style={[styles.container, { paddingTop: insets.top + Spacing.sm, paddingBottom: insets.bottom + Spacing.lg }]}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + Spacing.sm, paddingBottom: insets.bottom + Spacing.lg }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.header}>
           <Pressable 
             style={styles.backButton}
@@ -207,7 +212,7 @@ export default function HealthSyncScreen() {
         </View>
 
         <View style={styles.homeIndicator} />
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -236,8 +241,10 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     opacity: 0.4,
   },
-  container: {
+  scrollView: {
     flex: 1,
+  },
+  scrollContent: {
     paddingHorizontal: Spacing.lg,
   },
   header: {
