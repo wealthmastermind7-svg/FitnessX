@@ -13,6 +13,7 @@ import PaywallScreen from "@/screens/PaywallScreen";
 import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import HealthSyncScreen from "@/screens/HealthSyncScreen";
 import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
+import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -63,6 +64,7 @@ export type RootStackParamList = {
   CustomerCenter: undefined;
   HealthSync: undefined;
   PlateCalculator: undefined;
+  InviteFriends: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -175,6 +177,14 @@ export default function RootStackNavigator() {
         component={PlateCalculatorScreen}
         options={{
           presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="InviteFriends"
+        component={InviteFriendsScreen}
+        options={{
+          presentation: "card",
           headerShown: false,
         }}
       />
