@@ -191,6 +191,26 @@ export default function ExerciseDetailScreen() {
             </View>
           </View>
 
+          {/* Advanced Stats Section */}
+          <View style={styles.advancedStatsGrid}>
+            <Card elevation={2} style={styles.statMiniCard}>
+              <ThemedText style={styles.statMiniLabel}>Heaviest Weight</ThemedText>
+              <ThemedText style={styles.statMiniValue}>-</ThemedText>
+            </Card>
+            <Card elevation={2} style={styles.statMiniCard}>
+              <ThemedText style={styles.statMiniLabel}>Best 1RM</ThemedText>
+              <ThemedText style={styles.statMiniValue}>-</ThemedText>
+            </Card>
+            <Card elevation={2} style={styles.statMiniCard}>
+              <ThemedText style={styles.statMiniLabel}>Best Set Vol.</ThemedText>
+              <ThemedText style={styles.statMiniValue}>-</ThemedText>
+            </Card>
+            <Card elevation={2} style={styles.statMiniCard}>
+              <ThemedText style={styles.statMiniLabel}>Best Session</ThemedText>
+              <ThemedText style={styles.statMiniValue}>-</ThemedText>
+            </Card>
+          </View>
+
           {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
             <View style={styles.secondaryMuscles}>
               <ThemedText style={styles.sectionLabel}>
@@ -422,6 +442,30 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: Colors.dark.textSecondary,
     textTransform: "capitalize",
+  },
+  advancedStatsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  statMiniCard: {
+    width: '48%',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+  },
+  statMiniLabel: {
+    fontSize: 10,
+    color: Colors.dark.textSecondary,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+    marginBottom: 4,
+  },
+  statMiniValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: Colors.dark.text,
   },
   instructionsCard: {
     padding: Spacing.lg,

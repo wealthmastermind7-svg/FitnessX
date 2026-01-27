@@ -324,6 +324,27 @@ export default function GenerateScreen() {
           </View>
         </View>
 
+        {/* Plate Calculator Section */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionLabel}>UTILITY TOOLS</ThemedText>
+          <Card elevation={2} style={styles.utilityCard}>
+            <View style={styles.utilityHeader}>
+              <Feather name="settings" size={20} color={Colors.dark.accent} />
+              <ThemedText style={styles.utilityTitle}>Plate Calculator</ThemedText>
+            </View>
+            <ThemedText style={styles.utilityDescription}>
+              Quickly calculate how many plates you need for your target weight.
+            </ThemedText>
+            <Pressable 
+              style={styles.utilityButton}
+              onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+            >
+              <ThemedText style={styles.utilityButtonText}>Open Calculator</ThemedText>
+              <Feather name="external-link" size={14} color="#FFF" />
+            </Pressable>
+          </Card>
+        </View>
+
         <View style={styles.section}>
           <ThemedText style={styles.sectionLabel}>NOTES (OPTIONAL)</ThemedText>
           <TextInput
@@ -495,6 +516,43 @@ const styles = StyleSheet.create({
   difficultyTextSelected: {
     color: "#FFF",
     fontWeight: "600",
+  },
+  utilityCard: {
+    padding: Spacing.md,
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  utilityHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  utilityTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.dark.text,
+  },
+  utilityDescription: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    marginBottom: Spacing.md,
+  },
+  utilityButton: {
+    backgroundColor: Colors.dark.accent,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    gap: Spacing.xs,
+  },
+  utilityButtonText: {
+    color: '#FFF',
+    fontSize: 14,
+    fontWeight: '600',
   },
   textInput: {
     backgroundColor: Colors.dark.backgroundDefault,

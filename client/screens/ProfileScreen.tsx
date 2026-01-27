@@ -296,6 +296,80 @@ export default function ProfileScreen() {
           </View>
         </Pressable>
 
+        {/* Workout Days Log (Calendar Mock) */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Workout Days Log</ThemedText>
+            <View style={styles.streakBadge}>
+              <Feather name="zap" size={14} color="#FF6B6B" />
+              <ThemedText style={styles.streakBadgeText}>{stats.currentStreak} Week Streak</ThemedText>
+            </View>
+          </View>
+          <View style={styles.calendarCard}>
+            <View style={styles.calendarHeader}>
+              {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
+                <ThemedText key={i} style={styles.calendarDayLabel}>{day}</ThemedText>
+              ))}
+            </View>
+            <View style={styles.calendarGrid}>
+              {Array.from({ length: 31 }).map((_, i) => (
+                <View key={i} style={[
+                  styles.calendarDay,
+                  [2, 5, 8, 12, 15, 19, 22, 26].includes(i) && styles.calendarDayActive
+                ]}>
+                  <ThemedText style={[
+                    styles.calendarDayText,
+                    [2, 5, 8, 12, 15, 19, 22, 26].includes(i) && styles.calendarDayTextActive
+                  ]}>{i + 1}</ThemedText>
+                </View>
+              ))}
+            </View>
+          </View>
+        </View>
+
+        {/* Muscle Distribution (Radar Mock) */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Muscle Distribution</ThemedText>
+          <View style={styles.radarCard}>
+            <View style={styles.radarContainer}>
+              <View style={styles.radarWebContainer}>
+                {[1, 0.8, 0.6, 0.4, 0.2].map((scale) => (
+                  <View 
+                    key={scale} 
+                    style={[
+                      styles.radarWebLine, 
+                      { transform: [{ scale }] }
+                    ]} 
+                  />
+                ))}
+                {/* Visual indicators for muscle groups */}
+                <View style={[styles.radarPoint, { top: '10%', left: '50%' }]} />
+                <View style={[styles.radarPoint, { top: '30%', right: '10%' }]} />
+                <View style={[styles.radarPoint, { bottom: '20%', right: '25%' }]} />
+                <View style={[styles.radarPoint, { bottom: '20%', left: '25%' }]} />
+                <View style={[styles.radarPoint, { top: '30%', left: '10%' }]} />
+              </View>
+              <View style={styles.radarLabels}>
+                <ThemedText style={[styles.radarLabelText, { top: -20 }]}>Back</ThemedText>
+                <ThemedText style={[styles.radarLabelText, { top: '30%', right: -40 }]}>Chest</ThemedText>
+                <ThemedText style={[styles.radarLabelText, { bottom: '15%', right: -20 }]}>Core</ThemedText>
+                <ThemedText style={[styles.radarLabelText, { bottom: '15%', left: -20 }]}>Legs</ThemedText>
+                <ThemedText style={[styles.radarLabelText, { top: '30%', left: -40 }]}>Arms</ThemedText>
+              </View>
+            </View>
+            <View style={styles.radarLegend}>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: '#8E8E93' }]} />
+                <ThemedText style={styles.legendText}>Previous</ThemedText>
+              </View>
+              <View style={styles.legendItem}>
+                <View style={[styles.legendDot, { backgroundColor: '#FF6B6B' }]} />
+                <ThemedText style={styles.legendText}>Current</ThemedText>
+              </View>
+            </View>
+          </View>
+        </View>
+
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Settings</ThemedText>
           
@@ -603,7 +677,137 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     color: Colors.dark.text,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: Spacing.md,
+  },
+  streakBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+    gap: 4,
+  },
+  streakBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FF6B6B',
+  },
+  calendarCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  calendarHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: Spacing.sm,
+  },
+  calendarDayLabel: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    width: 32,
+    textAlign: 'center',
+  },
+  calendarGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    gap: 8,
+  },
+  calendarDay: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  calendarDayActive: {
+    backgroundColor: '#FF6B6B',
+  },
+  calendarDayText: {
+    fontSize: 14,
+    color: Colors.dark.text,
+  },
+  calendarDayTextActive: {
+    color: '#FFF',
+    fontWeight: '700',
+  },
+  radarCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  radarContainer: {
+    width: 200,
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: Spacing.lg,
+  },
+  radarWebContainer: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  radarWebLine: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.05)',
+    position: 'absolute',
+  },
+  radarPoint: {
+    position: 'absolute',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FF6B6B',
+    shadowColor: '#FF6B6B',
+    shadowRadius: 4,
+    shadowOpacity: 0.5,
+  },
+  radarLabels: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  radarLabelText: {
+    position: 'absolute',
+    fontSize: 10,
+    color: Colors.dark.textSecondary,
+    fontWeight: '600',
+    width: 60,
+    textAlign: 'center',
+    alignSelf: 'center',
+  },
+  radarLegend: {
+    flexDirection: 'row',
+    gap: Spacing.lg,
+    marginTop: Spacing.md,
+  },
+  legendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  legendDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  legendText: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
   },
   settingsCard: {
     backgroundColor: Colors.dark.backgroundDefault,
