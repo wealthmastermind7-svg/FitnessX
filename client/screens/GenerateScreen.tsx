@@ -338,7 +338,10 @@ export default function GenerateScreen() {
             </ThemedText>
             <Pressable 
               style={styles.utilityButton}
-              onPress={() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)}
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("PlateCalculator");
+              }}
             >
               <ThemedText style={styles.utilityButtonText}>Open Calculator</ThemedText>
               <Feather name="external-link" size={14} color="#FFF" />

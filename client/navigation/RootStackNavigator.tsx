@@ -12,6 +12,7 @@ import SavedWorkoutsScreen from "@/screens/SavedWorkoutsScreen";
 import PaywallScreen from "@/screens/PaywallScreen";
 import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import HealthSyncScreen from "@/screens/HealthSyncScreen";
+import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -61,6 +62,7 @@ export type RootStackParamList = {
   Paywall: undefined;
   CustomerCenter: undefined;
   HealthSync: undefined;
+  PlateCalculator: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -163,6 +165,14 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="HealthSync"
         component={HealthSyncScreen}
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PlateCalculator"
+        component={PlateCalculatorScreen}
         options={{
           presentation: "modal",
           headerShown: false,
