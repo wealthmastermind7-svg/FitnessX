@@ -28,6 +28,8 @@ import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
 import { Image as ExpoImage } from "expo-image";
 
+import CommunityFeedScreen from "./CommunityFeedScreen";
+
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
 const MUSCLE_GROUPS = [
@@ -414,6 +416,13 @@ export default function DiscoverScreen() {
               <MuscleCard key={muscle} muscle={muscle} index={index} navigation={navigation} />
             ))}
           </View>
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Community Activity</ThemedText>
+          </View>
+          <CommunityFeedScreen isNested={true} />
         </View>
       </Animated.ScrollView>
     </ThemedView>

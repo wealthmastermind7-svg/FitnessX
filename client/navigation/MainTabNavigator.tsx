@@ -12,7 +12,7 @@ import AIHubScreen from "@/screens/AIHubScreen";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
 
 export type MainTabParamList = {
-  Home: undefined;
+  Discover: undefined;
   Workout: undefined;
   AI: undefined;
   Profile: undefined;
@@ -25,7 +25,7 @@ export default function MainTabNavigator() {
 
   return (
     <Tab.Navigator
-      initialRouteName="Home"
+      initialRouteName="Discover"
       screenOptions={{
         tabBarActiveTintColor: Colors.dark.accent,
         tabBarInactiveTintColor: Colors.dark.tabIconDefault,
@@ -57,12 +57,12 @@ export default function MainTabNavigator() {
       }}
     >
       <Tab.Screen
-        name="Home"
-        component={CommunityFeedScreen}
+        name="Discover"
+        component={DiscoverScreen}
         options={{
-          title: "Home",
+          title: "Discover",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="home" size={size} color={color} />
+            <Feather name="search" size={size} color={color} />
           ),
         }}
       />

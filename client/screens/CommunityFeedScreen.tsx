@@ -380,7 +380,7 @@ function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: {
   );
 }
 
-export default function CommunityFeedScreen() {
+export default function CommunityFeedScreen({ isNested = false }: { isNested?: boolean }) {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NavigationProp>();
@@ -517,6 +517,46 @@ export default function CommunityFeedScreen() {
     </>
   );
 
+  const feedContent = (
+    <FlatList
+      data={feed}
+      scrollEnabled={!isNested}
+      renderItem={({ item }) => (
+        <WorkoutPostCard
+          post={item}
+          onLike={() => {}}
+          onComment={() => handlePostPress(item)}
+          onShare={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            Alert.alert("Share", "Sharing options will appear here on a physical device.");
+          }}
+          onPress={() => handlePostPress(item)}
+        />
+      )}
+      keyExtractor={item => item.id}
+      ListHeaderComponent={isNested ? null : renderHeader}
+      contentContainerStyle={[
+        styles.feedContent,
+        !isNested && { paddingBottom: tabBarHeight + Spacing.xl }
+      ]}
+      showsVerticalScrollIndicator={false}
+      refreshControl={
+        isNested ? undefined : (
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={Colors.dark.accent}
+          />
+        )
+      }
+      ItemSeparatorComponent={() => <View style={styles.postSeparator} />}
+    />
+  );
+
+  if (isNested) {
+    return feedContent;
+  }
+
   return (
     <ThemedView style={styles.container}>
       <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
@@ -534,36 +574,7 @@ export default function CommunityFeedScreen() {
         </View>
       </View>
 
-      <FlatList
-        data={feed}
-        renderItem={({ item }) => (
-          <WorkoutPostCard
-            post={item}
-            onLike={() => {}}
-            onComment={() => handlePostPress(item)}
-            onShare={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              Alert.alert("Share", "Sharing options will appear here on a physical device.");
-            }}
-            onPress={() => handlePostPress(item)}
-          />
-        )}
-        keyExtractor={item => item.id}
-        ListHeaderComponent={renderHeader}
-        contentContainerStyle={[
-          styles.feedContent,
-          { paddingBottom: tabBarHeight + Spacing.xl }
-        ]}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor={Colors.dark.accent}
-          />
-        }
-        ItemSeparatorComponent={() => <View style={styles.postSeparator} />}
-      />
+      {feedContent}
 
       <Pressable
         onPress={handleCreatePost}
