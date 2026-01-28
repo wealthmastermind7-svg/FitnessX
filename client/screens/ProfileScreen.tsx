@@ -1332,7 +1332,14 @@ const styles = StyleSheet.create({
   footerText: {
     ...Typography.small,
     color: Colors.dark.textSecondary,
-    marginBottom: Spacing.xs,
+    marginBottom: 4,
+  },
+  footerSubtext: {
+    ...Typography.small,
+    fontSize: 10,
+    color: Colors.dark.textSecondary,
+    fontStyle: "italic",
+    opacity: 0.7,
   },
   proBadge: {
     backgroundColor: "#FF6B6B20",
