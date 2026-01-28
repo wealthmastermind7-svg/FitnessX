@@ -470,18 +470,44 @@ export default function ProfileScreen() {
           text: "Clear",
           style: "destructive",
           onPress: async () => {
-            await AsyncStorage.clear();
-            setStats({
-              totalWorkouts: 0,
-              favoriteMuscle: "None yet",
-              currentStreak: 0,
-            });
-            setProfile({
-              displayName: "Athlete",
-              experienceLevel: "Intermediate",
-              preferredUnits: "metric",
-            });
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            try {
+              await AsyncStorage.clear();
+              setStats({
+                totalWorkouts: 0,
+                favoriteMuscle: "None yet",
+                currentStreak: 0,
+              });
+              setProfile({
+                displayName: "Athlete",
+                experienceLevel: "Intermediate",
+                preferredUnits: "metric",
+              });
+              setWorkoutDates([]);
+              setMuscleDistribution({
+                back: 0,
+                chest: 0,
+                core: 0,
+                legs: 0,
+                arms: 0,
+              });
+              setExerciseRecords({
+                heaviestWeight: "-",
+                best1RM: "-",
+                bestSetVolume: "-",
+                bestSession: "-",
+              });
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+              
+              // Force a reset of the app navigation to refresh all screens with empty state
+              Alert.alert(
+                "Data Cleared",
+                "Your data has been cleared. The app will now refresh.",
+                [{ text: "OK", onPress: () => navigation.reset({ index: 0, routes: [{ name: "Tabs" }] }) }]
+              );
+            } catch (error) {
+              console.error("Error clearing data:", error);
+              Alert.alert("Error", "Failed to clear data. Please try again.");
+            }
           },
         },
       ]
