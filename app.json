@@ -25,7 +25,14 @@
               "NSExceptionAllowsInsecureHTTPLoads": false
             }
           }
-        }
+        },
+        "NSHealthShareUsageDescription": "FitForge reads your health data to track your fitness progress, including workouts, heart rate, and activity metrics.",
+        "NSHealthUpdateUsageDescription": "FitForge writes workout data to Apple Health to keep all your fitness information in sync."
+      },
+      "entitlements": {
+        "com.apple.developer.healthkit": true,
+        "com.apple.developer.healthkit.background-delivery": true,
+        "com.apple.developer.healthkit.access": []
       }
     },
     "android": {
