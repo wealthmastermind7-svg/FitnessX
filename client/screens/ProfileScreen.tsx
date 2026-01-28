@@ -810,66 +810,17 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Health Data Sync</ThemedText>
-          
-          <View style={styles.healthSyncCard}>
-            <Pressable
-              style={styles.healthSyncRow}
-              onPress={() => toggleHealthService("appleHealth")}
-            >
-              <View style={styles.healthSyncRowLeft}>
-                <View style={[styles.healthSyncIconContainer, healthSync.appleHealth && styles.healthSyncIconActive]}>
-                  <Feather name="heart" size={20} color={healthSync.appleHealth ? HEALTH_SYNC_BLUE : Colors.dark.textSecondary} />
-                </View>
-                <View>
-                  <ThemedText style={styles.settingsLabel}>Apple Health</ThemedText>
-                  <ThemedText style={styles.healthSyncSubtitle}>iOS Native</ThemedText>
-                </View>
-              </View>
-              <View style={[styles.healthSyncToggle, healthSync.appleHealth && styles.healthSyncToggleActive]}>
-                <View style={[styles.healthSyncToggleKnob, healthSync.appleHealth && styles.healthSyncToggleKnobActive]} />
-              </View>
-            </Pressable>
-            
-            <View style={styles.settingsDivider} />
-            
-            <Pressable
-              style={styles.healthSyncRow}
-              onPress={() => toggleHealthService("googleFit")}
-            >
-              <View style={styles.healthSyncRowLeft}>
-                <View style={[styles.healthSyncIconContainer, healthSync.googleFit && styles.healthSyncIconActive]}>
-                  <Feather name="activity" size={20} color={healthSync.googleFit ? HEALTH_SYNC_BLUE : Colors.dark.textSecondary} />
-                </View>
-                <View>
-                  <ThemedText style={styles.settingsLabel}>Google Fit</ThemedText>
-                  <ThemedText style={styles.healthSyncSubtitle}>Cross-platform</ThemedText>
-                </View>
-              </View>
-              <View style={[styles.healthSyncToggle, healthSync.googleFit && styles.healthSyncToggleActive]}>
-                <View style={[styles.healthSyncToggleKnob, healthSync.googleFit && styles.healthSyncToggleKnobActive]} />
-              </View>
-            </Pressable>
-            
-            <View style={styles.settingsDivider} />
-            
-            <Pressable
-              style={styles.healthSyncSetupRow}
+          <ThemedText style={styles.sectionTitle}>Data & Connectivity</ThemedText>
+          <View style={styles.settingsCard}>
+            <SettingsRow
+              icon="activity"
+              label="Health Sync"
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 navigation.navigate("HealthSync");
               }}
-            >
-              <ThemedText style={styles.healthSyncSetupText}>Configure Health Sync</ThemedText>
-              <Feather name="chevron-right" size={18} color={HEALTH_SYNC_BLUE} />
-            </Pressable>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Data</ThemedText>
-          
-          <View style={styles.settingsCard}>
+            />
+            <View style={styles.settingsDivider} />
             <SettingsRow
               icon="trash-2"
               label="Clear All Data"
