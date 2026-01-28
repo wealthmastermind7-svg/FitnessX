@@ -571,15 +571,11 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Muscle Distribution</ThemedText>
           <View style={styles.muscleDistCard}>
-            {Object.values(muscleDistribution).some(v => v > 0) ? (
-              <RadarChart data={muscleDistribution} />
-            ) : (
-              <View style={styles.muscleDistEmpty}>
-                <Feather name="pie-chart" size={32} color={Colors.dark.textSecondary} />
-                <ThemedText style={styles.muscleDistEmptyText}>
-                  Save workouts to see your muscle distribution
-                </ThemedText>
-              </View>
+            <RadarChart data={muscleDistribution} />
+            {!Object.values(muscleDistribution).some(v => v > 0) && (
+              <ThemedText style={styles.muscleDistEmptyOverlayText}>
+                No workouts tracked yet this month
+              </ThemedText>
             )}
           </View>
         </View>
@@ -1075,6 +1071,16 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: 'rgba(255, 107, 107, 0.15)',
+    alignItems: 'center',
+    position: 'relative',
+  },
+  muscleDistEmptyOverlayText: {
+    position: 'absolute',
+    bottom: Spacing.md,
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
   muscleBarRow: {
     flexDirection: 'row',
