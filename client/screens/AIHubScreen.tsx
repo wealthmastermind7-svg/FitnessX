@@ -384,46 +384,51 @@ export default function AIHubScreen() {
             </Pressable>
           </View>
 
-          <View style={styles.healthScoreContainer}>
-            <View style={styles.healthScoreCircle}>
-              <ThemedText style={styles.healthScoreValue}>{foodAnalysisResult.healthScore}</ThemedText>
-              <ThemedText style={styles.healthScoreLabel}>Health Score</ThemedText>
-            </View>
-          </View>
-
-          <View style={styles.macrosGrid}>
-            <View style={styles.macroItem}>
-              <ThemedText style={styles.macroValue}>{foodAnalysisResult.calories}</ThemedText>
-              <ThemedText style={styles.macroLabel}>Calories</ThemedText>
-            </View>
-            <View style={styles.macroItem}>
-              <ThemedText style={styles.macroValue}>{foodAnalysisResult.protein}g</ThemedText>
-              <ThemedText style={styles.macroLabel}>Protein</ThemedText>
-            </View>
-            <View style={styles.macroItem}>
-              <ThemedText style={styles.macroValue}>{foodAnalysisResult.carbs}g</ThemedText>
-              <ThemedText style={styles.macroLabel}>Carbs</ThemedText>
-            </View>
-            <View style={styles.macroItem}>
-              <ThemedText style={styles.macroValue}>{foodAnalysisResult.fat}g</ThemedText>
-              <ThemedText style={styles.macroLabel}>Fat</ThemedText>
-            </View>
-          </View>
-
-          <ThemedText style={styles.sectionTitle}>Detected Foods</ThemedText>
-          <View style={styles.foodsList}>
-            {foodAnalysisResult.foods.map((food: string, i: number) => (
-              <View key={i} style={styles.foodItem}>
-                <Feather name="check-circle" size={16} color={Colors.dark.accent} />
-                <ThemedText style={styles.foodItemText}>{food}</ThemedText>
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: Spacing.xl }}
+          >
+            <View style={styles.healthScoreContainer}>
+              <View style={styles.healthScoreCircle}>
+                <ThemedText style={styles.healthScoreValue}>{foodAnalysisResult.healthScore}</ThemedText>
+                <ThemedText style={styles.healthScoreLabel}>Health Score</ThemedText>
               </View>
-            ))}
-          </View>
+            </View>
 
-          <ThemedText style={styles.sectionTitle}>Suggestions</ThemedText>
-          {foodAnalysisResult.suggestions.map((suggestion: string, i: number) => (
-            <ThemedText key={i} style={styles.suggestionText}>{suggestion}</ThemedText>
-          ))}
+            <View style={styles.macrosGrid}>
+              <View style={styles.macroItem}>
+                <ThemedText style={styles.macroValue}>{foodAnalysisResult.calories}</ThemedText>
+                <ThemedText style={styles.macroLabel}>Calories</ThemedText>
+              </View>
+              <View style={styles.macroItem}>
+                <ThemedText style={styles.macroValue}>{foodAnalysisResult.protein}g</ThemedText>
+                <ThemedText style={styles.macroLabel}>Protein</ThemedText>
+              </View>
+              <View style={styles.macroItem}>
+                <ThemedText style={styles.macroValue}>{foodAnalysisResult.carbs}g</ThemedText>
+                <ThemedText style={styles.macroLabel}>Carbs</ThemedText>
+              </View>
+              <View style={styles.macroItem}>
+                <ThemedText style={styles.macroValue}>{foodAnalysisResult.fat}g</ThemedText>
+                <ThemedText style={styles.macroLabel}>Fat</ThemedText>
+              </View>
+            </View>
+
+            <ThemedText style={styles.sectionTitle}>Detected Foods</ThemedText>
+            <View style={styles.foodsList}>
+              {foodAnalysisResult.foods.map((food: string, i: number) => (
+                <View key={i} style={styles.foodItem}>
+                  <Feather name="check-circle" size={16} color={Colors.dark.accent} />
+                  <ThemedText style={styles.foodItemText}>{food}</ThemedText>
+                </View>
+              ))}
+            </View>
+
+            <ThemedText style={styles.sectionTitle}>Suggestions</ThemedText>
+            {foodAnalysisResult.suggestions.map((suggestion: string, i: number) => (
+              <ThemedText key={i} style={styles.suggestionText}>{suggestion}</ThemedText>
+            ))}
+          </ScrollView>
         </View>
       </View>
     );
@@ -921,8 +926,18 @@ const styles = StyleSheet.create({
   suggestionText: {
     fontSize: 14,
     color: Colors.dark.textSecondary,
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.sm,
+    lineHeight: 20,
     paddingLeft: Spacing.sm,
+  },
+  foodItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  foodsList: {
+    marginBottom: Spacing.md,
   },
   modalSubtitle: {
     fontSize: 14,
