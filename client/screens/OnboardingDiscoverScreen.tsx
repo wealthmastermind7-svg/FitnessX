@@ -121,7 +121,7 @@ export default function OnboardingDiscoverScreen() {
             <View style={styles.titleRow}>
               <ThemedText style={styles.mainTitle}>Discover</ThemedText>
               <View style={styles.exerciseRow}>
-                <ThemedText style={styles.highlightNumber}>1,500+</ThemedText>
+                <ThemedText style={styles.highlightNumber}>1,300+</ThemedText>
                 <ThemedText style={styles.highlightText}> Exercises</ThemedText>
               </View>
             </View>
