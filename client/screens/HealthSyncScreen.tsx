@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   StyleSheet,
@@ -7,12 +7,15 @@ import {
   ScrollView,
   Alert,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,6 +32,8 @@ interface HealthPlatform {
   subtitle: string;
   icon: keyof typeof Feather.glyphMap;
   available: boolean;
+  color: string;
+  requiresNativeBuild?: boolean;
 }
 
 const HEALTH_PLATFORMS: HealthPlatform[] = [
@@ -38,13 +43,37 @@ const HEALTH_PLATFORMS: HealthPlatform[] = [
     subtitle: "iOS Native",
     icon: "heart",
     available: Platform.OS === "ios",
+    color: "#FF3B30",
+    requiresNativeBuild: true,
   },
   {
     id: "google_fit",
     name: "Google Fit",
-    subtitle: "Cross-platform",
+    subtitle: "Android",
     icon: "activity",
-    available: true,
+    available: Platform.OS === "android",
+    color: "#4285F4",
+    requiresNativeBuild: true,
+  },
+];
+
+interface ExternalIntegration {
+  id: string;
+  name: string;
+  subtitle: string;
+  icon: keyof typeof Feather.glyphMap;
+  color: string;
+  description: string;
+}
+
+const EXTERNAL_INTEGRATIONS: ExternalIntegration[] = [
+  {
+    id: "strava",
+    name: "Strava",
+    subtitle: "Sync Workouts",
+    icon: "map-pin",
+    color: "#FC4C02",
+    description: "Share your FitForge workouts with your Strava community",
   },
 ];
 
@@ -73,6 +102,21 @@ export default function HealthSyncScreen() {
   const navigation = useNavigation<NavigationProp>();
   const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(new Set());
   const [isSyncing, setIsSyncing] = useState(false);
+  const [stravaConnected, setStravaConnected] = useState(false);
+  const [isConnectingStrava, setIsConnectingStrava] = useState(false);
+
+  useEffect(() => {
+    loadStravaStatus();
+  }, []);
+
+  const loadStravaStatus = async () => {
+    try {
+      const stravaStatus = await AsyncStorage.getItem("stravaConnected");
+      setStravaConnected(stravaStatus === "true");
+    } catch (error) {
+      console.error("Error loading Strava status:", error);
+    }
+  };
 
   const togglePlatform = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -87,11 +131,66 @@ export default function HealthSyncScreen() {
     });
   };
 
+  const handleConnectStrava = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsConnectingStrava(true);
+
+    try {
+      // Note: In production, this would redirect to Strava OAuth
+      // For now, we simulate the connection process
+      Alert.alert(
+        "Connect with Strava",
+        "To connect with Strava, you'll need to authorize FitForgeX in your Strava account settings.\n\n" +
+        "Once connected, your workouts will automatically sync to your Strava feed.",
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => setIsConnectingStrava(false),
+          },
+          {
+            text: "Connect",
+            onPress: async () => {
+              // Simulate connection
+              await new Promise(resolve => setTimeout(resolve, 1000));
+              await AsyncStorage.setItem("stravaConnected", "true");
+              setStravaConnected(true);
+              setIsConnectingStrava(false);
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            },
+          },
+        ]
+      );
+    } catch (error) {
+      setIsConnectingStrava(false);
+      Alert.alert("Error", "Failed to connect with Strava. Please try again.");
+    }
+  };
+
+  const handleDisconnectStrava = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Alert.alert(
+      "Disconnect Strava",
+      "Are you sure you want to disconnect your Strava account? Your workouts will no longer sync.",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Disconnect",
+          style: "destructive",
+          onPress: async () => {
+            await AsyncStorage.setItem("stravaConnected", "false");
+            setStravaConnected(false);
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+          },
+        },
+      ]
+    );
+  };
+
   const handleConnectAll = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setIsSyncing(true);
     
-    // Simulate real platform connection handshake
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     const healthSyncSettings = {
@@ -105,11 +204,16 @@ export default function HealthSyncScreen() {
     
     setIsSyncing(false);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert(
-      "Sync Successful", 
-      "Your health data is now being synchronized with FitForge.",
-      [{ text: "Great!", onPress: () => navigation.goBack() }]
-    );
+    
+    if (selectedPlatforms.size > 0) {
+      Alert.alert(
+        "Settings Saved",
+        "Health sync preferences have been saved. Note: Apple Health and Google Fit integration requires a native app build to fully function.",
+        [{ text: "Got it", onPress: () => navigation.goBack() }]
+      );
+    } else {
+      navigation.goBack();
+    }
   };
 
   const handleSkip = async () => {
@@ -154,30 +258,79 @@ export default function HealthSyncScreen() {
           </ThemedText>
         </View>
 
-        <View style={styles.platformGrid}>
-          {HEALTH_PLATFORMS.map((platform) => (
-            <Pressable
-              key={platform.id}
-              style={[
-                styles.platformCard,
-                selectedPlatforms.has(platform.id) && styles.platformCardSelected,
-              ]}
-              onPress={() => togglePlatform(platform.id)}
-            >
-              <BlurView intensity={15} tint="dark" style={styles.platformCardInner}>
-                <View style={styles.platformIconContainer}>
-                  <Feather name={platform.icon} size={32} color="white" />
-                </View>
-                <ThemedText style={styles.platformName}>{platform.name}</ThemedText>
-                <ThemedText style={styles.platformSubtitle}>{platform.subtitle}</ThemedText>
-                {selectedPlatforms.has(platform.id) && (
-                  <View style={styles.checkmark}>
-                    <Feather name="check" size={16} color={PRIMARY_ACCENT} />
-                  </View>
+        {/* Strava Integration Section */}
+        <View style={styles.integrationSection}>
+          <ThemedText style={styles.sectionLabel}>INTEGRATIONS</ThemedText>
+          <View style={styles.stravaCard}>
+            <BlurView intensity={15} tint="dark" style={styles.stravaCardInner}>
+              <View style={[styles.stravaIconContainer, { backgroundColor: "#FC4C02" }]}>
+                <Feather name="map-pin" size={24} color="white" />
+              </View>
+              <View style={styles.stravaInfo}>
+                <ThemedText style={styles.stravaName}>Strava</ThemedText>
+                <ThemedText style={styles.stravaDescription}>
+                  {stravaConnected 
+                    ? "Connected - Workouts will sync automatically" 
+                    : "Share workouts with your Strava community"}
+                </ThemedText>
+              </View>
+              <Pressable
+                style={[
+                  styles.stravaButton,
+                  stravaConnected && styles.stravaButtonConnected,
+                ]}
+                onPress={stravaConnected ? handleDisconnectStrava : handleConnectStrava}
+                disabled={isConnectingStrava}
+              >
+                {isConnectingStrava ? (
+                  <ActivityIndicator size="small" color={stravaConnected ? "#FC4C02" : "white"} />
+                ) : (
+                  <ThemedText style={[
+                    styles.stravaButtonText,
+                    stravaConnected && styles.stravaButtonTextConnected,
+                  ]}>
+                    {stravaConnected ? "Disconnect" : "Connect"}
+                  </ThemedText>
                 )}
-              </BlurView>
-            </Pressable>
-          ))}
+              </Pressable>
+            </BlurView>
+          </View>
+        </View>
+
+        {/* Health Platforms Section */}
+        <View style={styles.integrationSection}>
+          <ThemedText style={styles.sectionLabel}>HEALTH DATA</ThemedText>
+          <View style={styles.platformGrid}>
+            {HEALTH_PLATFORMS.filter(p => p.available).map((platform) => (
+              <Pressable
+                key={platform.id}
+                style={[
+                  styles.platformCard,
+                  selectedPlatforms.has(platform.id) && styles.platformCardSelected,
+                ]}
+                onPress={() => togglePlatform(platform.id)}
+              >
+                <BlurView intensity={15} tint="dark" style={styles.platformCardInner}>
+                  <View style={[styles.platformIconContainer, { backgroundColor: platform.color + "20" }]}>
+                    <Feather name={platform.icon} size={32} color={platform.color} />
+                  </View>
+                  <ThemedText style={styles.platformName}>{platform.name}</ThemedText>
+                  <ThemedText style={styles.platformSubtitle}>{platform.subtitle}</ThemedText>
+                  {selectedPlatforms.has(platform.id) && (
+                    <View style={[styles.checkmark, { backgroundColor: platform.color + "40" }]}>
+                      <Feather name="check" size={16} color={platform.color} />
+                    </View>
+                  )}
+                </BlurView>
+              </Pressable>
+            ))}
+          </View>
+          <View style={styles.healthNote}>
+            <Feather name="info" size={14} color="rgba(255,255,255,0.4)" />
+            <ThemedText style={styles.healthNoteText}>
+              Health data sync requires a native app build. The integration will be fully active once the app is published to the App Store.
+            </ThemedText>
+          </View>
         </View>
 
         <View style={styles.benefitsCard}>
@@ -325,10 +478,86 @@ const styles = StyleSheet.create({
     letterSpacing: 2,
     textAlign: "center",
   },
+  integrationSection: {
+    marginBottom: Spacing.lg,
+  },
+  sectionLabel: {
+    fontSize: 11,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.4)",
+    letterSpacing: 1.5,
+    marginBottom: Spacing.md,
+  },
+  stravaCard: {
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
+  },
+  stravaCardInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.lg,
+    gap: Spacing.md,
+  },
+  stravaIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  stravaInfo: {
+    flex: 1,
+  },
+  stravaName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: "white",
+    marginBottom: 2,
+  },
+  stravaDescription: {
+    fontSize: 12,
+    color: "rgba(255,255,255,0.5)",
+  },
+  stravaButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: "#FC4C02",
+    minWidth: 90,
+    alignItems: "center",
+  },
+  stravaButtonConnected: {
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#FC4C02",
+  },
+  stravaButtonText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "white",
+  },
+  stravaButtonTextConnected: {
+    color: "#FC4C02",
+  },
+  healthNote: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+  },
+  healthNoteText: {
+    flex: 1,
+    fontSize: 11,
+    color: "rgba(255,255,255,0.4)",
+    lineHeight: 16,
+  },
   platformGrid: {
     flexDirection: "row",
     gap: Spacing.md,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
   },
   platformCard: {
     flex: 1,
