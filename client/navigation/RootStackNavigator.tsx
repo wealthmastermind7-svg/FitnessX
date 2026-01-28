@@ -14,6 +14,8 @@ import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import HealthSyncScreen from "@/screens/HealthSyncScreen";
 import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
 import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
+import PostDetailScreen from "@/screens/PostDetailScreen";
+import CreatePostScreen from "@/screens/CreatePostScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -49,6 +51,28 @@ export type ExerciseDBExercise = {
   category?: "strength" | "cardio" | "mobility" | "balance" | "stretching" | "plyometrics" | "rehabilitation";
 };
 
+export type WorkoutPost = {
+  id: string;
+  userId: string;
+  username: string;
+  avatarUrl?: string;
+  timestamp: Date;
+  workoutTitle: string;
+  description: string;
+  duration: string;
+  volume: string;
+  sets?: number;
+  records?: number;
+  avgBpm?: number;
+  calories?: number;
+  exercises: { name: string; sets: number; gifUrl?: string }[];
+  muscleSplit: { muscle: string; percentage: number }[];
+  likes: number;
+  comments: number;
+  isLiked: boolean;
+  imageUrl?: string;
+};
+
 export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
@@ -68,6 +92,8 @@ export type RootStackParamList = {
   HealthSync: undefined;
   PlateCalculator: undefined;
   InviteFriends: undefined;
+  PostDetail: { post: WorkoutPost };
+  CreatePost: { sharedExercise?: ExerciseDBExercise } | undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -188,6 +214,22 @@ export default function RootStackNavigator() {
         component={InviteFriendsScreen}
         options={{
           presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="PostDetail"
+        component={PostDetailScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="CreatePost"
+        component={CreatePostScreen}
+        options={{
+          presentation: "modal",
           headerShown: false,
         }}
       />

@@ -403,6 +403,24 @@ export default function ExerciseDetailScreen() {
             </View>
           </View>
         </Card>
+
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate("CreatePost", { sharedExercise: exercise });
+          }}
+          style={styles.shareButton}
+        >
+          <LinearGradient
+            colors={["#FF6B6B", "#FF4B4B"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.shareButtonGradient}
+          >
+            <Feather name="share-2" size={20} color="#FFF" />
+            <ThemedText style={styles.shareButtonText}>Share to Community</ThemedText>
+          </LinearGradient>
+        </Pressable>
       </ScrollView>
     </ThemedView>
   );
@@ -687,5 +705,22 @@ const styles = StyleSheet.create({
     width: 1,
     height: 40,
     backgroundColor: Colors.dark.border,
+  },
+  shareButton: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    marginBottom: Spacing.lg,
+  },
+  shareButtonGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.lg,
+    gap: Spacing.sm,
+  },
+  shareButtonText: {
+    ...Typography.body,
+    color: "#FFF",
+    fontWeight: "600",
   },
 });

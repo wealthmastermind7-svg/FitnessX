@@ -21,31 +21,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
-import type { RootStackParamList } from "@/navigation/RootStackNavigator";
+import type { RootStackParamList, WorkoutPost } from "@/navigation/RootStackNavigator";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-
-type WorkoutPost = {
-  id: string;
-  userId: string;
-  username: string;
-  avatarUrl?: string;
-  timestamp: Date;
-  workoutTitle: string;
-  description: string;
-  duration: string;
-  volume: string;
-  sets?: number;
-  records?: number;
-  avgBpm?: number;
-  calories?: number;
-  exercises: { name: string; sets: number; gifUrl?: string }[];
-  muscleSplit: { muscle: string; percentage: number }[];
-  likes: number;
-  comments: number;
-  isLiked: boolean;
-  imageUrl?: string;
-};
 
 const SUGGESTED_ATHLETES = [
   { id: "1", username: "fitpro_mike", name: "Mike Chen", featured: true },
@@ -408,6 +386,12 @@ export default function CommunityFeedScreen() {
 
   const handlePostPress = (post: WorkoutPost) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate("PostDetail", { post });
+  };
+
+  const handleCreatePost = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    navigation.navigate("CreatePost");
   };
 
   const renderHeader = () => (
@@ -543,6 +527,18 @@ export default function CommunityFeedScreen() {
         }
         ItemSeparatorComponent={() => <View style={styles.postSeparator} />}
       />
+
+      <Pressable
+        onPress={handleCreatePost}
+        style={[styles.fab, { bottom: tabBarHeight + Spacing.lg }]}
+      >
+        <LinearGradient
+          colors={["#FF6B6B", "#FF4B4B"]}
+          style={styles.fabGradient}
+        >
+          <Feather name="plus" size={28} color="#FFF" />
+        </LinearGradient>
+      </Pressable>
     </ThemedView>
   );
 }
@@ -551,6 +547,24 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,
+  },
+  fab: {
+    position: "absolute",
+    right: Spacing.lg,
+    borderRadius: 30,
+    overflow: "hidden",
+    shadowColor: "#FF6B6B",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  fabGradient: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   header: {
     flexDirection: "row",
