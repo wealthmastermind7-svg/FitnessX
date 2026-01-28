@@ -33,6 +33,21 @@ const MUSCLE_GROUPS = [
   "Forearms", "Abs", "Obliques", "Quads", "Hamstrings", "Glutes", "Calves",
 ];
 
+const MUSCLE_API_NAMES: Record<string, string> = {
+  chest: "chest",
+  back: "back",
+  shoulders: "shoulders",
+  biceps: "biceps",
+  triceps: "triceps",
+  forearms: "forearms",
+  abs: "abdominals",
+  obliques: "abdominals",
+  quads: "quadriceps",
+  hamstrings: "hamstrings",
+  glutes: "glutes",
+  calves: "calves",
+};
+
 const EQUIPMENT_OPTIONS = [
   "Any", "Barbell", "Dumbbell", "Cable", "Machine", "Bodyweight", "Kettlebell",
 ];
@@ -103,8 +118,11 @@ export default function GenerateScreen() {
   const buttonScale = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
 
+  const mappedMuscles = selectedMuscles.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase());
+  const uniqueMappedMuscles = [...new Set(mappedMuscles)];
+  
   const muscleImageUrl = selectedMuscles.length > 0
-    ? `${baseUrl}api/muscle-image?muscles=${selectedMuscles.join(",").toLowerCase()}&color=255,107,107`
+    ? `${baseUrl}api/muscle-image?muscles=${uniqueMappedMuscles.join(",")}&color=255,107,107`
     : `${baseUrl}api/muscle-image?base=true`;
 
   const toggleMuscle = useCallback((muscle: string) => {
