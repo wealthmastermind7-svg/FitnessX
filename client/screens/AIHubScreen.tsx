@@ -13,6 +13,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
+import { BlurView } from "expo-blur";
+import { GlassView } from "expo-glass-effect";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
@@ -216,28 +218,34 @@ export default function AIHubScreen() {
       onPress={() => handleFeaturePress(feature)}
       style={({ pressed }) => [styles.featureCard, pressed && styles.featureCardPressed]}
     >
-      <LinearGradient
-        colors={feature.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.featureGradient}
+      <GlassView 
+        glassEffectStyle="regular" 
+        intensity={80}
+        style={styles.featureGlass}
       >
-        <View style={styles.featureIconContainer}>
-          <Feather name={feature.icon} size={28} color="#FFF" />
-        </View>
-        <View style={styles.featureContent}>
-          <View style={styles.featureTitleRow}>
-            <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
-            {feature.isPremium && (
-              <View style={styles.proBadge}>
-                <ThemedText style={styles.proBadgeText}>PRO</ThemedText>
-              </View>
-            )}
+        <LinearGradient
+          colors={feature.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.featureGradient}
+        >
+          <View style={styles.featureIconContainer}>
+            <Feather name={feature.icon} size={28} color="#FFF" />
           </View>
-          <ThemedText style={styles.featureDescription}>{feature.description}</ThemedText>
-        </View>
-        <Feather name="chevron-right" size={24} color="rgba(255,255,255,0.7)" />
-      </LinearGradient>
+          <View style={styles.featureContent}>
+            <View style={styles.featureTitleRow}>
+              <ThemedText style={styles.featureTitle}>{feature.title}</ThemedText>
+              {feature.isPremium && (
+                <View style={styles.proBadge}>
+                  <ThemedText style={styles.proBadgeText}>PRO</ThemedText>
+                </View>
+              )}
+            </View>
+            <ThemedText style={styles.featureDescription}>{feature.description}</ThemedText>
+          </View>
+          <Feather name="chevron-right" size={24} color="rgba(255,255,255,0.7)" />
+        </LinearGradient>
+      </GlassView>
     </Pressable>
   );
 
@@ -801,7 +809,7 @@ const styles = StyleSheet.create({
     borderBottomColor: 'rgba(255, 107, 107, 0.2)',
   },
   modalSubtitle: {
-    ...Typography.body,
+    fontSize: 14,
     color: Colors.dark.textSecondary,
     marginTop: 2,
   },
