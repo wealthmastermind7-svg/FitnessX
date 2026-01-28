@@ -8,6 +8,7 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
@@ -45,6 +46,7 @@ export default function PostDetailScreen() {
   
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likes);
+  const [isFollowing, setIsFollowing] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([
     { id: "1", username: "fitness_fan", text: "Great workout! Keep it up!", timestamp: new Date(Date.now() - 30 * 60 * 1000) },
@@ -61,6 +63,16 @@ export default function PostDetailScreen() {
       setLikeCount(likeCount + 1);
     }
     setLiked(!liked);
+  };
+
+  const handleFollow = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsFollowing(!isFollowing);
+  };
+
+  const handleShare = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    Alert.alert("Share", "Sharing options will appear here on a physical device.");
   };
 
   const handleComment = () => {
@@ -112,8 +124,13 @@ export default function PostDetailScreen() {
                 <ThemedText style={styles.postUsername}>{post.username}</ThemedText>
                 <ThemedText style={styles.postTime}>{formatTimeAgo(post.timestamp)}</ThemedText>
               </View>
-              <Pressable style={styles.followButton}>
-                <ThemedText style={styles.followButtonText}>Follow</ThemedText>
+              <Pressable 
+                style={[styles.followButton, isFollowing && { backgroundColor: 'transparent', borderWidth: 1, borderColor: Colors.dark.accent }]} 
+                onPress={handleFollow}
+              >
+                <ThemedText style={[styles.followButtonText, isFollowing && { color: Colors.dark.accent }]}>
+                  {isFollowing ? "Following" : "Follow"}
+                </ThemedText>
               </Pressable>
             </View>
 
@@ -220,7 +237,7 @@ export default function PostDetailScreen() {
                 <Feather name="message-circle" size={22} color={Colors.dark.textSecondary} />
                 <ThemedText style={styles.actionCount}>{comments.length}</ThemedText>
               </View>
-              <Pressable style={styles.actionButton}>
+              <Pressable onPress={handleShare} style={styles.actionButton}>
                 <Feather name="share" size={22} color={Colors.dark.textSecondary} />
               </Pressable>
               <Pressable style={styles.actionButton}>

@@ -7,6 +7,7 @@ import {
   Dimensions,
   FlatList,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -210,14 +211,16 @@ function AthleteCard({ athlete, onFollow }: { athlete: typeof SUGGESTED_ATHLETES
   );
 }
 
-function WorkoutPostCard({ post, onLike, onComment, onPress }: { 
+function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: { 
   post: WorkoutPost; 
   onLike: () => void;
   onComment: () => void;
+  onShare: () => void;
   onPress: () => void;
 }) {
   const [liked, setLiked] = useState(post.isLiked);
   const [likeCount, setLikeCount] = useState(post.likes);
+  const [isFollowing, setIsFollowing] = useState(false);
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const initials = post.username.slice(0, 2).toUpperCase();
 
@@ -230,6 +233,11 @@ function WorkoutPostCard({ post, onLike, onComment, onPress }: {
     }
     setLiked(!liked);
     onLike();
+  };
+
+  const handleFollow = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsFollowing(!isFollowing);
   };
 
   const handlePressIn = () => {
@@ -257,8 +265,10 @@ function WorkoutPostCard({ post, onLike, onComment, onPress }: {
             <ThemedText style={styles.postUsername}>{post.username}</ThemedText>
             <ThemedText style={styles.postTime}>{formatTimeAgo(post.timestamp)}</ThemedText>
           </View>
-          <Pressable style={styles.followSmall}>
-            <ThemedText style={styles.followSmallText}>+ Follow</ThemedText>
+          <Pressable style={[styles.followSmall, isFollowing && { backgroundColor: 'transparent', borderWidth: 1, borderColor: Colors.dark.accent }]} onPress={handleFollow}>
+            <ThemedText style={[styles.followSmallText, isFollowing && { color: Colors.dark.accent }]}>
+              {isFollowing ? "Following" : "+ Follow"}
+            </ThemedText>
           </Pressable>
         </View>
 
@@ -342,7 +352,7 @@ function WorkoutPostCard({ post, onLike, onComment, onPress }: {
             <Feather name="message-circle" size={20} color={Colors.dark.textSecondary} />
             <ThemedText style={styles.actionCount}>{post.comments}</ThemedText>
           </Pressable>
-          <Pressable style={styles.actionButton}>
+          <Pressable onPress={onShare} style={styles.actionButton}>
             <Feather name="share" size={20} color={Colors.dark.textSecondary} />
           </Pressable>
         </View>
@@ -528,7 +538,11 @@ export default function CommunityFeedScreen() {
           <WorkoutPostCard
             post={item}
             onLike={() => {}}
-            onComment={() => {}}
+            onComment={() => handlePostPress(item)}
+            onShare={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              Alert.alert("Share", "Sharing options will appear here on a physical device.");
+            }}
             onPress={() => handlePostPress(item)}
           />
         )}
