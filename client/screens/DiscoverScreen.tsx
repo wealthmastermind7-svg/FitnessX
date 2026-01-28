@@ -22,6 +22,7 @@ import { BlurView } from "expo-blur";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import ReadinessWidget from "@/components/ReadinessWidget";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
@@ -311,6 +312,8 @@ export default function DiscoverScreen() {
             Your personal fitness journey starts here
           </ThemedText>
         </Animated.View>
+
+        <ReadinessWidget />
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
