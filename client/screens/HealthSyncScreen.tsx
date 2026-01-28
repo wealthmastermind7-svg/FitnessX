@@ -57,6 +57,20 @@ const HEALTH_PLATFORMS: HealthPlatform[] = [
   },
 ];
 
+interface SyncCategory {
+  id: string;
+  name: string;
+  icon: keyof typeof Feather.glyphMap;
+  color: string;
+}
+
+const SYNC_CATEGORIES: SyncCategory[] = [
+  { id: "steps", name: "Daily Steps", icon: "trending-up", color: "#4ECDC4" },
+  { id: "calories", name: "Active Calories", icon: "zap", color: "#FF6B6B" },
+  { id: "heart_rate", name: "Heart Rate", icon: "heart", color: "#9D4EDD" },
+  { id: "workouts", name: "Workouts", icon: "activity", color: "#FFB347" },
+];
+
 interface ExternalIntegration {
   id: string;
   name: string;
@@ -100,7 +114,8 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function HealthSyncScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
-  const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(new Set());
+  const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(new Set(["apple_health"]));
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set(["steps", "calories", "heart_rate", "workouts"]));
   const [isSyncing, setIsSyncing] = useState(false);
   const [stravaConnected, setStravaConnected] = useState(false);
   const [isConnectingStrava, setIsConnectingStrava] = useState(false);
@@ -121,6 +136,19 @@ export default function HealthSyncScreen() {
   const togglePlatform = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedPlatforms((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleCategory = (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedCategories((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(id)) {
         newSet.delete(id);
@@ -196,6 +224,7 @@ export default function HealthSyncScreen() {
     const healthSyncSettings = {
       appleHealth: selectedPlatforms.has("apple_health"),
       googleFit: selectedPlatforms.has("google_fit"),
+      categories: Array.from(selectedCategories),
       syncEnabled: true,
       connectedAt: new Date().toISOString(),
     };
@@ -325,6 +354,45 @@ export default function HealthSyncScreen() {
               </Pressable>
             ))}
           </View>
+
+          {selectedPlatforms.has("apple_health") && (
+            <View style={styles.categoriesSection}>
+              <ThemedText style={styles.sectionLabelSmall}>SYNC CATEGORIES</ThemedText>
+              <View style={styles.categoryGrid}>
+                {SYNC_CATEGORIES.map((category) => (
+                  <Pressable
+                    key={category.id}
+                    style={[
+                      styles.categoryCard,
+                      selectedCategories.has(category.id) && styles.categoryCardSelected,
+                    ]}
+                    onPress={() => toggleCategory(category.id)}
+                  >
+                    <BlurView intensity={10} tint="dark" style={styles.categoryCardInner}>
+                      <Feather 
+                        name={category.icon} 
+                        size={20} 
+                        color={selectedCategories.has(category.id) ? category.color : "rgba(255,255,255,0.3)"} 
+                      />
+                      <ThemedText style={[
+                        styles.categoryName,
+                        !selectedCategories.has(category.id) && { color: "rgba(255,255,255,0.4)" }
+                      ]}>
+                        {category.name}
+                      </ThemedText>
+                      <View style={[
+                        styles.categoryToggle,
+                        selectedCategories.has(category.id) && { backgroundColor: category.color }
+                      ]}>
+                        {selectedCategories.has(category.id) && <Feather name="check" size={12} color="white" />}
+                      </View>
+                    </BlurView>
+                  </Pressable>
+                ))}
+              </View>
+            </View>
+          )}
+
           <View style={styles.healthNote}>
             <Feather name="info" size={14} color="rgba(255,255,255,0.4)" />
             <ThemedText style={styles.healthNoteText}>
@@ -553,6 +621,51 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: "rgba(255,255,255,0.4)",
     lineHeight: 16,
+  },
+  categoriesSection: {
+    marginTop: Spacing.lg,
+    paddingHorizontal: 4,
+  },
+  sectionLabelSmall: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "rgba(255,255,255,0.3)",
+    letterSpacing: 1,
+    marginBottom: Spacing.sm,
+  },
+  categoryGrid: {
+    gap: Spacing.sm,
+  },
+  categoryCard: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.05)",
+  },
+  categoryCardSelected: {
+    borderColor: "rgba(255,255,255,0.15)",
+    backgroundColor: "rgba(255,255,255,0.03)",
+  },
+  categoryCardInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: Spacing.md,
+    gap: Spacing.md,
+  },
+  categoryName: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
+    color: "white",
+  },
+  categoryToggle: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.2)",
+    alignItems: "center",
+    justifyContent: "center",
   },
   platformGrid: {
     flexDirection: "row",
