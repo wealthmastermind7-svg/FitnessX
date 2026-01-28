@@ -879,9 +879,10 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.accent,
   },
   healthScoreValue: {
-    fontSize: 36,
+    fontSize: 48,
     fontWeight: "700",
     color: Colors.dark.accent,
+    lineHeight: 56,
   },
   healthScoreLabel: {
     fontSize: 12,
@@ -912,12 +913,14 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   foodsList: {
+    marginBottom: Spacing.md,
     gap: Spacing.xs,
   },
   foodItem: {
     flexDirection: "row",
     alignItems: "center",
     gap: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   foodItemText: {
     fontSize: 14,
@@ -929,15 +932,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     lineHeight: 20,
     paddingLeft: Spacing.sm,
-  },
-  foodItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginBottom: Spacing.xs,
-  },
-  foodsList: {
-    marginBottom: Spacing.md,
   },
   modalSubtitle: {
     fontSize: 14,
