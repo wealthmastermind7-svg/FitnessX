@@ -12,6 +12,13 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (v1.0.1 Build 3)
 
+**Exercise Library Enhancements:**
+- Added **Categories browsing section** to Discover screen (strength, cardio, mobility, stretching, plyometrics)
+- Exercise details now display **difficulty levels** (beginner, intermediate, advanced) and **training categories**
+- Backend updated with **high-resolution GIF support** (up to 720p) via resolution parameter
+- Added list endpoints: `/api/exercises/bodyPartList`, `/api/exercises/targetList`, `/api/exercises/equipmentList`
+- Exercise Browser supports filtering by both body part and training category
+
 **Freemium Model Update:**
 - Free users now limited to **5 generated and saved workouts** (previously unlimited generation, 5 save limit)
 - Pro users can **generate and save up to 100 workouts** (vs 5)
@@ -40,7 +47,7 @@ Preferred communication style: Simple, everyday language.
 ### Feature Specifications
 - **Onboarding Flow**: 4-screen guided introduction showcasing app capabilities (Welcome, Discover Exercises, AI Coach, Custom Workouts). Stored in AsyncStorage to show only on first launch.
 - **Workout Generation**: Users can generate custom workouts based on muscle groups and equipment.
-- **Exercise Browsing**: Access to a library of 1,300+ exercises with GIF demonstrations, search, and filtering.
+- **Exercise Browsing**: Access to a library of 1,300+ exercises with GIF demonstrations, search, filtering by body part and training category, plus metadata (difficulty, category, description).
 - **AI Coach**: Chat-based fitness assistant for general fitness Q&A, form checks, and recovery recommendations (simplified from multi-mode to chat-only).
 - **Workout Tracking**: Log workouts with exercises, sets, reps, and weight.
 - **Progress Tracking**: Chart weight, heart rate, and body measurements.

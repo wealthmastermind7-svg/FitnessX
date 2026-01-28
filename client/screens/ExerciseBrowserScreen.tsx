@@ -48,6 +48,15 @@ const BODY_PARTS = [
   { id: "cardio", label: "Cardio", icon: "heart" },
 ];
 
+const CATEGORIES = [
+  { id: "all", label: "All Categories", icon: "layers" },
+  { id: "strength", label: "Strength", icon: "trending-up" },
+  { id: "cardio", label: "Cardio", icon: "heart" },
+  { id: "mobility", label: "Mobility", icon: "wind" },
+  { id: "stretching", label: "Stretching", icon: "maximize-2" },
+  { id: "plyometrics", label: "Plyometrics", icon: "zap" },
+];
+
 const normalizeBodyPartName = (name: string): string => {
   const nameMap: Record<string, string> = {
     "arms": "upper arms",
@@ -71,6 +80,9 @@ export default function ExerciseBrowserScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBodyPart, setSelectedBodyPart] = useState(
     route.params?.filterByMuscle ? normalizeBodyPartName(route.params.filterByMuscle) : "all"
+  );
+  const [selectedCategory, setSelectedCategory] = useState(
+    route.params?.filterByCategory || null
   );
   const [refreshing, setRefreshing] = useState(false);
 
@@ -119,7 +131,7 @@ export default function ExerciseBrowserScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     navigation.navigate("ExerciseDetail", { 
       exercise, 
-      exercises,
+      exercises: filteredExercises,
       exerciseIndex: index 
     });
   };
@@ -127,8 +139,20 @@ export default function ExerciseBrowserScreen() {
   const handleBodyPartSelect = (bodyPart: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedBodyPart(bodyPart);
+    setSelectedCategory(null);
     setSearchQuery("");
   };
+
+  const handleCategorySelect = (category: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedCategory(category === "all" ? null : category);
+  };
+
+  const filteredExercises = useMemo(() => {
+    if (!exercises) return [];
+    if (!selectedCategory) return exercises;
+    return exercises.filter(ex => ex.category === selectedCategory);
+  }, [exercises, selectedCategory]);
 
   const getExerciseImageUrl = (exerciseId: string, resolution: string = "360") => {
     return `${baseUrl}api/exercises/image/${exerciseId}?resolution=${resolution}`;
@@ -244,9 +268,51 @@ export default function ExerciseBrowserScreen() {
         ))}
       </ScrollView>
 
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.bodyPartScroll}
+      >
+        {CATEGORIES.map((cat) => (
+          <Pressable
+            key={cat.id}
+            onPress={() => handleCategorySelect(cat.id)}
+            style={[
+              styles.bodyPartChip,
+              (cat.id === "all" ? !selectedCategory : selectedCategory === cat.id) && styles.categoryChipSelected,
+            ]}
+          >
+            {(cat.id === "all" ? !selectedCategory : selectedCategory === cat.id) ? (
+              <LinearGradient
+                colors={["#9D4EDD", "#5A189A"]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+              />
+            ) : (
+              <BlurView intensity={20} tint="dark" style={StyleSheet.absoluteFill} />
+            )}
+            <Feather
+              name={cat.icon as any}
+              size={14}
+              color={(cat.id === "all" ? !selectedCategory : selectedCategory === cat.id) ? "#FFF" : "rgba(255,255,255,0.6)"}
+            />
+            <ThemedText
+              style={[
+                styles.bodyPartText,
+                (cat.id === "all" ? !selectedCategory : selectedCategory === cat.id) && styles.bodyPartTextSelected,
+              ]}
+            >
+              {cat.label}
+            </ThemedText>
+          </Pressable>
+        ))}
+      </ScrollView>
+
       <View style={styles.resultsHeader}>
         <ThemedText style={styles.resultsCount}>
-          {exercises?.length || 0} exercises found
+          {filteredExercises?.length || 0} exercises found
+          {selectedCategory && ` in ${selectedCategory}`}
         </ThemedText>
       </View>
     </View>
@@ -272,7 +338,7 @@ export default function ExerciseBrowserScreen() {
       </View>
 
       <FlatList
-        data={exercises || []}
+        data={filteredExercises}
         renderItem={renderExerciseCard}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={ListHeader}
@@ -373,6 +439,9 @@ const styles = StyleSheet.create({
   },
   bodyPartChipSelected: {
     borderColor: "#FF6B6B",
+  },
+  categoryChipSelected: {
+    borderColor: "#9D4EDD",
   },
   bodyPartText: {
     ...Typography.small,

@@ -53,7 +53,7 @@ export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
   TrainingProgram: { program: any };
-  ExerciseBrowser: { filterByMuscle?: string } | undefined;
+  ExerciseBrowser: { filterByMuscle?: string; filterByCategory?: string } | undefined;
   ExerciseDetail: { 
     exercise: ExerciseDBExercise;
     exercises?: ExerciseDBExercise[];
