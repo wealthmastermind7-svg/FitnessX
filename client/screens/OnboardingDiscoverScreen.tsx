@@ -256,16 +256,16 @@ const styles = StyleSheet.create({
   },
   muscleCard: {
     width: "47%",
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: "rgba(30, 30, 40, 0.7)",
     borderRadius: 12,
     padding: 12,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: "rgba(255, 107, 107, 0.15)",
   },
   muscleCardSelected: {
-    borderColor: "rgba(255,77,77,0.5)",
-    backgroundColor: "rgba(255,77,77,0.1)",
+    borderColor: "rgba(255, 107, 107, 0.5)",
+    backgroundColor: "rgba(255, 107, 107, 0.1)",
   },
   muscleImage: {
     width: 56,

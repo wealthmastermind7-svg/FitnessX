@@ -138,7 +138,7 @@ export default function OnboardingAICoachScreen() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "#0D0221",
   },
   container: {
     flex: 1,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   },
   skipText: {
     fontSize: 16,
-    color: "#FF4D4D",
+    color: "rgba(255, 255, 255, 0.5)",
     fontWeight: "500",
   },
   scrollContent: {
@@ -167,14 +167,11 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
   },
   chatContainer: {
-    backgroundColor: "white",
+    backgroundColor: "rgba(30, 30, 40, 0.7)",
     borderRadius: 24,
     padding: Spacing.lg,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 107, 0.15)",
   },
   chatBubbleRow: {
     flexDirection: "row",
@@ -188,13 +185,13 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: "#8B5CF6",
+    backgroundColor: "#FF6B6B",
     alignItems: "center",
     justifyContent: "center",
   },
   coachBubble: {
     flex: 1,
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 16,
     borderTopLeftRadius: 4,
     padding: 14,
@@ -202,7 +199,7 @@ const styles = StyleSheet.create({
   },
   coachText: {
     fontSize: 14,
-    color: "#333",
+    color: "white",
     lineHeight: 20,
   },
   userBubbleRow: {
@@ -211,7 +208,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   userBubble: {
-    backgroundColor: "#FF4D4D",
+    backgroundColor: "#FF6B6B",
     borderRadius: 16,
     borderTopRightRadius: 4,
     padding: 14,
@@ -223,7 +220,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   typingBubble: {
-    backgroundColor: "#F0F0F0",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     borderRadius: 16,
     borderTopLeftRadius: 4,
     padding: 14,
@@ -237,7 +234,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#999",
+    backgroundColor: "rgba(255, 255, 255, 0.4)",
   },
   suggestionsRow: {
     flexDirection: "row",
@@ -250,17 +247,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: "#E0E0E0",
-    backgroundColor: "white",
+    borderColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
   },
   suggestionText: {
     fontSize: 13,
-    color: "#666",
+    color: "rgba(255, 255, 255, 0.7)",
   },
   inputBar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F5F5",
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: BorderRadius.full,
     paddingVertical: 12,
     paddingHorizontal: 16,
@@ -277,27 +274,27 @@ const styles = StyleSheet.create({
   },
   mainTitle: {
     fontSize: 28,
-    color: "#333",
+    color: "white",
     textAlign: "center",
     lineHeight: 36,
   },
   titleItalic: {
     fontSize: 28,
     fontStyle: "italic",
-    color: "#333",
+    color: "white",
     lineHeight: 36,
   },
   mainTitleBold: {
     fontSize: 28,
     fontWeight: "700",
     fontStyle: "italic",
-    color: "#333",
+    color: "white",
     marginBottom: Spacing.md,
     lineHeight: 36,
   },
   description: {
     fontSize: 15,
-    color: "#666",
+    color: "rgba(255, 255, 255, 0.6)",
     textAlign: "center",
     lineHeight: 22,
     maxWidth: 300,
@@ -311,17 +308,17 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: "#DDD",
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
   },
   dotActive: {
     width: 24,
-    backgroundColor: "#FF4D4D",
+    backgroundColor: "#FF6B6B",
   },
   primaryButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#FF4D4D",
+    backgroundColor: "#FF6B6B",
     paddingVertical: 18,
     paddingHorizontal: Spacing.xl,
     borderRadius: 20,

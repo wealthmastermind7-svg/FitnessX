@@ -221,8 +221,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: BorderRadius.full,
+    backgroundColor: "rgba(30, 30, 40, 0.7)",
     borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.15)",
+    borderColor: "rgba(255, 107, 107, 0.15)",
     overflow: "hidden",
   },
   badgeText: {
