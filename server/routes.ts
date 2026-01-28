@@ -990,6 +990,13 @@ function generateFallbackExercises(muscleGroups: string[]): Exercise[] {
       { name: "Tricep Pushdowns", sets: 3, reps: "12-15", restSeconds: 60, muscleGroup: "Triceps" },
       { name: "Skull Crushers", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Triceps" },
     ],
+    legs: [
+      { name: "Squats", sets: 4, reps: "8-10", restSeconds: 120, muscleGroup: "Legs" },
+      { name: "Leg Press", sets: 3, reps: "10-12", restSeconds: 90, muscleGroup: "Legs" },
+      { name: "Leg Extensions", sets: 3, reps: "12-15", restSeconds: 60, muscleGroup: "Legs" },
+      { name: "Romanian Deadlifts", sets: 4, reps: "8-10", restSeconds: 90, muscleGroup: "Legs" },
+      { name: "Leg Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Legs" },
+    ],
     quads: [
       { name: "Squats", sets: 4, reps: "8-10", restSeconds: 120, muscleGroup: "Quads" },
       { name: "Leg Press", sets: 3, reps: "10-12", restSeconds: 90, muscleGroup: "Quads" },
@@ -1007,9 +1014,22 @@ function generateFallbackExercises(muscleGroups: string[]): Exercise[] {
       { name: "Standing Calf Raises", sets: 4, reps: "15-20", restSeconds: 45, muscleGroup: "Calves" },
       { name: "Seated Calf Raises", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Calves" },
     ],
+    core: [
+      { name: "Cable Crunches", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Core" },
+      { name: "Hanging Leg Raises", sets: 3, reps: "12-15", restSeconds: 45, muscleGroup: "Core" },
+      { name: "Plank", sets: 3, reps: "60s", restSeconds: 30, muscleGroup: "Core" },
+    ],
     abs: [
       { name: "Cable Crunches", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Abs" },
       { name: "Hanging Leg Raises", sets: 3, reps: "12-15", restSeconds: 45, muscleGroup: "Abs" },
+    ],
+    arms: [
+      { name: "Barbell Curls", sets: 3, reps: "10-12", restSeconds: 60, muscleGroup: "Arms" },
+      { name: "Tricep Pushdowns", sets: 3, reps: "12-15", restSeconds: 60, muscleGroup: "Arms" },
+    ],
+    cardio: [
+      { name: "Running", sets: 1, reps: "20 min", restSeconds: 0, muscleGroup: "Cardio" },
+      { name: "Cycling", sets: 1, reps: "30 min", restSeconds: 0, muscleGroup: "Cardio" },
     ],
     forearms: [
       { name: "Wrist Curls", sets: 3, reps: "15-20", restSeconds: 45, muscleGroup: "Forearms" },

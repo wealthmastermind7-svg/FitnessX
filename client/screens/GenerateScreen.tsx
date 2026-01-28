@@ -29,23 +29,27 @@ import { useRevenueCat } from "@/lib/revenuecat";
 import { Alert } from "react-native";
 
 const MUSCLE_GROUPS = [
-  "Chest", "Back", "Shoulders", "Biceps", "Triceps",
-  "Forearms", "Abs", "Obliques", "Quads", "Hamstrings", "Glutes", "Calves",
+  "Chest", "Back", "Shoulders", "Arms", "Forearms", "Legs", "Calves", "Core", "Cardio"
 ];
 
 const MUSCLE_API_NAMES: Record<string, string> = {
   chest: "chest",
   back: "back",
   shoulders: "shoulders",
+  arms: "biceps,triceps",
   biceps: "biceps",
   triceps: "triceps",
   forearms: "forearms",
-  abs: "abdominals",
-  obliques: "abdominals",
+  legs: "quadriceps,hamstrings,glutes",
   quads: "quadriceps",
+  quadriceps: "quadriceps",
   hamstrings: "hamstrings",
   glutes: "glutes",
   calves: "calves",
+  core: "abdominals",
+  abs: "abdominals",
+  obliques: "abdominals",
+  cardio: "chest", // Fallback for cardio visualization
 };
 
 const EQUIPMENT_OPTIONS = [
