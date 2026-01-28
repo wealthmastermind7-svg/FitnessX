@@ -283,7 +283,29 @@ export default function ExerciseDetailScreen() {
                 {exercise.equipment}
               </ThemedText>
             </View>
+            {exercise.difficulty && (
+              <View style={[styles.tag, { backgroundColor: 'rgba(255, 255, 255, 0.1)' }]}>
+                <Feather name="bar-chart" size={14} color="#FFF" />
+                <ThemedText style={[styles.tagText, { color: "#FFF" }]}>
+                  {exercise.difficulty}
+                </ThemedText>
+              </View>
+            )}
+            {exercise.category && (
+              <View style={[styles.tag, { backgroundColor: 'rgba(255, 255, 255, 0.1)' }]}>
+                <Feather name="tag" size={14} color="#FFF" />
+                <ThemedText style={[styles.tagText, { color: "#FFF" }]}>
+                  {exercise.category}
+                </ThemedText>
+              </View>
+            )}
           </View>
+
+          {exercise.description && (
+            <View style={styles.descriptionContainer}>
+              <ThemedText style={styles.descriptionText}>{exercise.description}</ThemedText>
+            </View>
+          )}
 
           {/* Advanced Stats Section - Real Data */}
           <View style={styles.advancedStatsGrid}>
@@ -549,6 +571,17 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: Colors.dark.textSecondary,
     textTransform: "capitalize",
+  },
+  descriptionContainer: {
+    padding: Spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.lg,
+  },
+  descriptionText: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+    lineHeight: 22,
   },
   advancedStatsGrid: {
     flexDirection: 'row',

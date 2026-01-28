@@ -44,6 +44,9 @@ export type ExerciseDBExercise = {
   equipment: string;
   gifUrl: string;
   instructions: string[];
+  description?: string;
+  difficulty?: "beginner" | "intermediate" | "advanced";
+  category?: "strength" | "cardio" | "mobility" | "balance" | "stretching" | "plyometrics" | "rehabilitation";
 };
 
 export type RootStackParamList = {

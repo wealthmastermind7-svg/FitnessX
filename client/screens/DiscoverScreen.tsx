@@ -46,6 +46,16 @@ const MUSCLE_GROUPS = [
   "Cardio",
 ];
 
+const CATEGORIES = [
+  "strength",
+  "cardio",
+  "mobility",
+  "balance",
+  "stretching",
+  "plyometrics",
+  "rehabilitation",
+];
+
 // Hardcoded muscle group images
 const muscleGroupImages: Record<string, any> = {
   "Chest": require("../assets/muscle-groups/chest.jpeg"),
@@ -365,6 +375,35 @@ export default function DiscoverScreen() {
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScroll}
+          >
+            {CATEGORIES.map((category, index) => (
+              <Pressable
+                key={category}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate("ExerciseBrowser", { filterByCategory: category });
+                }}
+                style={({ pressed }) => [
+                  styles.categoryCard,
+                  pressed && { opacity: 0.8 }
+                ]}
+              >
+                <BlurView intensity={40} tint="dark" style={styles.categoryBlur}>
+                  <ThemedText style={styles.categoryName}>{category}</ThemedText>
+                </BlurView>
+              </Pressable>
+            ))}
+          </ScrollView>
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
           </View>
           <View style={styles.muscleGrid}>
@@ -491,6 +530,25 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     gap: Spacing.md,
+  },
+  categoryCard: {
+    width: 140,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
+  },
+  categoryBlur: {
+    padding: Spacing.md,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.text,
+    textTransform: 'capitalize',
   },
   muscleCard: {
     width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,

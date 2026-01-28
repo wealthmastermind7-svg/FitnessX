@@ -610,7 +610,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get body part list
+  app.get("/api/exercises/bodyPartList", async (_req, res) => {
+    try {
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/bodyPartList`,
+        { headers: exerciseDbHeaders }
+      );
+      if (!response.ok) throw new Error("ExerciseDB API error");
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch body part list" });
+    }
+  });
+
+  app.get("/api/exercises/targetList", async (_req, res) => {
+    try {
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/targetList`,
+        { headers: exerciseDbHeaders }
+      );
+      if (!response.ok) throw new Error("ExerciseDB API error");
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch target list" });
+    }
+  });
+
+  app.get("/api/exercises/equipmentList", async (_req, res) => {
+    try {
+      const response = await fetch(
+        `https://exercisedb.p.rapidapi.com/exercises/equipmentList`,
+        { headers: exerciseDbHeaders }
+      );
+      if (!response.ok) throw new Error("ExerciseDB API error");
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch equipment list" });
+    }
+  });
+
+  // Get body part list (OLD - keep for compatibility)
   app.get("/api/exercises/bodyPartList", async (req, res) => {
     try {
       const keyCheck = validateRapidApiKey();
