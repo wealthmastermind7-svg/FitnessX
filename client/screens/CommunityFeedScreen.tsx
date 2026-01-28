@@ -291,32 +291,30 @@ function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: {
         <View style={styles.postStats}>
           <View style={styles.statItem}>
             <ThemedText style={styles.statLabel}>Time</ThemedText>
-            <ThemedText style={styles.statValue}>{post.duration}</ThemedText>
+            <ThemedText style={styles.statValue} numberOfLines={1}>{post.duration}</ThemedText>
           </View>
           <View style={styles.statItem}>
             <ThemedText style={styles.statLabel}>Volume</ThemedText>
-            <ThemedText style={styles.statValue}>{post.volume}</ThemedText>
+            <ThemedText style={styles.statValue} numberOfLines={1}>{post.volume}</ThemedText>
           </View>
-          <View style={styles.rightStats}>
-            {post.records !== undefined && post.records > 0 && (
-              <View style={styles.statItemSmall}>
-                <ThemedText style={styles.statLabel}>Records</ThemedText>
-                <View style={styles.recordsValue}>
-                  <ThemedText style={styles.recordIcon}>🏆</ThemedText>
-                  <ThemedText style={styles.statValue}>{post.records}</ThemedText>
-                </View>
+          {post.records !== undefined && post.records > 0 && (
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statLabel}>Records</ThemedText>
+              <View style={styles.recordsValue}>
+                <ThemedText style={styles.recordIcon}>🏆</ThemedText>
+                <ThemedText style={styles.statValue}>{post.records}</ThemedText>
               </View>
-            )}
-            {post.avgBpm !== undefined && (
-              <View style={styles.statItemSmall}>
-                <ThemedText style={styles.statLabel}>Avg bpm</ThemedText>
-                <View style={styles.recordsValue}>
-                  <ThemedText style={styles.recordIcon}>❤️</ThemedText>
-                  <ThemedText style={[styles.statValue, { color: "#FF6B6B" }]}>{post.avgBpm}</ThemedText>
-                </View>
+            </View>
+          )}
+          {post.avgBpm !== undefined && (
+            <View style={styles.statItem}>
+              <ThemedText style={styles.statLabel}>Avg bpm</ThemedText>
+              <View style={styles.recordsValue}>
+                <ThemedText style={styles.recordIcon}>❤️</ThemedText>
+                <ThemedText style={[styles.statValue, { color: "#FF6B6B" }]}>{post.avgBpm}</ThemedText>
               </View>
-            )}
-          </View>
+            </View>
+          )}
         </View>
 
         {post.exercises.length > 0 && (
@@ -908,24 +906,15 @@ const styles = StyleSheet.create({
   },
   postStats: {
     flexDirection: "row",
-    alignItems: "flex-end",
-    gap: Spacing.lg,
+    justifyContent: "space-between",
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.dark.border,
   },
-  rightStats: {
-    flex: 1,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: Spacing.lg,
-  },
   statItem: {
-    minWidth: 70,
-  },
-  statItemSmall: {
-    alignItems: "flex-end",
+    flex: 1,
+    paddingRight: 4,
   },
   statLabel: {
     fontSize: 12,
