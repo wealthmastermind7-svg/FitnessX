@@ -109,6 +109,21 @@ function SelectableChip({
   );
 }
 
+// Muscle mapping for local assets
+const MUSCLE_ASSETS: Record<string, any> = {
+  chest: require("@/assets/muscles/chest.png"),
+  back: require("@/assets/muscles/back.png"),
+  shoulders: require("@/assets/muscles/shoulders.png"),
+  arms: require("@/assets/muscles/arms.png"),
+  forearms: require("@/assets/muscles/forearms.png"),
+  legs: require("@/assets/muscles/legs.png"),
+  calves: require("@/assets/muscles/calves.png"),
+  core: require("@/assets/muscles/core.png"),
+  glutes: require("@/assets/muscles/glutes.png"),
+  quads: require("@/assets/muscles/quads.png"),
+  hamstrings: require("@/assets/muscles/hamstrings.png"),
+};
+
 export default function GenerateScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
@@ -125,11 +140,19 @@ export default function GenerateScreen() {
   const buttonScale = useRef(new Animated.Value(1)).current;
   const baseUrl = getApiUrl();
 
-  const mappedMuscles = selectedMuscles.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase());
-  const uniqueMappedMuscles = [...new Set(mappedMuscles)];
-  
+  // Determine which image to show
+  // If multiple are selected, we show the first one for now as a static representation
+  // or we could combine them if we had a more complex solution, but static is requested.
+  const getMuscleImage = () => {
+    if (selectedMuscles.length === 0) return null;
+    
+    const primaryMuscle = selectedMuscles[0].toLowerCase();
+    return MUSCLE_ASSETS[primaryMuscle] || null;
+  };
+
+  const muscleAsset = getMuscleImage();
   const muscleImageUrl = selectedMuscles.length > 0
-    ? `${baseUrl}api/muscle-image?muscles=${uniqueMappedMuscles.join(",")}&color=255,107,107`
+    ? (muscleAsset ? Image.resolveAssetSource(muscleAsset).uri : `${baseUrl}api/muscle-image?muscles=${selectedMuscles.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase()).join(",")}&color=255,107,107`)
     : `${baseUrl}api/muscle-image?base=true`;
 
   const toggleMuscle = useCallback((muscle: string) => {
