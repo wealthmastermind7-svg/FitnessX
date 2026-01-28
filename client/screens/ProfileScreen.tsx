@@ -84,7 +84,7 @@ function SettingsRow({
     >
       <View style={styles.settingsRowLeft}>
         <View style={styles.settingsIconContainer}>
-          <Feather name={icon} size={20} color={Colors.dark.accent} />
+          <Feather name={icon} size={20} color="#FF6B6B" />
         </View>
         <ThemedText style={styles.settingsLabel}>{label}</ThemedText>
       </View>
@@ -103,7 +103,7 @@ function SettingsRow({
 function StatCard({ label, value, icon }: { label: string; value: string | number; icon: keyof typeof Feather.glyphMap }) {
   return (
     <View style={styles.statCard}>
-      <Feather name={icon} size={24} color={Colors.dark.accent} style={{ marginBottom: Spacing.sm }} />
+      <Feather name={icon} size={24} color="#FF6B6B" style={{ marginBottom: Spacing.sm }} />
       <ThemedText style={styles.statValue}>{value}</ThemedText>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
     </View>
@@ -364,7 +364,9 @@ export default function ProfileScreen() {
 
         <View style={styles.avatarSection}>
           <LinearGradient
-            colors={Gradients.accent as [string, string]}
+            colors={["#FF6B6B", "#FF4B4B"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
             style={styles.avatarContainer}
           >
             <Feather name="user" size={48} color="#FFF" />
@@ -483,7 +485,7 @@ export default function ProfileScreen() {
             <View style={styles.settingRowContainer}>
               <View style={styles.settingsRowLeft}>
                 <View style={styles.settingsIconContainer}>
-                  <Feather name="bar-chart-2" size={20} color={Colors.dark.accent} />
+                  <Feather name="bar-chart-2" size={20} color="#FF6B6B" />
                 </View>
                 <ThemedText style={styles.settingsLabel}>Experience Level</ThemedText>
               </View>
@@ -518,7 +520,7 @@ export default function ProfileScreen() {
             <View style={styles.settingRowContainer}>
               <View style={styles.settingsRowLeft}>
                 <View style={styles.settingsIconContainer}>
-                  <Feather name="globe" size={20} color={Colors.dark.accent} />
+                  <Feather name="globe" size={20} color="#FF6B6B" />
                 </View>
                 <ThemedText style={styles.settingsLabel}>Units</ThemedText>
               </View>
@@ -569,8 +571,8 @@ export default function ProfileScreen() {
               }}
             >
               <View style={styles.settingsRowLeft}>
-                <View style={[styles.settingsIconContainer, { backgroundColor: Colors.dark.accent + '20' }]}>
-                  <Feather name="zap" size={20} color={Colors.dark.accent} />
+                <View style={[styles.settingsIconContainer, { backgroundColor: "#FF6B6B" + '20' }]}>
+                  <Feather name="zap" size={20} color="#FF6B6B" />
                 </View>
                 <View>
                   <ThemedText style={styles.settingsLabel}>
@@ -1034,8 +1036,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonTabActive: {
-    backgroundColor: Colors.dark.accent,
-    borderColor: Colors.dark.accent,
+    backgroundColor: "#FF6B6B",
+    borderColor: "#FF6B6B",
   },
   buttonTabText: {
     ...Typography.small,
