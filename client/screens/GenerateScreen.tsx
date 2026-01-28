@@ -111,17 +111,17 @@ function SelectableChip({
 
 // Muscle mapping for local assets
 const MUSCLE_ASSETS: Record<string, any> = {
-  chest: require("@/assets/muscles/chest.png"),
-  back: require("@/assets/muscles/back.png"),
-  shoulders: require("@/assets/muscles/shoulders.png"),
-  arms: require("@/assets/muscles/arms.png"),
-  forearms: require("@/assets/muscles/forearms.png"),
-  legs: require("@/assets/muscles/legs.png"),
-  calves: require("@/assets/muscles/calves.png"),
-  core: require("@/assets/muscles/core.png"),
-  glutes: require("@/assets/muscles/glutes.png"),
-  quads: require("@/assets/muscles/quads.png"),
-  hamstrings: require("@/assets/muscles/hamstrings.png"),
+  chest: require("../assets/muscles/chest.png"),
+  back: require("../assets/muscles/back.png"),
+  shoulders: require("../assets/muscles/shoulders.png"),
+  arms: require("../assets/muscles/arms.png"),
+  forearms: require("../assets/muscles/forearms.png"),
+  legs: require("../assets/muscles/legs.png"),
+  calves: require("../assets/muscles/calves.png"),
+  core: require("../assets/muscles/core.png"),
+  glutes: require("../assets/muscles/glutes.png"),
+  quads: require("../assets/muscles/quads.png"),
+  hamstrings: require("../assets/muscles/hamstrings.png"),
 };
 
 export default function GenerateScreen() {
