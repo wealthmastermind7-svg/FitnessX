@@ -425,40 +425,69 @@ export default function AIHubScreen() {
     if (!showNutritionResult || !nutritionResult) return null;
     return (
       <View style={styles.modalOverlay}>
-        <ScrollView style={styles.resultScrollContent}>
-          <View style={styles.resultContentInner}>
-            <View style={styles.modalHeader}>
-              <ThemedText style={styles.modalTitle}>Your Nutrition Plan</ThemedText>
-              <Pressable onPress={() => setShowNutritionResult(false)}>
-                <Feather name="x" size={24} color={Colors.dark.text} />
-              </Pressable>
-            </View>
-            <ThemedText style={styles.resultText}>
-              {typeof nutritionResult === "string" ? nutritionResult : JSON.stringify(nutritionResult, null, 2)}
-            </ThemedText>
+        <View style={styles.resultContent}>
+          <View style={styles.modalHeader}>
+            <ThemedText style={styles.modalTitle}>Nutrition Advice</ThemedText>
+            <Pressable onPress={() => setShowNutritionResult(false)}>
+              <Feather name="x" size={24} color={Colors.dark.text} />
+            </Pressable>
           </View>
-        </ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <ThemedText style={styles.resultText}>
+              {typeof nutritionResult === "string" 
+                ? nutritionResult 
+                : nutritionResult.advice || JSON.stringify(nutritionResult, null, 2)}
+            </ThemedText>
+          </ScrollView>
+        </View>
       </View>
     );
   };
 
   const renderWorkoutResult = () => {
     if (!showWorkoutResult || !workoutPlanResult) return null;
+    
+    // Attempt to parse the workout plan into a readable format
+    const plan = workoutPlanResult;
+    const days = plan.exercises || [];
+
     return (
       <View style={styles.modalOverlay}>
-        <ScrollView style={styles.resultScrollContent}>
-          <View style={styles.resultContentInner}>
-            <View style={styles.modalHeader}>
+        <View style={styles.resultContent}>
+          <View style={styles.modalHeader}>
+            <View>
               <ThemedText style={styles.modalTitle}>Your Workout Plan</ThemedText>
-              <Pressable onPress={() => setShowWorkoutResult(false)}>
-                <Feather name="x" size={24} color={Colors.dark.text} />
-              </Pressable>
+              <ThemedText style={styles.modalSubtitle}>{plan.goal} • {plan.total_weeks} Weeks</ThemedText>
             </View>
-            <ThemedText style={styles.resultText}>
-              {typeof workoutPlanResult === "string" ? workoutPlanResult : JSON.stringify(workoutPlanResult, null, 2)}
-            </ThemedText>
+            <Pressable onPress={() => setShowWorkoutResult(false)}>
+              <Feather name="x" size={24} color={Colors.dark.text} />
+            </Pressable>
           </View>
-        </ScrollView>
+          
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {days.length > 0 ? (
+              days.map((day: any, idx: number) => (
+                <View key={idx} style={styles.planDay}>
+                  <ThemedText style={styles.planDayTitle}>{day.day}</ThemedText>
+                  {day.exercises.map((ex: any, exIdx: number) => (
+                    <View key={exIdx} style={styles.planExercise}>
+                      <View style={styles.planExerciseHeader}>
+                        <ThemedText style={styles.planExerciseName}>{ex.name}</ThemedText>
+                      </View>
+                      <ThemedText style={styles.planExerciseDetails}>
+                        {ex.reps || ex.repetitions} reps • {ex.sets} sets • {ex.duration !== "N/A" ? ex.duration : "Strength"}
+                      </ThemedText>
+                    </View>
+                  ))}
+                </View>
+              ))
+            ) : (
+              <ThemedText style={styles.resultText}>
+                {typeof plan === "string" ? plan : JSON.stringify(plan, null, 2)}
+              </ThemedText>
+            )}
+          </ScrollView>
+        </View>
       </View>
     );
   };
@@ -800,6 +829,44 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     marginBottom: Spacing.xs,
     paddingLeft: Spacing.sm,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
+  },
+  planDay: {
+    marginBottom: Spacing.lg,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  planDayTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.accent,
+    marginBottom: Spacing.sm,
+  },
+  planExercise: {
+    marginBottom: Spacing.sm,
+    paddingBottom: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
+  planExerciseHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  planExerciseName: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.dark.text,
+  },
+  planExerciseDetails: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
