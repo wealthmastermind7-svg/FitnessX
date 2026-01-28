@@ -348,7 +348,7 @@ export default function DiscoverScreen() {
           ]}
         >
           <LinearGradient
-            colors={["#9D4EDD", "#5A189A"] as any}
+            colors={["#9D4EDD", "#5A189A"]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.exerciseLibraryGradient}
