@@ -17,6 +17,8 @@ import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { BlurView } from "expo-blur";
+
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Card } from "@/components/Card";
@@ -464,12 +466,12 @@ const styles = StyleSheet.create({
   muscleImageContainer: {
     width: "100%",
     aspectRatio: 1,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.xl,
     marginBottom: Spacing.xl,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   muscleImage: {
     width: "100%",
@@ -499,12 +501,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   chip: {
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   chipSelected: {
     backgroundColor: "#FF6B6B",
@@ -525,11 +527,11 @@ const styles = StyleSheet.create({
   difficultyOption: {
     flex: 1,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   difficultyOptionSelected: {
     backgroundColor: "#FF6B6B",
@@ -545,10 +547,10 @@ const styles = StyleSheet.create({
   },
   utilityCard: {
     padding: Spacing.md,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   utilityHeader: {
     flexDirection: 'row',
@@ -581,7 +583,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   textInput: {
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     color: Colors.dark.text,
@@ -589,7 +591,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
     textAlignVertical: "top",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   floatingButtonContainer: {
     position: "absolute",

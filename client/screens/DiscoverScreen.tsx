@@ -18,6 +18,8 @@ import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+import { BlurView } from "expo-blur";
+
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
@@ -218,22 +220,24 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
       <Animated.View
         style={[styles.workoutCard, { transform: [{ scale: scaleAnim }] }]}
       >
-        <View style={styles.workoutCardHeader}>
-          <ThemedText style={styles.workoutCardTitle}>{workout.name}</ThemedText>
-          <View style={styles.difficultyBadge}>
-            <ThemedText style={styles.difficultyText}>{workout.difficulty}</ThemedText>
-          </View>
-        </View>
-        <ThemedText style={styles.workoutCardDescription}>
-          {workout.description}
-        </ThemedText>
-        <View style={styles.workoutCardMuscles}>
-          {workout.muscleGroups.slice(0, 3).map((muscle, idx) => (
-            <View key={idx} style={styles.musclePill}>
-              <ThemedText style={styles.musclePillText}>{muscle}</ThemedText>
+        <BlurView intensity={40} tint="dark" style={styles.workoutCardBlur}>
+          <View style={styles.workoutCardHeader}>
+            <ThemedText style={styles.workoutCardTitle}>{workout.name}</ThemedText>
+            <View style={styles.difficultyBadge}>
+              <ThemedText style={styles.difficultyText}>{workout.difficulty}</ThemedText>
             </View>
-          ))}
-        </View>
+          </View>
+          <ThemedText style={styles.workoutCardDescription}>
+            {workout.description}
+          </ThemedText>
+          <View style={styles.workoutCardMuscles}>
+            {workout.muscleGroups.slice(0, 3).map((muscle, idx) => (
+              <View key={idx} style={styles.musclePill}>
+                <ThemedText style={styles.musclePillText}>{muscle}</ThemedText>
+              </View>
+            ))}
+          </View>
+        </BlurView>
       </Animated.View>
     </Pressable>
   );
@@ -428,11 +432,14 @@ const styles = StyleSheet.create({
   },
   workoutCard: {
     width: SCREEN_WIDTH * 0.7,
-    backgroundColor: Colors.dark.backgroundDefault,
     borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    overflow: "hidden",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
+  },
+  workoutCardBlur: {
+    padding: Spacing.lg,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
   },
   workoutCardHeader: {
     flexDirection: "row",
@@ -488,11 +495,11 @@ const styles = StyleSheet.create({
   muscleCard: {
     width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
     aspectRatio: 1,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   muscleImage: {
     width: "100%",

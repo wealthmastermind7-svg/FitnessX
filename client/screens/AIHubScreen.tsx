@@ -218,9 +218,9 @@ export default function AIHubScreen() {
       onPress={() => handleFeaturePress(feature)}
       style={({ pressed }) => [styles.featureCard, pressed && styles.featureCardPressed]}
     >
-      <GlassView 
-        glassEffectStyle="regular" 
+      <BlurView 
         intensity={80}
+        tint="dark"
         style={styles.featureGlass}
       >
         <LinearGradient
@@ -245,7 +245,7 @@ export default function AIHubScreen() {
           </View>
           <Feather name="chevron-right" size={24} color="rgba(255,255,255,0.7)" />
         </LinearGradient>
-      </GlassView>
+      </BlurView>
     </Pressable>
   );
 
@@ -719,6 +719,10 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     transform: [{ scale: 0.98 }],
   },
+  featureGlass: {
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
   featureGradient: {
     flexDirection: "row",
     alignItems: "center",
@@ -948,11 +952,6 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     lineHeight: 20,
     paddingLeft: Spacing.sm,
-  },
-  modalSubtitle: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    marginTop: 2,
   },
   planDay: {
     marginBottom: Spacing.lg,

@@ -806,12 +806,12 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   statValue: {
     ...Typography.h2,
@@ -850,11 +850,11 @@ const styles = StyleSheet.create({
     color: '#FF6B6B',
   },
   calendarCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   calendarHeader: {
     flexDirection: 'row',
@@ -906,11 +906,11 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   muscleDistCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   muscleBarRow: {
     flexDirection: 'row',
@@ -960,12 +960,12 @@ const styles = StyleSheet.create({
   recordCard: {
     flex: 1,
     minWidth: "45%",
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
     gap: Spacing.xs,
   },
   recordValue: {
@@ -1048,11 +1048,11 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
   },
   settingsCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
     borderWidth: 1,
-    borderColor: Colors.dark.border,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   settingsRow: {
     flexDirection: "row",
