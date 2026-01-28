@@ -139,6 +139,12 @@ export default function ProfileScreen() {
     arms: 0,
   });
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [exerciseRecords, setExerciseRecords] = useState({
+    heaviestWeight: "-",
+    best1RM: "-",
+    bestSetVolume: "-",
+    bestSession: "-",
+  });
 
   useEffect(() => {
     loadProfile();
@@ -151,8 +157,26 @@ export default function ProfileScreen() {
     useCallback(() => {
       loadStats();
       loadWorkoutData();
+      loadExerciseRecords();
     }, [])
   );
+
+  const loadExerciseRecords = async () => {
+    try {
+      const savedRecords = await AsyncStorage.getItem("exerciseRecords");
+      if (savedRecords) {
+        const records = JSON.parse(savedRecords);
+        setExerciseRecords({
+          heaviestWeight: records.heaviestWeight ? `${records.heaviestWeight}${profile.preferredUnits === "metric" ? "kg" : "lbs"}` : "-",
+          best1RM: records.best1RM ? `${records.best1RM}${profile.preferredUnits === "metric" ? "kg" : "lbs"}` : "-",
+          bestSetVolume: records.bestSetVolume ? `${records.bestSetVolume}${profile.preferredUnits === "metric" ? "kg" : "lbs"}` : "-",
+          bestSession: records.bestSession ? `${records.bestSession} exercises` : "-",
+        });
+      }
+    } catch (error) {
+      console.error("Error loading exercise records:", error);
+    }
+  };
 
   const loadWorkoutData = async () => {
     try {
@@ -467,6 +491,33 @@ export default function ProfileScreen() {
                 </ThemedText>
               </View>
             )}
+          </View>
+        </View>
+
+        {/* Exercise Records */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>Personal Records</ThemedText>
+          <View style={styles.recordsGrid}>
+            <View style={styles.recordCard}>
+              <Feather name="trending-up" size={20} color="#FF6B6B" />
+              <ThemedText style={styles.recordValue}>{exerciseRecords.heaviestWeight}</ThemedText>
+              <ThemedText style={styles.recordLabel}>Heaviest Weight</ThemedText>
+            </View>
+            <View style={styles.recordCard}>
+              <Feather name="target" size={20} color="#FF6B6B" />
+              <ThemedText style={styles.recordValue}>{exerciseRecords.best1RM}</ThemedText>
+              <ThemedText style={styles.recordLabel}>Best 1RM</ThemedText>
+            </View>
+            <View style={styles.recordCard}>
+              <Feather name="layers" size={20} color="#FF6B6B" />
+              <ThemedText style={styles.recordValue}>{exerciseRecords.bestSetVolume}</ThemedText>
+              <ThemedText style={styles.recordLabel}>Best Set Vol.</ThemedText>
+            </View>
+            <View style={styles.recordCard}>
+              <Feather name="award" size={20} color="#FF6B6B" />
+              <ThemedText style={styles.recordValue}>{exerciseRecords.bestSession}</ThemedText>
+              <ThemedText style={styles.recordLabel}>Best Session</ThemedText>
+            </View>
           </View>
         </View>
 
@@ -899,6 +950,33 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.dark.textSecondary,
     textAlign: 'center',
+  },
+  recordsGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+    marginTop: Spacing.md,
+  },
+  recordCard: {
+    flex: 1,
+    minWidth: "45%",
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+    gap: Spacing.xs,
+  },
+  recordValue: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: Colors.dark.text,
+  },
+  recordLabel: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
   },
   radarCard: {
     backgroundColor: Colors.dark.backgroundDefault,
