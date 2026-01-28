@@ -119,26 +119,21 @@ export default function AIHubScreen() {
       allowsEditing: true,
       aspect: [4, 3],
       quality: 0.8,
+      base64: true,
     });
 
     if (!result.canceled && result.assets[0]) {
       setIsLoading(true);
       try {
-        const mockAnalysis = {
-          calories: Math.floor(Math.random() * 400) + 300,
-          protein: Math.floor(Math.random() * 30) + 15,
-          carbs: Math.floor(Math.random() * 50) + 20,
-          fat: Math.floor(Math.random() * 20) + 8,
-          fiber: Math.floor(Math.random() * 10) + 3,
-          foods: ["Grilled chicken", "Brown rice", "Steamed vegetables", "Mixed salad"],
-          healthScore: Math.floor(Math.random() * 30) + 70,
-          suggestions: [
-            "Great protein source with the chicken",
-            "Consider adding more healthy fats like avocado",
-            "Good fiber content from the vegetables",
-          ],
-        };
-        setFoodAnalysisResult(mockAnalysis);
+        const response = await fetch(`${baseUrl}api/ai/analyze-food`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ image: result.assets[0].base64 }),
+        });
+
+        if (!response.ok) throw new Error("Failed to analyze food");
+        const analysis = await response.json();
+        setFoodAnalysisResult(analysis);
         setShowFoodResult(true);
       } catch (error) {
         Alert.alert("Error", "Failed to analyze food plate. Please try again.");

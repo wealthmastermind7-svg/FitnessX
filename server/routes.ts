@@ -553,6 +553,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/ai/analyze-food", async (req, res) => {
+    try {
+      const { image } = req.body;
+      if (!image) return res.status(400).json({ error: "Image is required" });
+      const result = await analyzeFoodImage(image);
+      res.json(result);
+    } catch (error) {
+      console.error("Error in /api/ai/analyze-food:", error);
+      res.status(500).json({ error: "Failed to analyze food image" });
+    }
+  });
+
   // ExerciseDB API Endpoints - Exercise Browsing with Animated GIFs
   const exerciseDbHeaders = {
     "X-RapidAPI-Key": RAPIDAPI_KEY || "",

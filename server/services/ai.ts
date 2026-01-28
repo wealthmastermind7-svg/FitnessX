@@ -430,3 +430,61 @@ Guidelines:
     throw error;
   }
 }
+
+export interface FoodAnalysisResult {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  foods: string[];
+  healthScore: number;
+  suggestions: string[];
+}
+
+export async function analyzeFoodImage(base64Image: string): Promise<FoodAnalysisResult> {
+  const prompt = `You are a professional nutritionist. Analyze this food image and provide a nutritional breakdown.
+Identify the foods present and estimate the calories, protein, carbs, fat, and fiber for the entire plate shown.
+Also provide a health score from 1-100 and 3 actionable suggestions to improve the meal.
+
+Return ONLY valid JSON in this exact schema:
+{
+  "calories": number,
+  "protein": number,
+  "carbs": number,
+  "fat": number,
+  "fiber": number,
+  "foods": ["food 1", "food 2"],
+  "healthScore": number,
+  "suggestions": ["suggestion 1", "suggestion 2", "suggestion 3"]
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+              },
+            },
+          ],
+        },
+      ],
+      max_tokens: 500,
+      response_format: { type: "json_object" }
+    });
+
+    const content = response.choices[0].message.content;
+    if (!content) throw new Error("No content from OpenAI");
+    return JSON.parse(content) as FoodAnalysisResult;
+  } catch (error) {
+    console.error("Error analyzing food image:", error);
+    throw error;
+  }
+}
