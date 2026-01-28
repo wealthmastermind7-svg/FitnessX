@@ -76,6 +76,7 @@ const SAMPLE_FEED: WorkoutPost[] = [
     sets: 13,
     records: 2,
     avgBpm: 137,
+    imageUrl: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800",
     exercises: [
       { name: "Goblet Squat", sets: 1 },
       { name: "Romanian Deadlift (Dumbbell)", sets: 1 },
@@ -98,6 +99,7 @@ const SAMPLE_FEED: WorkoutPost[] = [
     description: "Was really struggling this morning as I'm trying to do more weight less reps. It's funny how on...",
     duration: "1h 3min",
     volume: "32,448 kg",
+    imageUrl: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800",
     exercises: [
       { name: "Leg Press (Machine)", sets: 4 },
       { name: "Leg Extension", sets: 3 },
@@ -142,6 +144,7 @@ const SAMPLE_FEED: WorkoutPost[] = [
     duration: "1h 6min",
     volume: "4,042.4 kg",
     records: 7,
+    imageUrl: "https://images.unsplash.com/photo-1581009146145-b5ef050c149a?w=800",
     exercises: [
       { name: "Lat Pulldown", sets: 4 },
       { name: "Barbell Curl", sets: 3 },
@@ -280,6 +283,17 @@ function WorkoutPostCard({ post, onLike, onComment, onPress }: {
             <ThemedText style={styles.followSmallText}>+ Follow</ThemedText>
           </Pressable>
         </View>
+
+        {post.imageUrl && (
+          <View style={styles.postImageContainer}>
+            <ExpoImage
+              source={{ uri: post.imageUrl }}
+              style={styles.postImage}
+              contentFit="cover"
+              transition={200}
+            />
+          </View>
+        )}
 
         <ThemedText style={styles.postTitle}>{post.workoutTitle}</ThemedText>
         <ThemedText style={styles.postDescription} numberOfLines={2}>
@@ -764,6 +778,16 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.dark.border,
+  },
+  postImageContainer: {
+    marginBottom: Spacing.md,
+    borderRadius: BorderRadius.md,
+    overflow: "hidden",
+  },
+  postImage: {
+    width: "100%",
+    height: 200,
+    borderRadius: BorderRadius.md,
   },
   postHeader: {
     flexDirection: "row",
