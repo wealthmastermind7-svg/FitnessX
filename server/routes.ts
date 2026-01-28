@@ -188,7 +188,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return;
       }
 
-      const muscleList = (muscles as string)?.split(",").map(m => m.trim().toLowerCase()) || [];
+      const muscleList = (muscles as string)?.split(",").map(m => {
+        const trimmed = m.trim().toLowerCase();
+        if (trimmed === "calves") return "calves"; // Explicit check for calves
+        return trimmed;
+      }) || [];
       const colorValue = color || "255,107,107";
 
       const url = `https://muscle-group-image-generator.p.rapidapi.com/getImage?muscleGroups=${encodeURIComponent(muscleList.join(","))}&color=${encodeURIComponent(colorValue as string)}&transparentBackground=0`;
