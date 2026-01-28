@@ -337,41 +337,168 @@ export default function DiscoverScreen() {
           </ScrollView>
         </View>
 
-        <Pressable
-          onPress={() => {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-            navigation.navigate("AIChat");
-          }}
-          style={({ pressed }) => [
-            styles.aiChatCard,
-            pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
-          ]}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={[styles.horizontalScroll, { paddingHorizontal: Spacing.lg, gap: Spacing.md, marginBottom: Spacing.xl }]}
+          decelerationRate="fast"
+          snapToInterval={SCREEN_WIDTH * 0.85 + Spacing.md}
         >
-          <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B' }]}>
-            <View style={styles.exerciseLibraryContent}>
-              <View style={styles.exerciseLibraryText}>
-                <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
-                  <Feather name="zap" size={14} color="#9D4EDD" />
-                  <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
-                    PRO
+          {/* AI Coach Card */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("AIChat");
+            }}
+            style={({ pressed }) => [
+              styles.aiChatCard,
+              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
+              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+            ]}
+          >
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
+              <View style={styles.exerciseLibraryContent}>
+                <View style={styles.exerciseLibraryText}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+                    <Feather name="zap" size={14} color="#9D4EDD" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
+                      PRO
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.exerciseLibraryTitle}>
+                    AI Coach
+                  </ThemedText>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
+                    Programs, feedback, recovery & coaching
                   </ThemedText>
                 </View>
-                <ThemedText style={styles.exerciseLibraryTitle}>
-                  AI Coach
-                </ThemedText>
-                <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
-                  Programs, feedback, recovery & coaching
-                </ThemedText>
+                <View style={styles.exerciseLibraryPreview}>
+                  <Feather name="message-circle" size={40} color="rgba(157, 78, 221, 0.5)" />
+                </View>
               </View>
-              <View style={styles.exerciseLibraryPreview}>
-                <Feather name="message-circle" size={40} color="rgba(157, 78, 221, 0.5)" />
+              <View style={styles.exerciseLibraryArrow}>
+                <Feather name="arrow-right" size={20} color="#9D4EDD" />
               </View>
             </View>
-            <View style={styles.exerciseLibraryArrow}>
-              <Feather name="arrow-right" size={20} color="#9D4EDD" />
+          </Pressable>
+
+          {/* Generate Workout Plan Card */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("Workout");
+            }}
+            style={({ pressed }) => [
+              styles.aiChatCard,
+              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
+              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+            ]}
+          >
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+              <View style={styles.exerciseLibraryContent}>
+                <View style={styles.exerciseLibraryText}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                      PRO
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.exerciseLibraryTitle}>
+                    Generate Plan
+                  </ThemedText>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                    Create a personalized multi-week training program
+                  </ThemedText>
+                </View>
+                <View style={styles.exerciseLibraryPreview}>
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
+                    <Feather name="calendar" size={32} color="#FFF" />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.exerciseLibraryArrow}>
+                <Feather name="arrow-right" size={20} color="#FFF" />
+              </View>
             </View>
-          </View>
-        </Pressable>
+          </Pressable>
+
+          {/* Nutrition Advice Card */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("AI");
+            }}
+            style={({ pressed }) => [
+              styles.aiChatCard,
+              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
+              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+            ]}
+          >
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+              <View style={styles.exerciseLibraryContent}>
+                <View style={styles.exerciseLibraryText}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                      PRO
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.exerciseLibraryTitle}>
+                    Nutrition Advice
+                  </ThemedText>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                    Get personalized nutrition recommendations for your goals
+                  </ThemedText>
+                </View>
+                <View style={styles.exerciseLibraryPreview}>
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
+                    <Feather name="heart" size={32} color="#FFF" />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.exerciseLibraryArrow}>
+                <Feather name="arrow-right" size={20} color="#FFF" />
+              </View>
+            </View>
+          </Pressable>
+
+          {/* Analyze Food Plate Card */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("AI");
+            }}
+            style={({ pressed }) => [
+              styles.aiChatCard,
+              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
+              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+            ]}
+          >
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+              <View style={styles.exerciseLibraryContent}>
+                <View style={styles.exerciseLibraryText}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                      PRO
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.exerciseLibraryTitle}>
+                    Analyze Plate
+                  </ThemedText>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                    Take a photo of your meal to get nutritional info
+                  </ThemedText>
+                </View>
+                <View style={styles.exerciseLibraryPreview}>
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
+                    <Feather name="camera" size={32} color="#FFF" />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.exerciseLibraryArrow}>
+                <Feather name="arrow-right" size={20} color="#FFF" />
+              </View>
+            </View>
+          </Pressable>
+        </ScrollView>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
