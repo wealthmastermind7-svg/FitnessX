@@ -48,6 +48,7 @@ const MUSCLE_API_NAMES: Record<string, string> = {
   hamstrings: "hamstrings",
   glutes: "glutes",
   calves: "calves",
+  calf: "calves",
   core: "abdominals",
   abs: "abdominals",
   obliques: "abdominals",

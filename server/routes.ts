@@ -190,7 +190,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const muscleList = (muscles as string)?.split(",").map(m => {
         const trimmed = m.trim().toLowerCase();
-        if (trimmed === "calves") return "calves"; // Explicit check for calves
+        if (trimmed === "calves") return "calves";
+        if (trimmed === "calf") return "calves";
         return trimmed;
       }) || [];
       const colorValue = color || "255,107,107";
