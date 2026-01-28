@@ -39,6 +39,10 @@ export default function CreatePostScreen() {
   const [workoutTitle, setWorkoutTitle] = useState(
     sharedExercise ? sharedExercise.name : ""
   );
+  const [duration, setDuration] = useState("");
+  const [volume, setVolume] = useState("");
+  const [sets, setSets] = useState("");
+  const [calories, setCalories] = useState("");
   const [isPosting, setIsPosting] = useState(false);
 
   const takePhoto = async () => {
@@ -103,8 +107,10 @@ export default function CreatePostScreen() {
         likes: 0,
         comments: 0,
         isLiked: false,
-        duration: "0h 0min", // These should be hooked up to inputs if added
-        volume: "0 kg",
+        duration: duration || "0h 0min",
+        volume: volume ? `${volume} kg` : "0 kg",
+        sets: sets ? parseInt(sets) : 0,
+        calories: calories ? parseInt(calories) : 0,
       };
 
       const existingPostsJson = await AsyncStorage.getItem("community_posts");
@@ -253,6 +259,8 @@ export default function CreatePostScreen() {
                 style={styles.statInputField}
                 placeholder="Duration"
                 placeholderTextColor={Colors.dark.textSecondary}
+                value={duration}
+                onChangeText={setDuration}
               />
             </View>
             <View style={styles.statInput}>
@@ -261,6 +269,9 @@ export default function CreatePostScreen() {
                 style={styles.statInputField}
                 placeholder="Volume (kg)"
                 placeholderTextColor={Colors.dark.textSecondary}
+                value={volume}
+                onChangeText={setVolume}
+                keyboardType="numeric"
               />
             </View>
             <View style={styles.statInput}>
@@ -269,6 +280,8 @@ export default function CreatePostScreen() {
                 style={styles.statInputField}
                 placeholder="Sets"
                 placeholderTextColor={Colors.dark.textSecondary}
+                value={sets}
+                onChangeText={setSets}
                 keyboardType="numeric"
               />
             </View>
@@ -278,6 +291,8 @@ export default function CreatePostScreen() {
                 style={styles.statInputField}
                 placeholder="Calories"
                 placeholderTextColor={Colors.dark.textSecondary}
+                value={calories}
+                onChangeText={setCalories}
                 keyboardType="numeric"
               />
             </View>
