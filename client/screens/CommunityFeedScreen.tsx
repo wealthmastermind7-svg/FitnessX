@@ -908,13 +908,25 @@ const styles = StyleSheet.create({
   },
   postStats: {
     flexDirection: "row",
+    alignItems: "flex-end",
     gap: Spacing.lg,
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: Colors.dark.border,
   },
-  statItem: {},
+  rightStats: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: Spacing.lg,
+  },
+  statItem: {
+    minWidth: 70,
+  },
+  statItemSmall: {
+    alignItems: "flex-end",
+  },
   statLabel: {
     fontSize: 12,
     color: Colors.dark.textSecondary,
