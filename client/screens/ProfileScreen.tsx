@@ -115,9 +115,9 @@ function StatCard({ label, value, icon }: { label: string; value: string | numbe
 }
 
 function RadarChart({ data }: { data: MuscleDistribution }) {
-  const size = 280;
+  const size = 300;
   const center = size / 2;
-  const radius = (size / 2) - 40;
+  const radius = (size / 2) - 50;
   const levels = 5;
   
   const axes = [
@@ -198,7 +198,7 @@ function RadarChart({ data }: { data: MuscleDistribution }) {
         {/* Labels */}
         {axes.map((axis, i) => {
           const angle = i * angleStep - Math.PI / 2;
-          const labelR = radius + 25;
+          const labelR = radius + 30;
           const x = center + labelR * Math.cos(angle);
           const y = center + labelR * Math.sin(angle);
           
@@ -1210,11 +1210,10 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.border,
   },
   radarContainer: {
-    width: 200,
-    height: 200,
-    justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: Spacing.lg,
+    justifyContent: 'center',
+    height: 300,
+    width: '100%',
   },
   radarWebContainer: {
     ...StyleSheet.absoluteFillObject,
