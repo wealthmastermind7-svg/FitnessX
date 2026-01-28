@@ -38,7 +38,7 @@ const SHARE_OPTIONS = [
   { id: "more", name: "Share More", icon: "share", color: "#9CA3AF" },
 ];
 
-const INVITE_MESSAGE = "Join me on FitForge! Track your workouts, get AI coaching, and crush your fitness goals together. Download now: https://fitforge.app";
+const INVITE_MESSAGE = "Join me on FitForge! Track your workouts, get AI coaching, and crush your fitness goals together. Download now: https://apps.apple.com/us/app/fitforgex/id6756863078";
 
 export default function InviteFriendsScreen() {
   const insets = useSafeAreaInsets();
@@ -125,7 +125,7 @@ export default function InviteFriendsScreen() {
       case "more":
         if (await Sharing.isAvailableAsync()) {
           try {
-            await Sharing.shareAsync("https://fitforge.app", {
+            await Sharing.shareAsync("https://apps.apple.com/us/app/fitforgex/id6756863078", {
               dialogTitle: "Invite friends to FitForge",
             });
           } catch (error) {
