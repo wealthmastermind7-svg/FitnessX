@@ -444,6 +444,26 @@ export default function AIHubScreen() {
     );
   };
 
+  const handleExercisePress = async (exerciseName: string) => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`${baseUrl}api/exercises/name/${encodeURIComponent(exerciseName.toLowerCase())}?limit=1`);
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data) && data.length > 0) {
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          navigation.navigate("ExerciseDetail", { exercise: data[0] });
+        } else {
+          Alert.alert("Exercise not found", `Could not find details for ${exerciseName}`);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching exercise details:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const renderWorkoutResult = () => {
     if (!showWorkoutResult || !workoutPlanResult) return null;
     
@@ -470,14 +490,19 @@ export default function AIHubScreen() {
                 <View key={idx} style={styles.planDay}>
                   <ThemedText style={styles.planDayTitle}>{day.day}</ThemedText>
                   {day.exercises.map((ex: any, exIdx: number) => (
-                    <View key={exIdx} style={styles.planExercise}>
+                    <Pressable 
+                      key={exIdx} 
+                      style={styles.planExercise}
+                      onPress={() => handleExercisePress(ex.name)}
+                    >
                       <View style={styles.planExerciseHeader}>
                         <ThemedText style={styles.planExerciseName}>{ex.name}</ThemedText>
+                        <Feather name="chevron-right" size={16} color={Colors.dark.accent} />
                       </View>
                       <ThemedText style={styles.planExerciseDetails}>
                         {ex.reps || ex.repetitions} reps • {ex.sets} sets • {ex.duration !== "N/A" ? ex.duration : "Strength"}
                       </ThemedText>
-                    </View>
+                    </Pressable>
                   ))}
                 </View>
               ))
