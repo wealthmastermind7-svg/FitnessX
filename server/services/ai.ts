@@ -476,7 +476,7 @@ Return ONLY valid JSON in this exact schema:
           ],
         },
       ],
-      max_tokens: 500,
+      max_tokens: 1000,
       response_format: { type: "json_object" }
     });
 

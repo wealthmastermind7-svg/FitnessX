@@ -125,18 +125,31 @@ export default function AIHubScreen() {
     if (!result.canceled && result.assets[0]) {
       setIsLoading(true);
       try {
+        const base64 = result.assets[0].base64;
+        if (!base64) {
+          throw new Error("Failed to get image data");
+        }
+
+        console.log("[AIHub] Sending image to analysis...");
         const response = await fetch(`${baseUrl}api/ai/analyze-food`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image: result.assets[0].base64 }),
+          body: JSON.stringify({ image: base64 }),
         });
 
-        if (!response.ok) throw new Error("Failed to analyze food");
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("[AIHub] Analysis failed:", errorData);
+          throw new Error(errorData.error || "Failed to analyze food");
+        }
+
         const analysis = await response.json();
+        console.log("[AIHub] Analysis received successfully");
         setFoodAnalysisResult(analysis);
         setShowFoodResult(true);
-      } catch (error) {
-        Alert.alert("Error", "Failed to analyze food plate. Please try again.");
+      } catch (error: any) {
+        console.error("[AIHub] Analysis error:", error);
+        Alert.alert("Error", error.message || "Failed to analyze food plate. Please try again.");
       } finally {
         setIsLoading(false);
       }
