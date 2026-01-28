@@ -24,6 +24,8 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
 import { useRevenueCat } from "@/lib/revenuecat";
 
+import Svg, { Polygon, Line, Text as SvgText, Circle } from 'react-native-svg';
+
 interface UserProfile {
   displayName: string;
   experienceLevel: string;
@@ -106,6 +108,114 @@ function StatCard({ label, value, icon }: { label: string; value: string | numbe
       <Feather name={icon} size={24} color="#FF6B6B" style={{ marginBottom: Spacing.sm }} />
       <ThemedText style={styles.statValue}>{value}</ThemedText>
       <ThemedText style={styles.statLabel}>{label}</ThemedText>
+    </View>
+  );
+}
+
+function RadarChart({ data }: { data: MuscleDistribution }) {
+  const size = 280;
+  const center = size / 2;
+  const radius = (size / 2) - 40;
+  const levels = 5;
+  
+  const axes = [
+    { key: 'back', label: 'Back' },
+    { key: 'chest', label: 'Chest' },
+    { key: 'core', label: 'Core' },
+    { key: 'legs', label: 'Legs' },
+    { key: 'arms', label: 'Arms' },
+  ];
+  
+  const angleStep = (Math.PI * 2) / axes.length;
+  
+  // Calculate points for a value at a certain radius
+  const getPoint = (val: number, r: number, i: number) => {
+    const angle = i * angleStep - Math.PI / 2;
+    const distance = (val / 100) * r;
+    return {
+      x: center + distance * Math.cos(angle),
+      y: center + distance * Math.sin(angle),
+    };
+  };
+
+  // Grid levels
+  const gridPolygons = Array.from({ length: levels }).map((_, levelIndex) => {
+    const r = (radius / levels) * (levelIndex + 1);
+    const points = axes.map((_, i) => {
+      const angle = i * angleStep - Math.PI / 2;
+      return `${center + r * Math.cos(angle)},${center + r * Math.sin(angle)}`;
+    }).join(' ');
+    return points;
+  });
+
+  // Data points
+  const dataPoints = axes.map((axis, i) => {
+    const val = data[axis.key as keyof MuscleDistribution] || 10; // Min value for visibility
+    const point = getPoint(Math.max(val, 15), radius, i);
+    return `${point.x},${point.y}`;
+  }).join(' ');
+
+  return (
+    <View style={styles.radarContainer}>
+      <Svg height={size} width={size}>
+        {/* Grid */}
+        {gridPolygons.map((points, i) => (
+          <Polygon
+            key={i}
+            points={points}
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.1)"
+            strokeWidth="1"
+          />
+        ))}
+        
+        {/* Axes */}
+        {axes.map((_, i) => {
+          const angle = i * angleStep - Math.PI / 2;
+          return (
+            <Line
+              key={i}
+              x1={center}
+              y1={center}
+              x2={center + radius * Math.cos(angle)}
+              y2={center + radius * Math.sin(angle)}
+              stroke="rgba(255, 255, 255, 0.1)"
+              strokeWidth="1"
+            />
+          );
+        })}
+
+        {/* Data Area */}
+        <Polygon
+          points={dataPoints}
+          fill="rgba(255, 107, 107, 0.3)"
+          stroke="#FF6B6B"
+          strokeWidth="2"
+        />
+
+        {/* Labels */}
+        {axes.map((axis, i) => {
+          const angle = i * angleStep - Math.PI / 2;
+          const labelR = radius + 25;
+          const x = center + labelR * Math.cos(angle);
+          const y = center + labelR * Math.sin(angle);
+          
+          return (
+            <SvgText
+              key={i}
+              x={x}
+              y={y}
+              fill={Colors.dark.textSecondary}
+              fontSize="12"
+              fontWeight="600"
+              textAnchor="middle"
+              alignmentBaseline="middle"
+            >
+              {axis.label}
+            </SvgText>
+          );
+        })}
+      </Svg>
     </View>
   );
 }
@@ -453,36 +563,12 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Muscle Distribution - Real Data */}
+        {/* Muscle Distribution - Radar Chart */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Muscle Distribution</ThemedText>
           <View style={styles.muscleDistCard}>
             {Object.values(muscleDistribution).some(v => v > 0) ? (
-              <>
-                {[
-                  { label: 'Back', value: muscleDistribution.back, color: '#FF6B6B' },
-                  { label: 'Chest', value: muscleDistribution.chest, color: '#FFB347' },
-                  { label: 'Core', value: muscleDistribution.core, color: '#87CEEB' },
-                  { label: 'Legs', value: muscleDistribution.legs, color: '#98D8AA' },
-                  { label: 'Arms', value: muscleDistribution.arms, color: '#DDA0DD' },
-                ].map((muscle) => (
-                  <View key={muscle.label} style={styles.muscleBarRow}>
-                    <ThemedText style={styles.muscleBarLabel}>{muscle.label}</ThemedText>
-                    <View style={styles.muscleBarContainer}>
-                      <View 
-                        style={[
-                          styles.muscleBarFill, 
-                          { 
-                            width: `${muscle.value}%`,
-                            backgroundColor: muscle.color,
-                          }
-                        ]} 
-                      />
-                    </View>
-                    <ThemedText style={styles.muscleBarValue}>{muscle.value}%</ThemedText>
-                  </View>
-                ))}
-              </>
+              <RadarChart data={muscleDistribution} />
             ) : (
               <View style={styles.muscleDistEmpty}>
                 <Feather name="pie-chart" size={32} color={Colors.dark.textSecondary} />
