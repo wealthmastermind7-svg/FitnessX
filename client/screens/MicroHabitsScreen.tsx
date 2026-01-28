@@ -489,10 +489,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   screenTitle: {
-    fontSize: 32,
+    fontSize: 42,
     fontWeight: "800",
     color: Colors.dark.text,
     marginBottom: Spacing.sm,
+    lineHeight: 48,
   },
   screenSubtitle: {
     fontSize: 14,
