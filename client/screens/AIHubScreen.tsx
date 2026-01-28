@@ -56,7 +56,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "Nutrition Advice",
     description: "Get personalized nutrition recommendations for your goals",
     icon: "heart",
-    gradient: ["#4ECDC4", "#2ECC71"],
+    gradient: ["#9D4EDD", "#5A189A"],
     isPremium: true,
   },
   {
@@ -64,7 +64,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "Analyze Food Plate",
     description: "Take a photo of your meal to get nutritional breakdown",
     icon: "camera",
-    gradient: ["#F39C12", "#E74C3C"],
+    gradient: ["#9D4EDD", "#5A189A"],
     isPremium: true,
   },
 ];
@@ -303,7 +303,7 @@ export default function AIHubScreen() {
           </ScrollView>
 
           <Pressable onPress={fetchNutritionAdvice} style={styles.modalButton} disabled={isLoading}>
-            <LinearGradient colors={["#4ECDC4", "#2ECC71"]} style={styles.modalButtonGradient}>
+            <LinearGradient colors={["#9D4EDD", "#5A189A"]} style={styles.modalButtonGradient}>
               {isLoading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
