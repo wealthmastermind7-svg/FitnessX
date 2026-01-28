@@ -41,7 +41,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "AI Fitness Coach",
     description: "Get instant expert advice, workout tips, and form corrections",
     icon: "message-circle",
-    gradient: ["#9D4EDD", "#5A189A"],
+    gradient: ["#FF6B6B", "#FF4B4B"],
     isPremium: true,
   },
   {
@@ -49,7 +49,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "Generate Workout Plan",
     description: "Create a personalized multi-week training program",
     icon: "calendar",
-    gradient: ["#9D4EDD", "#5A189A"],
+    gradient: ["#FF6B6B", "#FF4B4B"],
     isPremium: true,
   },
   {
@@ -57,7 +57,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "Nutrition Advice",
     description: "Get personalized nutrition recommendations for your goals",
     icon: "heart",
-    gradient: ["#9D4EDD", "#5A189A"],
+    gradient: ["#FF6B6B", "#FF4B4B"],
     isPremium: true,
   },
   {
@@ -65,7 +65,7 @@ const AI_FEATURES: AIFeature[] = [
     title: "Analyze Food Plate",
     description: "Take a photo of your meal to get nutritional breakdown",
     icon: "camera",
-    gradient: ["#9D4EDD", "#5A189A"],
+    gradient: ["#FF6B6B", "#FF4B4B"],
     isPremium: true,
   },
 ];
@@ -713,6 +713,9 @@ const styles = StyleSheet.create({
   featureCard: {
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
+    backgroundColor: "rgba(30, 30, 40, 0.7)",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 107, 0.15)",
   },
   featureCardPressed: {
     opacity: 0.9,
