@@ -16,6 +16,7 @@ import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
 import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
 import PostDetailScreen from "@/screens/PostDetailScreen";
 import CreatePostScreen from "@/screens/CreatePostScreen";
+import MicroHabitsScreen from "@/screens/MicroHabitsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -94,6 +95,7 @@ export type RootStackParamList = {
   InviteFriends: undefined;
   PostDetail: { post: WorkoutPost };
   CreatePost: { sharedExercise?: ExerciseDBExercise } | undefined;
+  MicroHabits: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -230,6 +232,14 @@ export default function RootStackNavigator() {
         component={CreatePostScreen}
         options={{
           presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="MicroHabits"
+        component={MicroHabitsScreen}
+        options={{
+          presentation: "card",
           headerShown: false,
         }}
       />

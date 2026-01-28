@@ -501,6 +501,46 @@ export default function DiscoverScreen() {
               </View>
             </View>
           </Pressable>
+
+          {/* Micro-Habits Autopilot Card */}
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+              navigation.navigate("MicroHabits");
+            }}
+            style={({ pressed }) => [
+              styles.aiChatCard,
+              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
+              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
+            ]}
+          >
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+              <View style={styles.exerciseLibraryContent}>
+                <View style={styles.exerciseLibraryText}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                    <Feather name="coffee" size={14} color="#FFF" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                      NEW
+                    </ThemedText>
+                  </View>
+                  <ThemedText style={styles.exerciseLibraryTitle}>
+                    Micro-Habits
+                  </ThemedText>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.85)" }]}>
+                    30-90 sec movements triggered by daily moments
+                  </ThemedText>
+                </View>
+                <View style={styles.exerciseLibraryPreview}>
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
+                    <Feather name="clock" size={32} color="#FFF" />
+                  </View>
+                </View>
+              </View>
+              <View style={styles.exerciseLibraryArrow}>
+                <Feather name="arrow-right" size={20} color="#FFF" />
+              </View>
+            </View>
+          </Pressable>
         </ScrollView>
 
         <View style={styles.section}>
