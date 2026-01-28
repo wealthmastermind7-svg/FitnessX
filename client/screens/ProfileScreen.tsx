@@ -502,7 +502,7 @@ export default function ProfileScreen() {
               Alert.alert(
                 "Data Cleared",
                 "Your data has been cleared. The app will now refresh.",
-                [{ text: "OK", onPress: () => navigation.reset({ index: 0, routes: [{ name: "Tabs" }] }) }]
+                [{ text: "OK", onPress: () => navigation.reset({ index: 0, routes: [{ name: "MainTabs" as any }] }) }]
               );
             } catch (error) {
               console.error("Error clearing data:", error);
