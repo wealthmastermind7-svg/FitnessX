@@ -158,7 +158,7 @@ export default function PaywallScreen() {
           onPress={handleClose} 
           style={[styles.closeButton, { top: insets.top + Spacing.lg }]}
         >
-          <Feather name="x" size={24} color={Colors.dark.text} />
+          <Feather name="arrow-left" size={24} color={Colors.dark.text} />
         </Pressable>
       </View>
 

@@ -65,9 +65,19 @@ export function ProGate({ children, feature = 'this feature', showUpgradePrompt 
           Upgrade to FitForgeX Pro to unlock {feature} and all other AI-powered features.
         </ThemedText>
 
-        <Pressable style={styles.upgradeButton} onPress={handleUpgrade}>
-          <Feather name="zap" size={18} color="#FFF" />
-          <ThemedText style={styles.upgradeButtonText}>Upgrade to Pro</ThemedText>
+        <Pressable 
+          style={styles.upgradeButton} 
+          onPress={handleUpgrade}
+        >
+          <LinearGradient
+            colors={['#FF6B6B', '#FF4B4B']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.upgradeButtonGradient}
+          >
+            <Feather name="zap" size={18} color="#FFF" />
+            <ThemedText style={styles.upgradeButtonText}>Upgrade to Pro</ThemedText>
+          </LinearGradient>
         </Pressable>
       </Card>
     </View>
@@ -173,12 +183,14 @@ const styles = StyleSheet.create({
     lineHeight: 22,
   },
   upgradeButton: {
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+  },
+  upgradeButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.dark.accent,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
   },
   upgradeButtonText: {
