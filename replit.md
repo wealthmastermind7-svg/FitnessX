@@ -10,7 +10,7 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.1 Build 3)
+## Recent Changes (v1.0.2 Build 4)
 
 **Exercise Library Enhancements:**
 - Added **Categories browsing section** to Discover screen (strength, cardio, mobility, stretching, plyometrics)
