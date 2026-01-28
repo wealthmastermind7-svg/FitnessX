@@ -883,8 +883,8 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={styles.footerText}>FitForge v1.0.0</ThemedText>
-          <ThemedText style={styles.footerText}>Built with care</ThemedText>
+          <ThemedText style={styles.footerText}>FitForge v1.0.2</ThemedText>
+          <ThemedText style={styles.footerSubtext}>Crafted for Champions</ThemedText>
         </View>
       </ScrollView>
     </ThemedView>
