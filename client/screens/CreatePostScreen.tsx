@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -89,12 +90,37 @@ export default function CreatePostScreen() {
     setIsPosting(true);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     
-    setTimeout(() => {
+    try {
+      const newPost = {
+        id: Date.now().toString(),
+        userId: "current_user", // Placeholder for actual user auth
+        username: "Me", // Placeholder for actual user profile
+        timestamp: new Date().toISOString(),
+        workoutTitle,
+        description: caption,
+        imageUrl: imageUri,
+        exercises: sharedExercise ? [{ name: sharedExercise.name, sets: 1 }] : [],
+        likes: 0,
+        comments: 0,
+        isLiked: false,
+        duration: "0h 0min", // These should be hooked up to inputs if added
+        volume: "0 kg",
+      };
+
+      const existingPostsJson = await AsyncStorage.getItem("community_posts");
+      const existingPosts = existingPostsJson ? JSON.parse(existingPostsJson) : [];
+      const updatedPosts = [newPost, ...existingPosts];
+      await AsyncStorage.setItem("community_posts", JSON.stringify(updatedPosts));
+
       setIsPosting(false);
       Alert.alert("Posted!", "Your workout has been shared with the community.", [
         { text: "OK", onPress: () => navigation.goBack() }
       ]);
-    }, 1500);
+    } catch (error) {
+      console.error("Error saving post:", error);
+      setIsPosting(false);
+      Alert.alert("Error", "Failed to save your post. Please try again.");
+    }
   };
 
   const removeImage = () => {

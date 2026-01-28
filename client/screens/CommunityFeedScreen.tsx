@@ -376,13 +376,34 @@ export default function CommunityFeedScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
 
-  const onRefresh = useCallback(() => {
+  const loadFeed = useCallback(async () => {
+    try {
+      const savedPostsJson = await AsyncStorage.getItem("community_posts");
+      if (savedPostsJson) {
+        const savedPosts = JSON.parse(savedPostsJson).map((post: any) => ({
+          ...post,
+          timestamp: new Date(post.timestamp)
+        }));
+        setFeed([...savedPosts, ...SAMPLE_FEED]);
+      } else {
+        setFeed(SAMPLE_FEED);
+      }
+    } catch (error) {
+      console.error("Error loading feed:", error);
+      setFeed(SAMPLE_FEED);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFeed();
+  }, [loadFeed]);
+
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 1500);
-  }, []);
+    await loadFeed();
+    setRefreshing(false);
+  }, [loadFeed]);
 
   const handlePostPress = (post: WorkoutPost) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
