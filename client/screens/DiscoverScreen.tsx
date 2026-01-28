@@ -36,6 +36,11 @@ const MUSCLE_GROUPS = [
   "Legs",
   "Calves",
   "Core",
+  "Glutes",
+  "Quads",
+  "Hamstrings",
+  "Biceps",
+  "Triceps",
   "Cardio",
 ];
 
@@ -49,6 +54,11 @@ const muscleGroupImages: Record<string, any> = {
   "Legs": require("../assets/muscle-groups/legs.jpeg"),
   "Calves": require("../assets/muscle-groups/calves.jpeg"),
   "Core": require("../assets/muscle-groups/core.jpeg"),
+  "Glutes": require("../assets/muscle-groups/legs.jpeg"),
+  "Quads": require("../assets/muscle-groups/legs.jpeg"),
+  "Hamstrings": require("../assets/muscle-groups/legs.jpeg"),
+  "Biceps": require("../assets/muscle-groups/arms.jpeg"),
+  "Triceps": require("../assets/muscle-groups/arms.jpeg"),
   "Cardio": require("../assets/muscle-groups/cardio.jpeg"),
 };
 

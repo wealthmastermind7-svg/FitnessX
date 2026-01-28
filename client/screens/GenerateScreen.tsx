@@ -29,7 +29,7 @@ import { useRevenueCat } from "@/lib/revenuecat";
 import { Alert } from "react-native";
 
 const MUSCLE_GROUPS = [
-  "Chest", "Back", "Shoulders", "Arms", "Forearms", "Legs", "Calves", "Core", "Cardio"
+  "Chest", "Back", "Shoulders", "Arms", "Forearms", "Legs", "Calves", "Core", "Glutes", "Quads", "Hamstrings", "Biceps", "Triceps", "Cardio"
 ];
 
 const MUSCLE_API_NAMES: Record<string, string> = {
