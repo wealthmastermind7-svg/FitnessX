@@ -237,9 +237,11 @@ export default function PostDetailScreen() {
                 <Feather name="message-circle" size={22} color={Colors.dark.textSecondary} />
                 <ThemedText style={styles.actionCount}>{comments.length}</ThemedText>
               </View>
-              <Pressable onPress={handleShare} style={styles.actionButton}>
-                <Feather name="share" size={22} color={Colors.dark.textSecondary} />
-              </Pressable>
+              {post.userId === "current_user" && (
+                <Pressable onPress={handleShare} style={styles.actionButton}>
+                  <Feather name="share" size={22} color={Colors.dark.textSecondary} />
+                </Pressable>
+              )}
               <Pressable style={styles.actionButton}>
                 <Feather name="bookmark" size={22} color={Colors.dark.textSecondary} />
               </Pressable>

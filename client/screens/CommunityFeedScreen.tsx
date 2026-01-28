@@ -352,9 +352,11 @@ function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: {
             <Feather name="message-circle" size={20} color={Colors.dark.textSecondary} />
             <ThemedText style={styles.actionCount}>{post.comments}</ThemedText>
           </Pressable>
-          <Pressable onPress={onShare} style={styles.actionButton}>
-            <Feather name="share" size={20} color={Colors.dark.textSecondary} />
-          </Pressable>
+          {post.userId === "current_user" && (
+            <Pressable onPress={onShare} style={styles.actionButton}>
+              <Feather name="share" size={20} color={Colors.dark.textSecondary} />
+            </Pressable>
+          )}
         </View>
 
         {likeCount > 0 && (
