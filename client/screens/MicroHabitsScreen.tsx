@@ -6,6 +6,8 @@ import {
   Pressable,
   Modal,
   TouchableWithoutFeedback,
+  Image,
+  ImageSourcePropType,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
@@ -19,6 +21,21 @@ import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
+
+const HABIT_IMAGES: { [key: string]: ImageSourcePropType } = {
+  "1": require("../../assets/images/microhabits/calf-raises.png"),
+  "2": require("../../assets/images/microhabits/leg-raises.png"),
+  "3": require("../../assets/images/microhabits/squats-desk.png"),
+  "4": require("../../assets/images/microhabits/flutter-kicks.png"),
+  "5": require("../../assets/images/microhabits/tricep-dips.png"),
+  "6": require("../../assets/images/microhabits/overhead-punches.png"),
+  "7": require("../../assets/images/microhabits/calf-raises.png"),
+  "8": require("../../assets/images/microhabits/half-jacks.png"),
+  "9": require("../../assets/images/microhabits/lunges.png"),
+  "10": require("../../assets/images/microhabits/single-leg-balance.png"),
+  "11": require("../../assets/images/microhabits/doorframe-stretch.png"),
+  "12": require("../../assets/images/microhabits/elbow-plank.png"),
+};
 
 interface MicroHabit {
   id: string;
@@ -321,13 +338,13 @@ export default function MicroHabitsScreen() {
                 >
                   <View style={styles.habitLeft}>
                     <View style={[
-                      styles.habitIcon,
-                      { backgroundColor: CATEGORY_COLORS[habit.category] + "20" }
+                      styles.habitImageContainer,
+                      { borderColor: CATEGORY_COLORS[habit.category] + "40" }
                     ]}>
-                      <Feather
-                        name={habit.icon}
-                        size={20}
-                        color={CATEGORY_COLORS[habit.category]}
+                      <Image
+                        source={HABIT_IMAGES[habit.id]}
+                        style={styles.habitImage}
+                        resizeMode="cover"
                       />
                     </View>
                     <View style={styles.habitInfo}>
@@ -384,13 +401,13 @@ export default function MicroHabitsScreen() {
                 {selectedHabit && (
                   <>
                     <View style={[
-                      styles.modalIconContainer,
-                      { backgroundColor: CATEGORY_COLORS[selectedHabit.category] + "20" }
+                      styles.modalImageContainer,
+                      { borderColor: CATEGORY_COLORS[selectedHabit.category] + "40" }
                     ]}>
-                      <Feather
-                        name={selectedHabit.icon}
-                        size={32}
-                        color={CATEGORY_COLORS[selectedHabit.category]}
+                      <Image
+                        source={HABIT_IMAGES[selectedHabit.id]}
+                        style={styles.modalImage}
+                        resizeMode="cover"
                       />
                     </View>
                     
@@ -550,13 +567,18 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flex: 1,
   },
-  habitIcon: {
-    width: 44,
-    height: 44,
+  habitImageContainer: {
+    width: 56,
+    height: 56,
     borderRadius: BorderRadius.md,
-    justifyContent: "center",
-    alignItems: "center",
+    overflow: "hidden",
     marginRight: Spacing.md,
+    borderWidth: 2,
+    backgroundColor: "#FFF",
+  },
+  habitImage: {
+    width: "100%",
+    height: "100%",
   },
   habitInfo: {
     flex: 1,
@@ -635,13 +657,18 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-  modalIconContainer: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    justifyContent: "center",
-    alignItems: "center",
+  modalImageContainer: {
+    width: 160,
+    height: 160,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
     marginBottom: Spacing.lg,
+    borderWidth: 3,
+    backgroundColor: "#FFF",
+  },
+  modalImage: {
+    width: "100%",
+    height: "100%",
   },
   modalTrigger: {
     fontSize: 14,
