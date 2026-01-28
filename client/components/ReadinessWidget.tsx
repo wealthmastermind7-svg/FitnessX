@@ -158,11 +158,11 @@ function ReadinessRing({ score, size = 120 }: { score: number; size?: number }) 
         borderTopColor: score < 25 ? "transparent" : getScoreColor(),
         transform: [{ rotate: "-90deg" }],
       }} />
-      <View style={{ alignItems: "center" }}>
-        <ThemedText style={{ fontSize: 32, fontWeight: "800", color: getScoreColor() }}>
+      <View style={{ alignItems: "center", justifyContent: "center" }}>
+        <ThemedText style={{ fontSize: 32, fontWeight: "800", color: getScoreColor(), lineHeight: 32, textAlign: "center", height: 32 }}>
           {score}
         </ThemedText>
-        <ThemedText style={{ fontSize: 11, color: Colors.dark.textSecondary, marginTop: -4 }}>
+        <ThemedText style={{ fontSize: 10, color: Colors.dark.textSecondary, marginTop: 2, textAlign: "center" }}>
           READINESS
         </ThemedText>
       </View>

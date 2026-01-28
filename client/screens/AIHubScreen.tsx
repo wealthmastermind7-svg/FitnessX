@@ -662,6 +662,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginBottom: Spacing.xl,
+    paddingTop: Spacing.md,
   },
   title: {
     ...Typography.h1,
