@@ -152,7 +152,9 @@ export default function GenerateScreen() {
 
   const muscleAsset = getMuscleImage();
   const muscleImageUrl = selectedMuscles.length > 0
-    ? (muscleAsset ? Image.resolveAssetSource(muscleAsset).uri : `${baseUrl}api/muscle-image?muscles=${selectedMuscles.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase()).join(",")}&color=255,107,107`)
+    ? (selectedMuscles.length === 1 && muscleAsset 
+        ? Image.resolveAssetSource(muscleAsset).uri 
+        : `${baseUrl}api/muscle-image?muscles=${selectedMuscles.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase()).join(",")}&color=255,107,107`)
     : `${baseUrl}api/muscle-image?base=true`;
 
   const toggleMuscle = useCallback((muscle: string) => {
