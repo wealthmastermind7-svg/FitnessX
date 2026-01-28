@@ -347,35 +347,30 @@ export default function DiscoverScreen() {
             pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
           ]}
         >
-          <LinearGradient
-            colors={["#9D4EDD", "#5A189A"]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.exerciseLibraryGradient}
-          >
+          <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B' }]}>
             <View style={styles.exerciseLibraryContent}>
               <View style={styles.exerciseLibraryText}>
-                <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                  <Feather name="zap" size={14} color="#fff" />
-                  <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#fff" }]}>
+                <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+                  <Feather name="zap" size={14} color="#9D4EDD" />
+                  <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
                     PRO
                   </ThemedText>
                 </View>
                 <ThemedText style={styles.exerciseLibraryTitle}>
                   AI Coach
                 </ThemedText>
-                <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
                   Programs, feedback, recovery & coaching
                 </ThemedText>
               </View>
               <View style={styles.exerciseLibraryPreview}>
-                <Feather name="message-circle" size={40} color="rgba(255,255,255,0.6)" />
+                <Feather name="message-circle" size={40} color="rgba(157, 78, 221, 0.5)" />
               </View>
             </View>
             <View style={styles.exerciseLibraryArrow}>
-              <Feather name="arrow-right" size={20} color="#fff" />
+              <Feather name="arrow-right" size={20} color="#9D4EDD" />
             </View>
-          </LinearGradient>
+          </View>
         </Pressable>
 
         <View style={styles.section}>
