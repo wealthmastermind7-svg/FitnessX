@@ -55,6 +55,14 @@ const SUGGESTED_ATHLETES = [
   { id: "5", username: "iron_will", name: "Marcus Thompson", featured: false },
 ];
 
+const EXERCISE_CATEGORIES = [
+  { id: "strength", label: "Strength", icon: "trending-up", colors: ["#FF6B6B", "#FF4B4B"] },
+  { id: "cardio", label: "Cardio", icon: "heart", colors: ["#9D4EDD", "#5A189A"] },
+  { id: "mobility", label: "Mobility", icon: "wind", colors: ["#4ECDC4", "#2EAF9F"] },
+  { id: "stretching", label: "Stretching", icon: "maximize-2", colors: ["#FFB347", "#FF9500"] },
+  { id: "plyometrics", label: "Plyometrics", icon: "zap", colors: ["#FF6B6B", "#9D4EDD"] },
+];
+
 const SAMPLE_FEED: WorkoutPost[] = [
   {
     id: "1",
@@ -445,6 +453,41 @@ export default function CommunityFeedScreen() {
           contentContainerStyle={styles.athletesList}
         />
       </View>
+
+      <View style={styles.exerciseLibrarySection}>
+        <View style={styles.suggestedHeader}>
+          <ThemedText style={styles.suggestedTitle}>Exercise Library</ThemedText>
+          <Pressable onPress={() => navigation.navigate("ExerciseBrowser")}>
+            <ThemedText style={styles.seeAllText}>See All</ThemedText>
+          </Pressable>
+        </View>
+        <FlatList
+          horizontal
+          data={EXERCISE_CATEGORIES}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("ExerciseBrowser", { filterByCategory: item.id });
+              }}
+              style={styles.categoryCard}
+            >
+              <LinearGradient
+                colors={item.colors as any}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.categoryGradient}
+              >
+                <Feather name={item.icon as any} size={24} color="#FFF" />
+                <ThemedText style={styles.categoryLabel}>{item.label}</ThemedText>
+              </LinearGradient>
+            </Pressable>
+          )}
+          keyExtractor={item => item.id}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoriesList}
+        />
+      </View>
     </>
   );
 
@@ -687,6 +730,35 @@ const styles = StyleSheet.create({
   },
   followingButtonText: {
     color: Colors.dark.text,
+  },
+  exerciseLibrarySection: {
+    marginBottom: Spacing.lg,
+  },
+  seeAllText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.accent,
+  },
+  categoryCard: {
+    width: 120,
+    height: 80,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+  },
+  categoryGradient: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  categoryLabel: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: "#FFF",
+    textTransform: "capitalize",
+  },
+  categoriesList: {
+    gap: Spacing.md,
   },
   postCard: {
     backgroundColor: Colors.dark.backgroundDefault,
