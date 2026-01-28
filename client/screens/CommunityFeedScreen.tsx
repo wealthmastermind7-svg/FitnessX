@@ -56,11 +56,11 @@ const SUGGESTED_ATHLETES = [
 ];
 
 const EXERCISE_CATEGORIES = [
-  { id: "strength", label: "Strength", icon: "trending-up", colors: ["#FF6B6B", "#FF4B4B"] },
-  { id: "cardio", label: "Cardio", icon: "heart", colors: ["#9D4EDD", "#5A189A"] },
-  { id: "mobility", label: "Mobility", icon: "wind", colors: ["#4ECDC4", "#2EAF9F"] },
-  { id: "stretching", label: "Stretching", icon: "maximize-2", colors: ["#FFB347", "#FF9500"] },
-  { id: "plyometrics", label: "Plyometrics", icon: "zap", colors: ["#FF6B6B", "#9D4EDD"] },
+  { id: "strength", label: "Strength", icon: "trending-up" },
+  { id: "cardio", label: "Cardio", icon: "heart" },
+  { id: "mobility", label: "Mobility", icon: "wind" },
+  { id: "stretching", label: "Stretching", icon: "maximize-2" },
+  { id: "plyometrics", label: "Plyometrics", icon: "zap" },
 ];
 
 const SAMPLE_FEED: WorkoutPost[] = [
@@ -472,15 +472,10 @@ export default function CommunityFeedScreen() {
               }}
               style={styles.categoryCard}
             >
-              <LinearGradient
-                colors={item.colors as any}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.categoryGradient}
-              >
-                <Feather name={item.icon as any} size={24} color="#FFF" />
+              <View style={styles.categoryCardInner}>
+                <Feather name={item.icon as any} size={24} color={Colors.dark.accent} />
                 <ThemedText style={styles.categoryLabel}>{item.label}</ThemedText>
-              </LinearGradient>
+              </View>
             </Pressable>
           )}
           keyExtractor={item => item.id}
@@ -744,8 +739,11 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: BorderRadius.lg,
     overflow: "hidden",
+    backgroundColor: 'rgba(30, 30, 40, 0.7)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
-  categoryGradient: {
+  categoryCardInner: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -754,7 +752,7 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontSize: 13,
     fontWeight: "600",
-    color: "#FFF",
+    color: Colors.dark.text,
     textTransform: "capitalize",
   },
   categoriesList: {
