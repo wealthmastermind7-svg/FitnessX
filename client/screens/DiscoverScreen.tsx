@@ -386,7 +386,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Workout");
+              navigation.navigate("Main", { screen: "Workout" } as any);
             }}
             style={({ pressed }) => [
               styles.aiChatCard,
@@ -425,7 +425,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("AI");
+              navigation.navigate("Main", { screen: "AI" } as any);
             }}
             style={({ pressed }) => [
               styles.aiChatCard,
@@ -464,7 +464,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("AI");
+              navigation.navigate("Main", { screen: "AI" } as any);
             }}
             style={({ pressed }) => [
               styles.aiChatCard,
