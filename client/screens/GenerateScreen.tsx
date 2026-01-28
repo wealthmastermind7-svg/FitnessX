@@ -51,7 +51,7 @@ const MUSCLE_API_NAMES: Record<string, string> = {
   core: "abdominals",
   abs: "abdominals",
   obliques: "abdominals",
-  cardio: "chest", // Fallback for cardio visualization
+  cardio: "chest",
 };
 
 const EQUIPMENT_OPTIONS = [

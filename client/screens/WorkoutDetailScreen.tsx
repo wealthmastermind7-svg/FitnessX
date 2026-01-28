@@ -145,6 +145,26 @@ function ExerciseCard({
   );
 }
 
+const MUSCLE_API_NAMES: Record<string, string> = {
+  chest: "chest",
+  back: "back",
+  shoulders: "shoulders",
+  arms: "biceps,triceps",
+  biceps: "biceps",
+  triceps: "triceps",
+  forearms: "forearms",
+  legs: "quadriceps,hamstrings,glutes",
+  quads: "quadriceps",
+  quadriceps: "quadriceps",
+  hamstrings: "hamstrings",
+  glutes: "glutes",
+  calves: "calves",
+  core: "abdominals",
+  abs: "abdominals",
+  obliques: "abdominals",
+  cardio: "chest",
+};
+
 const muscleToBodyPart: Record<string, string> = {
   chest: "chest",
   back: "back",
@@ -316,7 +336,7 @@ export default function WorkoutDetailScreen() {
   }, [navigation]);
 
   const muscleImageUrl = workout.muscleGroups.length > 0
-    ? `${baseUrl}api/dual-muscle-image?primary=${workout.muscleGroups[0].toLowerCase()}&secondary=${workout.muscleGroups.slice(1).join(",").toLowerCase()}`
+    ? `${baseUrl}api/dual-muscle-image?primary=${workout.muscleGroups.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase())[0]}&secondary=${workout.muscleGroups.map(m => MUSCLE_API_NAMES[m.toLowerCase()] || m.toLowerCase()).slice(1).join(",").toLowerCase()}`
     : `${baseUrl}api/muscle-image?base=true`;
 
   const handleClose = useCallback(() => {
