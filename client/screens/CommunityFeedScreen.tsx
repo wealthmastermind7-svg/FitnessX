@@ -300,7 +300,7 @@ function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: {
           {post.records !== undefined && post.records > 0 && (
             <View style={styles.statItem}>
               <ThemedText style={styles.statLabel}>Records</ThemedText>
-              <View style={styles.recordsValue}>
+              <View style={styles.valueWithIcon}>
                 <ThemedText style={styles.recordIcon}>🏆</ThemedText>
                 <ThemedText style={styles.statValue}>{post.records}</ThemedText>
               </View>
@@ -309,8 +309,9 @@ function WorkoutPostCard({ post, onLike, onComment, onShare, onPress }: {
           {post.avgBpm !== undefined && (
             <View style={styles.statItem}>
               <ThemedText style={styles.statLabel}>Avg bpm</ThemedText>
-              <View style={styles.recordsValue}>
-                <ThemedText style={[styles.statValue, { color: "#FF6B6B" }]}>❤️ {post.avgBpm}</ThemedText>
+              <View style={styles.valueWithIcon}>
+                <ThemedText style={styles.recordIcon}>❤️</ThemedText>
+                <ThemedText style={[styles.statValue, { color: "#FF6B6B" }]}>{post.avgBpm}</ThemedText>
               </View>
             </View>
           )}
