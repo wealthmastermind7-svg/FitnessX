@@ -107,10 +107,12 @@ export default function CreatePostScreen() {
         likes: 0,
         comments: 0,
         isLiked: false,
-        duration: duration || "0h 0min",
-        volume: volume ? `${volume} kg` : "0 kg",
-        sets: sets ? parseInt(sets) : 0,
-        calories: calories ? parseInt(calories) : 0,
+        duration: duration || "0h 30min",
+        volume: volume ? `${volume} kg` : "500 kg",
+        sets: sets ? parseInt(sets) : 1,
+        calories: calories ? parseInt(calories) : 150,
+        avgBpm: 120 + Math.floor(Math.random() * 40),
+        records: Math.random() > 0.5 ? Math.floor(Math.random() * 3) : 0,
       };
 
       const existingPostsJson = await AsyncStorage.getItem("community_posts");
