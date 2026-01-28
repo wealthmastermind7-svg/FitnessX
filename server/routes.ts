@@ -6,6 +6,7 @@ import {
   generateExerciseSubstitutions,
   generateRecoveryAdvice,
   generateChatResponse,
+  analyzeFoodImage,
 } from "./services/ai";
 
 interface WorkoutRequest {
