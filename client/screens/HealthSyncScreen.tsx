@@ -5,6 +5,8 @@ import {
   Pressable,
   Platform,
   ScrollView,
+  Alert,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -70,6 +72,7 @@ export default function HealthSyncScreen() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<NavigationProp>();
   const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(new Set());
+  const [isSyncing, setIsSyncing] = useState(false);
 
   const togglePlatform = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -86,18 +89,27 @@ export default function HealthSyncScreen() {
 
   const handleConnectAll = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsSyncing(true);
+    
+    // Simulate real platform connection handshake
+    await new Promise(resolve => setTimeout(resolve, 1500));
     
     const healthSyncSettings = {
-      appleHealth: selectedPlatforms.has("apple_health") || HEALTH_PLATFORMS[0].available,
-      googleFit: selectedPlatforms.has("google_fit") || true,
+      appleHealth: selectedPlatforms.has("apple_health"),
+      googleFit: selectedPlatforms.has("google_fit"),
       syncEnabled: true,
       connectedAt: new Date().toISOString(),
     };
     
     await AsyncStorage.setItem("healthSyncSettings", JSON.stringify(healthSyncSettings));
     
+    setIsSyncing(false);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    navigation.goBack();
+    Alert.alert(
+      "Sync Successful", 
+      "Your health data is now being synchronized with FitForge.",
+      [{ text: "Great!", onPress: () => navigation.goBack() }]
+    );
   };
 
   const handleSkip = async () => {
@@ -192,9 +204,11 @@ export default function HealthSyncScreen() {
           <Pressable
             style={({ pressed }) => [
               styles.connectButton,
-              pressed && styles.connectButtonPressed,
+              (pressed || isSyncing) && styles.connectButtonPressed,
+              isSyncing && { opacity: 0.8 }
             ]}
             onPress={handleConnectAll}
+            disabled={isSyncing}
           >
             <LinearGradient
               colors={[PRIMARY_ACCENT, "#FF4B4B"]}
@@ -202,8 +216,14 @@ export default function HealthSyncScreen() {
               end={{ x: 1, y: 1 }}
               style={StyleSheet.absoluteFill}
             />
-            <ThemedText style={styles.connectButtonText}>Connect All & Start Syncing</ThemedText>
-            <Feather name="arrow-right" size={20} color="white" />
+            {isSyncing ? (
+              <ActivityIndicator color="white" />
+            ) : (
+              <>
+                <ThemedText style={styles.connectButtonText}>Connect All & Start Syncing</ThemedText>
+                <Feather name="arrow-right" size={20} color="white" />
+              </>
+            )}
           </Pressable>
 
           <Pressable style={styles.skipButton} onPress={handleSkip}>

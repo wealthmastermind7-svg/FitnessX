@@ -526,6 +526,13 @@ export default function ProfileScreen() {
           
           <View style={styles.settingsCard}>
             <SettingsRow
+              icon="activity"
+              label="Health Sync"
+              value={healthSync.syncEnabled ? "Active" : "Not Connected"}
+              onPress={() => navigation.navigate("HealthSync")}
+            />
+            <View style={styles.settingsDivider} />
+            <SettingsRow
               icon="user"
               label="Display Name"
               value={profile.displayName}
