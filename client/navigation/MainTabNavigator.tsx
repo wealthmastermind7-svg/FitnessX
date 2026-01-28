@@ -8,11 +8,13 @@ import CommunityFeedScreen from "@/screens/CommunityFeedScreen";
 import DiscoverScreen from "@/screens/DiscoverScreen";
 import GenerateScreen from "@/screens/GenerateScreen";
 import ProfileScreen from "@/screens/ProfileScreen";
+import AIHubScreen from "@/screens/AIHubScreen";
 import { Colors, Spacing, BorderRadius } from "@/constants/theme";
 
 export type MainTabParamList = {
   Home: undefined;
   Workout: undefined;
+  AI: undefined;
   Profile: undefined;
 };
 
@@ -71,6 +73,16 @@ export default function MainTabNavigator() {
           title: "Workout",
           tabBarIcon: ({ color, size }) => (
             <Feather name="activity" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="AI"
+        component={AIHubScreen}
+        options={{
+          title: "AI",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="cpu" size={size} color={color} />
           ),
         }}
       />
