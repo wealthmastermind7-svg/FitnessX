@@ -48,8 +48,8 @@ const AI_FEATURES: AIFeature[] = [
     title: "Generate Workout Plan",
     description: "Create a personalized multi-week training program",
     icon: "calendar",
-    gradient: ["#FF6B6B", "#FF4B4B"],
-    isPremium: false,
+    gradient: ["#9D4EDD", "#5A189A"],
+    isPremium: true,
   },
   {
     id: "nutrition",
@@ -303,7 +303,7 @@ export default function AIHubScreen() {
           </ScrollView>
 
           <Pressable onPress={fetchNutritionAdvice} style={styles.modalButton} disabled={isLoading}>
-            <LinearGradient colors={["#9D4EDD", "#5A189A"]} style={styles.modalButtonGradient}>
+            <LinearGradient colors={["#FF6B6B", "#FF4B4B"]} style={styles.modalButtonGradient}>
               {isLoading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
@@ -345,21 +345,21 @@ export default function AIHubScreen() {
 
           <View style={styles.planInfo}>
             <View style={styles.planInfoItem}>
-              <Feather name="calendar" size={20} color={Colors.dark.accent} />
+              <Feather name="calendar" size={20} color="#FF6B6B" />
               <ThemedText style={styles.planInfoText}>4 weeks</ThemedText>
             </View>
             <View style={styles.planInfoItem}>
-              <Feather name="repeat" size={20} color={Colors.dark.accent} />
+              <Feather name="repeat" size={20} color="#FF6B6B" />
               <ThemedText style={styles.planInfoText}>4 sessions/week</ThemedText>
             </View>
             <View style={styles.planInfoItem}>
-              <Feather name="clock" size={20} color={Colors.dark.accent} />
+              <Feather name="clock" size={20} color="#FF6B6B" />
               <ThemedText style={styles.planInfoText}>60 min each</ThemedText>
             </View>
           </View>
 
           <Pressable onPress={fetchWorkoutPlan} style={styles.modalButton} disabled={isLoading}>
-            <LinearGradient colors={Gradients.accent as [string, string]} style={styles.modalButtonGradient}>
+            <LinearGradient colors={["#FF6B6B", "#FF4B4B"]} style={styles.modalButtonGradient}>
               {isLoading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
@@ -418,7 +418,7 @@ export default function AIHubScreen() {
             <View style={styles.foodsList}>
               {foodAnalysisResult.foods.map((food: string, i: number) => (
                 <View key={i} style={styles.foodItem}>
-                  <Feather name="check-circle" size={16} color={Colors.dark.accent} />
+                  <Feather name="check-circle" size={16} color="#FF6B6B" />
                   <ThemedText style={styles.foodItemText}>{food}</ThemedText>
                 </View>
               ))}
@@ -571,7 +571,7 @@ export default function AIHubScreen() {
                     >
                       <View style={styles.planExerciseHeader}>
                         <ThemedText style={styles.planExerciseName}>{ex.name}</ThemedText>
-                        <Feather name="chevron-right" size={16} color={Colors.dark.accent} />
+                        <Feather name="chevron-right" size={16} color="#FF6B6B" />
                       </View>
                       <ThemedText style={styles.planExerciseDetails}>
                         {ex.reps || ex.repetitions} reps • {ex.sets} sets • {ex.duration !== "N/A" ? ex.duration : "Strength"}
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
   tipTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: "#9D4EDD",
+    color: "#FF6B6B",
     marginBottom: 4,
   },
   tipText: {
@@ -796,6 +796,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 107, 107, 0.2)',
+  },
+  modalSubtitle: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
   },
   modalTitle: {
     ...Typography.h2,
@@ -872,16 +880,16 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: Colors.dark.accent + "30",
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 4,
-    borderColor: Colors.dark.accent,
+    borderColor: '#FF6B6B',
   },
   healthScoreValue: {
     fontSize: 48,
     fontWeight: "700",
-    color: Colors.dark.accent,
+    color: '#FF6B6B',
     lineHeight: 56,
   },
   healthScoreLabel: {
@@ -947,7 +955,7 @@ const styles = StyleSheet.create({
   planDayTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.dark.accent,
+    color: "#FF6B6B",
     marginBottom: Spacing.sm,
   },
   planExercise: {
@@ -999,7 +1007,7 @@ const styles = StyleSheet.create({
   macroRowValue: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.dark.accent,
+    color: "#FF6B6B",
   },
   adviceSection: {
     marginTop: Spacing.md,
