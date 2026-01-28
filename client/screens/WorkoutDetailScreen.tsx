@@ -153,7 +153,7 @@ const MUSCLE_API_NAMES: Record<string, string> = {
   biceps: "biceps",
   triceps: "triceps",
   forearms: "forearms",
-  legs: "quadriceps,hamstrings,glutes",
+  legs: "upper legs",
   quads: "quadriceps",
   quadriceps: "quadriceps",
   hamstrings: "hamstrings",
