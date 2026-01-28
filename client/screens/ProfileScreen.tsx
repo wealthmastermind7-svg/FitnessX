@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   proBadge: {
-    backgroundColor: Colors.dark.accent,
+    backgroundColor: "#FF6B6B20",
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -1084,7 +1084,7 @@ const styles = StyleSheet.create({
   },
   legalLinkText: {
     ...Typography.body,
-    color: Colors.dark.accent,
+    color: "#FF6B6B",
     fontWeight: "500",
   },
   healthSyncCard: {
