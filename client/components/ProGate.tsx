@@ -52,6 +52,11 @@ export function ProGate({ children, feature = 'this feature', showUpgradePrompt 
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Feather name="arrow-left" size={24} color="#FFF" />
+        </Pressable>
+      </View>
       <Card style={styles.upgradeCard}>
         <LinearGradient
           colors={[Colors.dark.accent, '#9D4EDD'] as any}
@@ -145,21 +150,33 @@ export function UpgradeButton({ compact = false, style }: UpgradeButtonProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.lg,
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  container: {
+    flex: 1,
+    padding: Spacing.lg,
+  },
+  header: {
+    height: 50,
+    justifyContent: 'center',
+    marginBottom: Spacing.lg,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+  },
   upgradeCard: {
     padding: Spacing.xl,
     alignItems: 'center',
     maxWidth: 340,
+    alignSelf: 'center',
+    marginTop: 'auto',
+    marginBottom: 'auto',
   },
   iconContainer: {
     width: 80,
