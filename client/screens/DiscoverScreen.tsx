@@ -394,29 +394,30 @@ export default function DiscoverScreen() {
               pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
             ]}
           >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
               <View style={styles.exerciseLibraryContent}>
                 <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+                    <Feather name="zap" size={14} color="#9D4EDD" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
                       PRO
                     </ThemedText>
                   </View>
                   <ThemedText style={styles.exerciseLibraryTitle}>
                     Generate Plan
                   </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
                     Create a personalized multi-week training program
                   </ThemedText>
                 </View>
                 <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
-                    <Feather name="calendar" size={32} color="#FFF" />
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
+                    <Feather name="calendar" size={32} color="#9D4EDD" />
                   </View>
                 </View>
               </View>
               <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#FFF" />
+                <Feather name="arrow-right" size={20} color="#9D4EDD" />
               </View>
             </View>
           </Pressable>
@@ -433,29 +434,30 @@ export default function DiscoverScreen() {
               pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
             ]}
           >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
               <View style={styles.exerciseLibraryContent}>
                 <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+                    <Feather name="zap" size={14} color="#9D4EDD" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
                       PRO
                     </ThemedText>
                   </View>
                   <ThemedText style={styles.exerciseLibraryTitle}>
                     Nutrition Advice
                   </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
                     Get personalized nutrition recommendations for your goals
                   </ThemedText>
                 </View>
                 <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
-                    <Feather name="heart" size={32} color="#FFF" />
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
+                    <Feather name="heart" size={32} color="#9D4EDD" />
                   </View>
                 </View>
               </View>
               <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#FFF" />
+                <Feather name="arrow-right" size={20} color="#9D4EDD" />
               </View>
             </View>
           </Pressable>
@@ -472,29 +474,30 @@ export default function DiscoverScreen() {
               pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
             ]}
           >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
+            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
               <View style={styles.exerciseLibraryContent}>
                 <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
+                    <Feather name="zap" size={14} color="#9D4EDD" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
                       PRO
                     </ThemedText>
                   </View>
                   <ThemedText style={styles.exerciseLibraryTitle}>
                     Analyze Plate
                   </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.8)" }]}>
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
                     Take a photo of your meal to get nutritional info
                   </ThemedText>
                 </View>
                 <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
-                    <Feather name="camera" size={32} color="#FFF" />
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
+                    <Feather name="camera" size={32} color="#9D4EDD" />
                   </View>
                 </View>
               </View>
               <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#FFF" />
+                <Feather name="arrow-right" size={20} color="#9D4EDD" />
               </View>
             </View>
           </Pressable>
