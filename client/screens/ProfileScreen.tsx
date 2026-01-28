@@ -6,6 +6,8 @@ import {
   Pressable,
   Alert,
   Platform,
+  Modal,
+  TouchableWithoutFeedback,
 } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -255,6 +257,8 @@ export default function ProfileScreen() {
     bestSetVolume: "-",
     bestSession: "-",
   });
+
+  const [isPRModalVisible, setIsPRModalVisible] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -580,9 +584,76 @@ export default function ProfileScreen() {
           </View>
         </View>
 
+        {/* Personal Records Modal */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={isPRModalVisible}
+          onRequestClose={() => setIsPRModalVisible(false)}
+        >
+          <TouchableWithoutFeedback onPress={() => setIsPRModalVisible(false)}>
+            <View style={styles.modalOverlay}>
+              <TouchableWithoutFeedback>
+                <View style={styles.prModalContent}>
+                  <ThemedText style={styles.prModalTitle}>Personal Records</ThemedText>
+                  
+                  <View style={styles.prModalItem}>
+                    <ThemedText style={styles.prModalLabel}>Heaviest Weight</ThemedText>
+                    <ThemedText style={styles.prModalDescription}>
+                      The heaviest weight you've ever lifted for this exercise.
+                    </ThemedText>
+                  </View>
+
+                  <View style={styles.prModalItem}>
+                    <ThemedText style={styles.prModalLabel}>Best 1RM</ThemedText>
+                    <ThemedText style={styles.prModalDescription}>
+                      1RM (One Rep Max) uses reps and weight from a set to estimate the max weight you could lift for a single rep. This is the highest 1RM you've ever achieved.
+                    </ThemedText>
+                  </View>
+
+                  <View style={styles.prModalItem}>
+                    <ThemedText style={styles.prModalLabel}>Best Set Volume</ThemedText>
+                    <ThemedText style={styles.prModalDescription}>
+                      The set in which you lifted the most volume (weight x reps).
+                    </ThemedText>
+                  </View>
+
+                  <View style={styles.prModalItem}>
+                    <ThemedText style={styles.prModalLabel}>Best Session Volume</ThemedText>
+                    <ThemedText style={styles.prModalDescription}>
+                      Max Session Volume is the session you lifted the most weight in total over all your sets in this exercise.
+                    </ThemedText>
+                  </View>
+
+                  <Pressable
+                    style={styles.prModalButton}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setIsPRModalVisible(false);
+                    }}
+                  >
+                    <ThemedText style={styles.prModalButtonText}>Ok</ThemedText>
+                  </Pressable>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
+
         {/* Exercise Records */}
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Personal Records</ThemedText>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle}>Personal Records</ThemedText>
+            <Pressable 
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                setIsPRModalVisible(true);
+              }}
+              style={styles.infoIcon}
+            >
+              <Feather name="info" size={18} color="#FF6B6B" />
+            </Pressable>
+          </View>
           <View style={styles.recordsGrid}>
             <View style={styles.recordCard}>
               <Feather name="trending-up" size={20} color="#FF6B6B" />
@@ -1033,6 +1104,59 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.dark.text,
     textAlign: 'right',
+  },
+  infoIcon: {
+    padding: 4,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  prModalContent: {
+    backgroundColor: '#FFF',
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    width: '100%',
+    alignItems: 'center',
+  },
+  prModalTitle: {
+    ...Typography.h3,
+    color: '#000',
+    marginBottom: Spacing.lg,
+  },
+  prModalItem: {
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  prModalLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#000',
+    marginBottom: 4,
+  },
+  prModalDescription: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    lineHeight: 20,
+    marginBottom: Spacing.sm,
+  },
+  prModalButton: {
+    backgroundColor: '#007AFF',
+    borderRadius: BorderRadius.lg,
+    paddingVertical: Spacing.md,
+    width: '100%',
+    alignItems: 'center',
+    marginTop: Spacing.md,
+  },
+  prModalButtonText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: '700',
   },
   muscleDistEmpty: {
     alignItems: 'center',
