@@ -423,21 +423,63 @@ export default function AIHubScreen() {
 
   const renderNutritionResult = () => {
     if (!showNutritionResult || !nutritionResult) return null;
+    const nutrition = nutritionResult;
     return (
       <View style={styles.modalOverlay}>
         <View style={styles.resultContent}>
           <View style={styles.modalHeader}>
-            <ThemedText style={styles.modalTitle}>Nutrition Advice</ThemedText>
+            <View>
+              <ThemedText style={styles.modalTitle}>Nutrition Advice</ThemedText>
+              <ThemedText style={styles.modalSubtitle}>{nutrition.goal || selectedGoal}</ThemedText>
+            </View>
             <Pressable onPress={() => setShowNutritionResult(false)}>
               <Feather name="x" size={24} color={Colors.dark.text} />
             </Pressable>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <ThemedText style={styles.resultText}>
-              {typeof nutritionResult === "string" 
-                ? nutritionResult 
-                : nutritionResult.advice || JSON.stringify(nutritionResult, null, 2)}
-            </ThemedText>
+            {nutrition.description ? (
+              <View style={styles.nutritionCard}>
+                <ThemedText style={styles.nutritionDesc}>{nutrition.description}</ThemedText>
+                
+                <View style={styles.macrosGrid}>
+                  <View style={styles.macroItem}>
+                    <ThemedText style={styles.macroValue}>{nutrition.calories_per_day}</ThemedText>
+                    <ThemedText style={styles.macroLabel}>Daily Calories</ThemedText>
+                  </View>
+                </View>
+
+                {nutrition.macronutrients && (
+                  <View style={styles.macrosBreakdown}>
+                    <ThemedText style={styles.sectionTitle}>Macronutrients</ThemedText>
+                    <View style={styles.macroRow}>
+                      <ThemedText style={styles.macroRowLabel}>Carbs</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.carbohydrates}</ThemedText>
+                    </View>
+                    <View style={styles.macroRow}>
+                      <ThemedText style={styles.macroRowLabel}>Protein</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.proteins}</ThemedText>
+                    </View>
+                    <View style={styles.macroRow}>
+                      <ThemedText style={styles.macroRowLabel}>Fats</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.fats}</ThemedText>
+                    </View>
+                  </View>
+                )}
+
+                {nutrition.advice && (
+                  <View style={styles.adviceSection}>
+                    <ThemedText style={styles.sectionTitle}>Key Advice</ThemedText>
+                    <ThemedText style={styles.resultText}>{nutrition.advice}</ThemedText>
+                  </View>
+                )}
+              </View>
+            ) : (
+              <ThemedText style={styles.resultText}>
+                {typeof nutrition === "string" 
+                  ? nutrition 
+                  : JSON.stringify(nutrition, null, 2)}
+              </ThemedText>
+            )}
           </ScrollView>
         </View>
       </View>
@@ -911,6 +953,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.dark.textSecondary,
     marginTop: 2,
+  },
+  nutritionCard: {
+    gap: Spacing.md,
+  },
+  nutritionDesc: {
+    fontSize: 15,
+    color: Colors.dark.text,
+    lineHeight: 22,
+    marginBottom: Spacing.md,
+  },
+  macrosBreakdown: {
+    backgroundColor: Colors.dark.backgroundSecondary,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    gap: Spacing.xs,
+  },
+  macroRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 4,
+  },
+  macroRowLabel: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+  },
+  macroRowValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.accent,
+  },
+  adviceSection: {
+    marginTop: Spacing.md,
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
