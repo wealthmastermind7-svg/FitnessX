@@ -447,14 +447,33 @@ export default function AIHubScreen() {
   const handleExercisePress = async (exerciseName: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${baseUrl}api/exercises/name/${encodeURIComponent(exerciseName.toLowerCase())}?limit=1`);
+      const normalizedName = exerciseName
+        .toLowerCase()
+        .replace(/s$/i, '')
+        .trim();
+      
+      console.log(`[AIHub] Searching for: ${normalizedName}`);
+      const response = await fetch(`${baseUrl}api/exercises/name/${encodeURIComponent(normalizedName)}?limit=10`);
       if (response.ok) {
         const data = await response.json();
         if (Array.isArray(data) && data.length > 0) {
           Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
           navigation.navigate("ExerciseDetail", { exercise: data[0] });
         } else {
-          Alert.alert("Exercise not found", `Could not find details for ${exerciseName}`);
+          // If no direct name match, search for parts of the name
+          const words = normalizedName.split(' ').filter(w => w.length > 3);
+          if (words.length > 0) {
+            const secondResponse = await fetch(`${baseUrl}api/exercises/name/${encodeURIComponent(words[words.length - 1])}?limit=10`);
+            if (secondResponse.ok) {
+              const secondData = await secondResponse.json();
+              if (Array.isArray(secondData) && secondData.length > 0) {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("ExerciseDetail", { exercise: secondData[0] });
+                return;
+              }
+            }
+          }
+          Alert.alert("Exercise not found", `Could not find details for ${exerciseName}. Try searching in the Discover tab.`);
         }
       }
     } catch (error) {
