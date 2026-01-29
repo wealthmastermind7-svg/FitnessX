@@ -325,8 +325,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { goal, dietary_restrictions, health_conditions } = req.body;
 
+      // Enhance advice using OpenAI for more personalized and varied content
+      const aiResponse = await generateChatResponse({
+        message: `Generate a short, engaging nutrition advice (max 3 sentences) and specific macronutrient ratios (Carbs, Protein, Fats) for a fitness goal of "${goal || "Build muscle"}". 
+        Dietary restrictions: ${dietary_restrictions?.join(", ") || "None"}. 
+        Health conditions: ${health_conditions?.join(", ") || "None"}.
+        Format as JSON: { "advice": "string", "calories": number, "macros": { "carbs": number, "protein": number, "fats": number } }`,
+        history: [],
+      });
+
+      try {
+        const parsed = JSON.parse(aiResponse.match(/\{[\s\S]*\}/)?.[0] || "{}");
+        if (parsed.advice && parsed.macros) {
+          return res.json({
+            advice: parsed.advice,
+            calories: parsed.calories || 2800,
+            macros: {
+              carbs: parsed.macros.carbs || 50,
+              protein: parsed.macros.protein || 30,
+              fats: parsed.macros.fats || 20,
+            }
+          });
+        }
+      } catch (e) {
+        console.warn("Failed to parse AI nutrition response, falling back to basic logic");
+      }
+
       if (!RAPIDAPI_KEY) {
-        return res.status(500).json({ error: "RapidAPI key not configured" });
+        // Fallback if AI or RapidAPI fails
+        return res.json({
+          advice: `Focus on high-quality proteins and complex carbohydrates to support your ${goal || "fitness"} journey. Consistency with your macros is key to seeing results.`,
+          calories: 2800,
+          macros: { carbs: 50, protein: 30, fats: 20 }
+        });
       }
 
       const response = await fetch(
