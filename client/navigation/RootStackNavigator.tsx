@@ -13,6 +13,7 @@ import PaywallScreen from "@/screens/PaywallScreen";
 import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import HealthSyncScreen from "@/screens/HealthSyncScreen";
 import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
+import OnboardingFoodPlateScreen from "@/screens/OnboardingFoodPlateScreen";
 import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
 import PostDetailScreen from "@/screens/PostDetailScreen";
 import CreatePostScreen from "@/screens/CreatePostScreen";
@@ -221,7 +222,7 @@ export default function RootStackNavigator() {
       />
       <Stack.Screen
         name="FoodPlate"
-        component={PlateCalculatorScreen}
+        component={OnboardingFoodPlateScreen}
         options={{
           presentation: "modal",
           headerShown: false,
