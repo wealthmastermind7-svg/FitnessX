@@ -81,15 +81,15 @@ export default function OnboardingFoodPlateScreen() {
                 <ThemedText style={styles.statLabel}>Calories</ThemedText>
               </View>
               <View style={styles.statItem}>
-                <ThemedText style={styles.statValue}>35g</ThemedText>
+                <ThemedText style={styles.statValue}>30g</ThemedText>
                 <ThemedText style={styles.statLabel}>Protein</ThemedText>
               </View>
               <View style={styles.statItem}>
-                <ThemedText style={styles.statValue}>25g</ThemedText>
+                <ThemedText style={styles.statValue}>20g</ThemedText>
                 <ThemedText style={styles.statLabel}>Carbs</ThemedText>
               </View>
               <View style={styles.statItem}>
-                <ThemedText style={styles.statValue}>20g</ThemedText>
+                <ThemedText style={styles.statValue}>25g</ThemedText>
                 <ThemedText style={styles.statLabel}>Fat</ThemedText>
               </View>
             </View>
