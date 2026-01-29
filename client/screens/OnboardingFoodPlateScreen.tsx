@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255, 107, 107, 0.15)",
     alignItems: 'center',
-    overflow: 'hidden', // Add this
+    overflow: 'hidden',
   },
   plateImageWrapper: {
     width: '100%',
@@ -180,21 +180,21 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     position: 'relative',
-    marginBottom: Spacing.md, // Add spacing here
+    marginBottom: Spacing.md,
   },
   scoreCircleOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10, // Increase zIndex
+    zIndex: 10,
   },
   scoreCircle: {
-    width: 100, // Reduced size slightly
-    height: 100, // Reduced size slightly
+    width: 100,
+    height: 100,
     borderRadius: 50,
     borderWidth: 3,
     borderColor: '#FF6B6B',
-    backgroundColor: 'rgba(13, 2, 33, 0.9)', // Higher opacity
+    backgroundColor: 'rgba(13, 2, 33, 0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#FF6B6B',
@@ -203,17 +203,17 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
   },
   scoreValue: {
-    fontSize: 32, // Adjusted font size
+    fontSize: 32,
     fontWeight: '800',
     color: '#FF6B6B',
-    lineHeight: 38, // Explicit line height
+    lineHeight: 38,
   },
   scoreLabel: {
     fontSize: 10,
     color: 'white',
     textTransform: 'uppercase',
     letterSpacing: 1,
-    lineHeight: 12, // Explicit line height
+    lineHeight: 12,
   },
   plateImage: {
     width: '100%',
@@ -263,26 +263,29 @@ const styles = StyleSheet.create({
   statsRow: {
     flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-between', // Changed to space-between
-    paddingHorizontal: Spacing.xs,
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.sm,
     marginTop: Spacing.sm,
     paddingBottom: Spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+    borderRadius: 16,
+    paddingVertical: Spacing.sm,
   },
   statItem: {
     alignItems: 'center',
-    flex: 1, // Allow items to share space
+    flex: 1,
   },
   statValue: {
-    fontSize: 18, // Slightly smaller to prevent cut
+    fontSize: 24,
     fontWeight: '800',
     color: '#FF6B6B',
-    lineHeight: 24,
+    lineHeight: 30,
   },
   statLabel: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.7)',
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.5)',
     marginTop: 2,
-    lineHeight: 14,
+    lineHeight: 16,
   },
   descriptionSection: {
     alignItems: "center",
