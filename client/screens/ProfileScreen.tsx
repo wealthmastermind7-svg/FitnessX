@@ -554,6 +554,36 @@ export default function ProfileScreen() {
             <StatCard label="Top Muscle" value={stats.favoriteMuscle} icon="award" />
           </View>
         </Pressable>
+
+        {/* Progress Analytics Card */}
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+            navigation.navigate("ProgressAnalytics");
+          }}
+          style={styles.progressAnalyticsCard}
+        >
+          <LinearGradient
+            colors={["rgba(255, 107, 107, 0.15)", "rgba(255, 107, 107, 0.05)"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.progressAnalyticsGradient}
+          >
+            <View style={styles.progressAnalyticsLeft}>
+              <View style={styles.progressAnalyticsIcon}>
+                <Feather name="trending-up" size={24} color="#FF6B6B" />
+              </View>
+              <View>
+                <ThemedText style={styles.progressAnalyticsTitle}>Progress Analytics</ThemedText>
+                <ThemedText style={styles.progressAnalyticsSubtitle}>Track your strength gains over time</ThemedText>
+              </View>
+            </View>
+            <View style={styles.progressAnalyticsProBadge}>
+              <ThemedText style={styles.progressAnalyticsProText}>PRO</ThemedText>
+            </View>
+          </LinearGradient>
+        </Pressable>
+
         {/* Workout Days Log - Real Data */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -1440,5 +1470,54 @@ const styles = StyleSheet.create({
     ...Typography.body,
     color: HEALTH_SYNC_BLUE,
     fontWeight: "600",
+  },
+  progressAnalyticsCard: {
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.lg,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    borderWidth: 1,
+    borderColor: "rgba(255, 107, 107, 0.2)",
+  },
+  progressAnalyticsGradient: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: Spacing.md,
+  },
+  progressAnalyticsLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  progressAnalyticsIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: "rgba(255, 107, 107, 0.2)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  progressAnalyticsTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.dark.text,
+  },
+  progressAnalyticsSubtitle: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
+  },
+  progressAnalyticsProBadge: {
+    backgroundColor: "rgba(157, 78, 221, 0.3)",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 4,
+    borderRadius: BorderRadius.sm,
+  },
+  progressAnalyticsProText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: "#9D4EDD",
+    letterSpacing: 1,
   },
 });

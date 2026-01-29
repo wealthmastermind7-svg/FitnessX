@@ -18,6 +18,7 @@ import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
 import PostDetailScreen from "@/screens/PostDetailScreen";
 import CreatePostScreen from "@/screens/CreatePostScreen";
 import MicroHabitsScreen from "@/screens/MicroHabitsScreen";
+import ProgressAnalyticsScreen from "@/screens/ProgressAnalyticsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -98,7 +99,9 @@ export type RootStackParamList = {
   PostDetail: { post: WorkoutPost };
   CreatePost: { sharedExercise?: ExerciseDBExercise } | undefined;
   MicroHabits: undefined;
+  ProgressAnalytics: undefined;
   OnboardingWelcome: undefined;
+  OnboardingProgress: undefined;
   OnboardingDiscover: undefined;
   OnboardingFoodPlate: undefined;
   OnboardingAICoach: undefined;
@@ -257,6 +260,19 @@ export default function RootStackNavigator() {
           presentation: "card",
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name="ProgressAnalytics"
+        component={ProgressAnalyticsScreen}
+        options={{
+          presentation: "card",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="OnboardingProgress"
+        component={require("@/screens/OnboardingProgressScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
       />
       <Stack.Screen
         name="OnboardingWelcome"
