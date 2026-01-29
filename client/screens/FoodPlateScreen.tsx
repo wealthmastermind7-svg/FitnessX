@@ -298,17 +298,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   scoreCircle: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+    width: 160,
+    height: 160,
+    borderRadius: 80,
     borderWidth: 6,
     backgroundColor: Colors.dark.backgroundDefault,
     justifyContent: "center",
     alignItems: "center",
   },
   scoreValue: {
-    fontSize: 48,
+    fontSize: 56,
     fontWeight: "800",
+    lineHeight: 64,
   },
   scoreLabel: {
     fontSize: 12,
