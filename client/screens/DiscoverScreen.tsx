@@ -332,14 +332,14 @@ export default function DiscoverScreen() {
                 </View>
               </View>
 
-              {/* Floating Result Bubbles */}
+              {/* Floating Result Bubbles - Removed static values that don't match scan results */}
               <BlurView intensity={60} tint="dark" style={[styles.resultBubble, { top: '15%', right: '-5%' }]}>
-                <ThemedText style={styles.resultBubbleValue}>450</ThemedText>
-                <ThemedText style={styles.resultBubbleLabel}>KCAL</ThemedText>
+                <Feather name="activity" size={24} color="#FF6B6B" />
+                <ThemedText style={styles.resultBubbleLabel}>STATS</ThemedText>
               </BlurView>
               <BlurView intensity={60} tint="dark" style={[styles.resultBubble, { bottom: '25%', left: '-5%' }]}>
-                <ThemedText style={styles.resultBubbleValue}>35g</ThemedText>
-                <ThemedText style={styles.resultBubbleLabel}>PRO</ThemedText>
+                <Feather name="pie-chart" size={24} color="#FF6B6B" />
+                <ThemedText style={styles.resultBubbleLabel}>MACROS</ThemedText>
               </BlurView>
             </View>
           </Pressable>
