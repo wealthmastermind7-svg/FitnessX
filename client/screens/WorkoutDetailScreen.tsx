@@ -5,6 +5,9 @@ import {
   Animated,
   Pressable,
   Dimensions,
+  ActivityIndicator,
+  Alert,
+  Platform,
 } from "react-native";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,6 +16,8 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
+import * as Sharing from "expo-sharing";
+import * as FileSystem from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -220,6 +225,71 @@ export default function WorkoutDetailScreen() {
   const [exerciseDataMap, setExerciseDataMap] = useState<Record<string, ExerciseDBData>>(() => 
     buildInitialFallbacks(workout.exercises)
   );
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+
+  const handleGenerateVideo = useCallback(async () => {
+    try {
+      setIsGeneratingVideo(true);
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
+      const profileData = await AsyncStorage.getItem("userProfile");
+      const profile = profileData ? JSON.parse(profileData) : {};
+      const userName = profile.name || "Athlete";
+
+      const totalVolume = workout.exercises.reduce((sum, ex) => {
+        const repsNum = parseInt(ex.reps) || 10;
+        return sum + (ex.sets * repsNum * 50);
+      }, 0);
+
+      const response = await fetch(`${baseUrl}api/video/workout-summary`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          workoutName: workout.name,
+          duration: 45,
+          exerciseCount: workout.exercises.length,
+          totalVolume,
+          caloriesBurned: Math.round(workout.exercises.length * 50),
+          muscleGroups: workout.muscleGroups,
+          personalRecords: 0,
+          userName,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to generate video");
+      }
+
+      const { videoUrl } = await response.json();
+      const fullVideoUrl = `${baseUrl}${videoUrl.replace(/^\//, "")}`;
+
+      if (Platform.OS === "web") {
+        window.open(fullVideoUrl, "_blank");
+      } else {
+        const localUri = (FileSystem.documentDirectory || "") + "workout-summary.mp4";
+        const download = await FileSystem.downloadAsync(fullVideoUrl, localUri);
+        
+        if (await Sharing.isAvailableAsync()) {
+          await Sharing.shareAsync(download.uri, {
+            mimeType: "video/mp4",
+            dialogTitle: "Share Workout Summary",
+          });
+        } else {
+          Alert.alert("Video Ready", "Your workout summary video has been generated!");
+        }
+      }
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      console.error("Error generating video:", error);
+      Alert.alert(
+        "Video Generation",
+        "Video generation is a premium feature that requires server-side rendering. This feature will be available soon!"
+      );
+    } finally {
+      setIsGeneratingVideo(false);
+    }
+  }, [workout, baseUrl]);
 
   useEffect(() => {
     const normalizeExerciseName = (name: string): string[] => {
@@ -476,9 +546,19 @@ export default function WorkoutDetailScreen() {
               <Feather name="message-circle" size={20} color={Colors.dark.textSecondary} />
               <ThemedText style={styles.socialButtonText}>Comment</ThemedText>
             </Pressable>
-            <Pressable style={styles.socialButton}>
-              <Feather name="share" size={20} color={Colors.dark.textSecondary} />
-              <ThemedText style={styles.socialButtonText}>Share</ThemedText>
+            <Pressable 
+              style={styles.socialButton} 
+              onPress={handleGenerateVideo}
+              disabled={isGeneratingVideo}
+            >
+              {isGeneratingVideo ? (
+                <ActivityIndicator size="small" color={Colors.dark.accent} />
+              ) : (
+                <Feather name="video" size={20} color={Colors.dark.accent} />
+              )}
+              <ThemedText style={[styles.socialButtonText, { color: Colors.dark.accent }]}>
+                {isGeneratingVideo ? "Creating..." : "Share Video"}
+              </ThemedText>
             </Pressable>
           </View>
 
