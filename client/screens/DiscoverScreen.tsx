@@ -325,10 +325,6 @@ export default function DiscoverScreen() {
               />
               
               <View style={styles.premiumCircleContent}>
-                <View style={styles.premiumBadge}>
-                  <Feather name="zap" size={14} color="#FFF" />
-                  <ThemedText style={styles.premiumBadgeText}>WOW</ThemedText>
-                </View>
                 <ThemedText style={styles.premiumCircleTitle}>Analyse Plate</ThemedText>
                 <View style={styles.premiumScanIndicator}>
                   <Feather name="camera" size={24} color="#FFF" />
@@ -662,6 +658,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   premiumBadge: {
+    display: 'none',
     position: 'absolute',
     top: 30,
     flexDirection: 'row',
