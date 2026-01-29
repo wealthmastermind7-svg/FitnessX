@@ -94,6 +94,7 @@ export type RootStackParamList = {
   CustomerCenter: undefined;
   HealthSync: undefined;
   PlateCalculator: undefined;
+  FoodPlate: undefined;
   InviteFriends: undefined;
   PostDetail: { post: WorkoutPost };
   CreatePost: { sharedExercise?: ExerciseDBExercise } | undefined;
@@ -212,6 +213,14 @@ export default function RootStackNavigator() {
       />
       <Stack.Screen
         name="PlateCalculator"
+        component={PlateCalculatorScreen}
+        options={{
+          presentation: "modal",
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="FoodPlate"
         component={PlateCalculatorScreen}
         options={{
           presentation: "modal",
