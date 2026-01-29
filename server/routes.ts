@@ -8,6 +8,10 @@ import {
   generateChatResponse,
   analyzeFoodImage,
 } from "./services/ai";
+import {
+  generateWorkoutSummaryVideo,
+  type WorkoutVideoData,
+} from "./services/video";
 
 interface WorkoutRequest {
   muscleGroups: string[];
@@ -563,6 +567,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error in /api/ai/analyze-food:", error);
       res.status(500).json({ error: "Failed to analyze food image" });
+    }
+  });
+
+  app.post("/api/video/workout-summary", async (req, res) => {
+    try {
+      const {
+        workoutName,
+        duration,
+        exerciseCount,
+        totalVolume,
+        caloriesBurned,
+        muscleGroups,
+        personalRecords,
+        userName,
+      } = req.body;
+
+      if (!workoutName || !duration) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      const videoData: WorkoutVideoData = {
+        workoutName,
+        duration: duration || 0,
+        exerciseCount: exerciseCount || 0,
+        totalVolume: totalVolume || 0,
+        caloriesBurned: caloriesBurned || 0,
+        muscleGroups: muscleGroups || [],
+        personalRecords: personalRecords || 0,
+        userName: userName || "Athlete",
+        completedAt: new Date().toISOString(),
+      };
+
+      console.log("[Video API] Generating workout summary video...");
+      const videoUrl = await generateWorkoutSummaryVideo(videoData);
+      
+      res.json({ 
+        success: true, 
+        videoUrl,
+        message: "Video generated successfully" 
+      });
+    } catch (error) {
+      console.error("Error generating workout video:", error);
+      res.status(500).json({ error: "Failed to generate video. This feature requires server-side rendering." });
     }
   });
 
