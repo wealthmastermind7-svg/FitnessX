@@ -24,7 +24,7 @@ export default function OnboardingFoodPlateScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingProgress");
+    navigation.navigate("OnboardingAICoach");
   };
 
   const handleSkip = () => {

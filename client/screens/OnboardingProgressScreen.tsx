@@ -113,7 +113,7 @@ export default function OnboardingProgressScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingWorkout");
+    navigation.navigate("OnboardingFoodPlate");
   };
 
   const handleSkip = () => {
