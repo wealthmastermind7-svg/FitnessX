@@ -1,18 +1,21 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   View,
   StyleSheet,
   ScrollView,
   Pressable,
-  TextInput,
   Image,
   Animated,
   Dimensions,
+  RefreshControl,
+  TextInput,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useIsFocused } from "@react-navigation/native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -35,6 +38,13 @@ interface Post {
   timestamp: string;
   liked: boolean;
   bookmarked: boolean;
+  workoutTitle?: string;
+  stats?: {
+    duration?: string;
+    volume?: string;
+    sets?: number;
+    calories?: number;
+  };
 }
 
 const SAMPLE_POSTS: Post[] = [
@@ -68,52 +78,6 @@ const SAMPLE_POSTS: Post[] = [
     timestamp: "4h ago",
     liked: true,
     bookmarked: false,
-  },
-  {
-    id: "3",
-    author: {
-      name: "Emma Davis",
-      avatar: "https://i.pravatar.cc/100?img=9",
-      verified: true,
-    },
-    content: "Morning yoga session in the park. There's something magical about starting the day with movement and fresh air. Who else is a morning workout person?",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800",
-    likes: 189,
-    dislikes: 1,
-    comments: 35,
-    timestamp: "6h ago",
-    liked: false,
-    bookmarked: true,
-  },
-  {
-    id: "4",
-    author: {
-      name: "Chris Thompson",
-      avatar: "https://i.pravatar.cc/100?img=12",
-      verified: false,
-    },
-    content: "Week 8 of my transformation complete. Down 12kg and feeling stronger than ever. The AI program recommendations have been incredibly helpful!",
-    likes: 312,
-    dislikes: 4,
-    comments: 67,
-    timestamp: "8h ago",
-    liked: false,
-    bookmarked: false,
-  },
-  {
-    id: "5",
-    author: {
-      name: "Lisa Anderson",
-      avatar: "https://i.pravatar.cc/100?img=16",
-      verified: true,
-    },
-    content: "Remember: Recovery is just as important as the workout itself. Make sure you're getting enough sleep and nutrition!",
-    likes: 423,
-    dislikes: 2,
-    comments: 54,
-    timestamp: "12h ago",
-    liked: true,
-    bookmarked: true,
   },
 ];
 
@@ -153,10 +117,37 @@ function PostCard({ post, onLike, onBookmark }: { post: Post; onLike: () => void
         </Pressable>
       </View>
 
+      {post.workoutTitle && (
+        <ThemedText style={styles.postWorkoutTitle}>{post.workoutTitle}</ThemedText>
+      )}
+
       <ThemedText style={styles.postContent}>{post.content}</ThemedText>
 
       {post.image && (
         <Image source={{ uri: post.image }} style={styles.postImage} resizeMode="cover" />
+      )}
+
+      {post.stats && (
+        <View style={styles.postStatsContainer}>
+          {post.stats.duration && (
+            <View style={styles.postStatItem}>
+              <Feather name="clock" size={14} color={Colors.dark.accent} />
+              <ThemedText style={styles.postStatText}>{post.stats.duration}</ThemedText>
+            </View>
+          )}
+          {post.stats.volume && (
+            <View style={styles.postStatItem}>
+              <Feather name="activity" size={14} color={Colors.dark.accent} />
+              <ThemedText style={styles.postStatText}>{post.stats.volume}</ThemedText>
+            </View>
+          )}
+          {post.stats.calories && (
+            <View style={styles.postStatItem}>
+              <Feather name="zap" size={14} color={Colors.dark.accent} />
+              <ThemedText style={styles.postStatText}>{post.stats.calories} kcal</ThemedText>
+            </View>
+          )}
+        </View>
       )}
 
       <View style={styles.postActions}>
@@ -164,7 +155,7 @@ function PostCard({ post, onLike, onBookmark }: { post: Post; onLike: () => void
           <Pressable style={styles.actionButton} onPress={handleLikePress}>
             <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
               <Feather
-                name={post.liked ? "thumbs-up" : "thumbs-up"}
+                name="thumbs-up"
                 size={20}
                 color={post.liked ? Colors.dark.accent : Colors.dark.textSecondary}
               />
@@ -193,7 +184,7 @@ function PostCard({ post, onLike, onBookmark }: { post: Post; onLike: () => void
 
         <Pressable onPress={onBookmark}>
           <Feather
-            name={post.bookmarked ? "bookmark" : "bookmark"}
+            name="bookmark"
             size={20}
             color={post.bookmarked ? Colors.dark.accentSecondary : Colors.dark.textSecondary}
           />
@@ -205,9 +196,60 @@ function PostCard({ post, onLike, onBookmark }: { post: Post; onLike: () => void
 
 export default function CommunityScreen({ navigation }: any) {
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
   const [posts, setPosts] = useState<Post[]>(SAMPLE_POSTS);
+  const [refreshing, setRefreshing] = useState(false);
   const [showCompose, setShowCompose] = useState(false);
   const [newPostContent, setNewPostContent] = useState("");
+
+  const loadCommunityPosts = async () => {
+    try {
+      const savedPostsJson = await AsyncStorage.getItem("community_posts");
+      if (savedPostsJson) {
+        const savedPosts = JSON.parse(savedPostsJson);
+        const mappedPosts: Post[] = savedPosts.map((p: any) => ({
+          id: p.id,
+          author: {
+            name: p.username || "Anonymous",
+            avatar: "https://i.pravatar.cc/100?img=33",
+            verified: false,
+          },
+          content: p.description || "",
+          image: p.imageUrl,
+          likes: p.likes || 0,
+          dislikes: 0,
+          comments: p.comments || 0,
+          timestamp: "Recently",
+          liked: p.isLiked || false,
+          bookmarked: false,
+          workoutTitle: p.workoutTitle,
+          stats: {
+            duration: p.duration,
+            volume: p.volume,
+            sets: p.sets,
+            calories: p.calories,
+          }
+        }));
+        
+        // Merge with sample posts
+        setPosts([...mappedPosts, ...SAMPLE_POSTS]);
+      }
+    } catch (error) {
+      console.error("Error loading community posts:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      loadCommunityPosts();
+    }
+  }, [isFocused]);
+
+  const onRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    await loadCommunityPosts();
+    setRefreshing(false);
+  }, []);
 
   const toggleLike = (postId: string) => {
     setPosts(posts.map((p) => (p.id === postId ? { ...p, liked: !p.liked } : p)));
@@ -319,6 +361,9 @@ export default function CommunityScreen({ navigation }: any) {
         style={styles.content}
         contentContainerStyle={{ paddingBottom: insets.bottom + Spacing.xxl }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.dark.accent} />
+        }
       >
         <View style={styles.createPostCard}>
           <Image
@@ -462,6 +507,30 @@ const styles = StyleSheet.create({
   filterTabTextActive: {
     color: "#fff",
     fontWeight: "600",
+  },
+  postWorkoutTitle: {
+    ...Typography.h3,
+    color: Colors.dark.accent,
+    marginBottom: Spacing.xs,
+  },
+  postStatsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: Spacing.md,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.sm,
+    backgroundColor: "rgba(255,255,255,0.05)",
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  postStatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  postStatText: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
   },
   postCard: {
     padding: Spacing.lg,

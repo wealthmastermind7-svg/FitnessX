@@ -2,7 +2,6 @@ import React, { useState, useRef } from "react";
 import {
   View,
   StyleSheet,
-  ScrollView,
   Pressable,
   TextInput,
   Alert,
@@ -18,11 +17,12 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import type { RouteProp } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import type { RootStackParamList, ExerciseDBExercise } from "@/navigation/RootStackNavigator";
+import type { RootStackParamList } from "@/navigation/RootStackNavigator";
 
 type CreatePostRouteProp = RouteProp<RootStackParamList, "CreatePost">;
 
@@ -97,8 +97,8 @@ export default function CreatePostScreen() {
     try {
       const newPost = {
         id: Date.now().toString(),
-        userId: "current_user", // Placeholder for actual user auth
-        username: "Me", // Placeholder for actual user profile
+        userId: "current_user",
+        username: "Me",
         timestamp: new Date().toISOString(),
         workoutTitle,
         description: caption,
@@ -162,10 +162,11 @@ export default function CreatePostScreen() {
         </Pressable>
       </View>
 
-      <ScrollView 
+      <KeyboardAwareScrollView 
         style={styles.scrollView}
         contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + Spacing.xl }]}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
         {sharedExercise && (
           <View style={styles.sharedExerciseCard}>
@@ -300,7 +301,7 @@ export default function CreatePostScreen() {
             </View>
           </View>
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </ThemedView>
   );
 }
