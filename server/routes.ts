@@ -591,9 +591,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/ai/analyze-food", async (req, res) => {
     try {
-      const { image } = req.body;
+      const { image, previousAnalysis } = req.body;
       if (!image) return res.status(400).json({ error: "Image is required" });
-      const result = await analyzeFoodImage(image);
+      
+      const result = await analyzeFoodImage(image) as any;
+      
+      // If we have an analysis, generate a quick tip based on the macros
+      if (result && (result.macronutrients || result.macros)) {
+        const macros = result.macronutrients || result.macros;
+        const tipResponse = await generateChatResponse({
+          message: `Based on this meal analysis: ${JSON.stringify(macros)}. 
+          Provide one specific, actionable nutritional tip (1 sentence) for someone with a fitness goal.`,
+          history: [],
+        });
+        result.aiTip = typeof tipResponse === 'string' ? tipResponse : (tipResponse as any).response;
+      }
+      
       res.json(result);
     } catch (error) {
       console.error("Error in /api/ai/analyze-food:", error);

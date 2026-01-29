@@ -435,6 +435,16 @@ export default function AIHubScreen() {
             {foodAnalysisResult.suggestions.map((suggestion: string, i: number) => (
               <ThemedText key={i} style={styles.suggestionText}>{suggestion}</ThemedText>
             ))}
+
+            {foodAnalysisResult.aiTip && (
+              <View style={styles.aiTipContainer}>
+                <View style={styles.aiTipHeader}>
+                  <Feather name="zap" size={16} color={Colors.dark.accent} />
+                  <ThemedText style={styles.aiTipTitle}>AI Smart Tip</ThemedText>
+                </View>
+                <ThemedText style={styles.aiTipText}>{foodAnalysisResult.aiTip}</ThemedText>
+              </View>
+            )}
           </ScrollView>
         </View>
       </View>
@@ -955,6 +965,33 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     lineHeight: 20,
     paddingLeft: Spacing.sm,
+  },
+  aiTipContainer: {
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    backgroundColor: "rgba(255, 107, 107, 0.1)",
+    borderRadius: BorderRadius.md,
+    borderLeftWidth: 3,
+    borderLeftColor: Colors.dark.accent,
+  },
+  aiTipHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
+  aiTipTitle: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: Colors.dark.accent,
+    textTransform: "uppercase",
+    letterSpacing: 1,
+  },
+  aiTipText: {
+    fontSize: 14,
+    color: Colors.dark.text,
+    fontStyle: "italic",
+    lineHeight: 20,
   },
   planDay: {
     marginBottom: Spacing.lg,
