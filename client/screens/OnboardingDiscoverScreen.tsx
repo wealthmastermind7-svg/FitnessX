@@ -32,7 +32,7 @@ export default function OnboardingDiscoverScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingAICoach");
+    navigation.navigate("OnboardingFoodPlate");
   };
 
   const handleBack = () => {
@@ -61,6 +61,7 @@ export default function OnboardingDiscoverScreen() {
             <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.headerIcon} />
             <View style={styles.progressDots}>
               <View style={[styles.dot, styles.dotActive]} />
+              <View style={styles.dot} />
               <View style={styles.dot} />
               <View style={styles.dot} />
               <View style={styles.dot} />

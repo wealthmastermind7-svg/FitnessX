@@ -117,6 +117,7 @@ export default function OnboardingWorkoutScreen() {
             <View style={styles.dot} />
             <View style={styles.dot} />
             <View style={styles.dot} />
+            <View style={styles.dot} />
             <View style={[styles.dot, styles.dotActive]} />
           </View>
         </View>

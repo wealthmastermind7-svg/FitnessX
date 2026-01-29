@@ -74,6 +74,8 @@ export type WorkoutPost = {
   imageUrl?: string;
 };
 
+import OnboardingFoodPlateScreen from "@/screens/OnboardingFoodPlateScreen";
+
 export type RootStackParamList = {
   Main: undefined;
   WorkoutDetail: { workout: Workout };
@@ -96,6 +98,11 @@ export type RootStackParamList = {
   PostDetail: { post: WorkoutPost };
   CreatePost: { sharedExercise?: ExerciseDBExercise } | undefined;
   MicroHabits: undefined;
+  OnboardingWelcome: undefined;
+  OnboardingDiscover: undefined;
+  OnboardingFoodPlate: undefined;
+  OnboardingAICoach: undefined;
+  OnboardingWorkout: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -242,6 +249,31 @@ export default function RootStackNavigator() {
           presentation: "card",
           headerShown: false,
         }}
+      />
+      <Stack.Screen
+        name="OnboardingWelcome"
+        component={require("@/screens/OnboardingWelcomeScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
+      />
+      <Stack.Screen
+        name="OnboardingDiscover"
+        component={require("@/screens/OnboardingDiscoverScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
+      />
+      <Stack.Screen
+        name="OnboardingFoodPlate"
+        component={OnboardingFoodPlateScreen}
+        options={{ headerShown: false, animation: "fade" }}
+      />
+      <Stack.Screen
+        name="OnboardingAICoach"
+        component={require("@/screens/OnboardingAICoachScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
+      />
+      <Stack.Screen
+        name="OnboardingWorkout"
+        component={require("@/screens/OnboardingWorkoutScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
       />
     </Stack.Navigator>
   );

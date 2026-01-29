@@ -113,6 +113,7 @@ export default function OnboardingAICoachScreen() {
           <View style={styles.progressDots}>
             <View style={styles.dot} />
             <View style={styles.dot} />
+            <View style={styles.dot} />
             <View style={[styles.dot, styles.dotActive]} />
             <View style={styles.dot} />
           </View>

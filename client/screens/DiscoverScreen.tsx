@@ -466,7 +466,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Main", { screen: "AI" } as any);
+              navigation.navigate("PlateCalculator");
             }}
             style={({ pressed }) => [
               styles.aiChatCard,
@@ -474,32 +474,37 @@ export default function DiscoverScreen() {
               pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
             ]}
           >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
+            <LinearGradient
+              colors={["#FF6B6B", "#FF4B4B"]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.exerciseLibraryGradient}
+            >
               <View style={styles.exerciseLibraryContent}>
                 <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
-                    <Feather name="zap" size={14} color="#9D4EDD" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
-                      PRO
+                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
+                    <Feather name="star" size={14} color="#FFF" />
+                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
+                      WOW
                     </ThemedText>
                   </View>
                   <ThemedText style={styles.exerciseLibraryTitle}>
-                    Analyze Plate
+                    Analyse Food Plate
                   </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
-                    Take a photo of your meal to get nutritional info
+                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.9)" }]}>
+                    Snap your meal for instant macro breakdown
                   </ThemedText>
                 </View>
                 <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
-                    <Feather name="camera" size={32} color="#9D4EDD" />
+                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255, 255, 255, 0.2)', borderWidth: 0 }]}>
+                    <Feather name="camera" size={32} color="#FFF" />
                   </View>
                 </View>
               </View>
               <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#9D4EDD" />
+                <Feather name="arrow-right" size={20} color="#FFF" />
               </View>
-            </View>
+            </LinearGradient>
           </Pressable>
 
           {/* Micro-Habits Autopilot Card */}
