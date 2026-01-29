@@ -307,7 +307,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              navigation.navigate("FoodPlate");
+              navigation.navigate("OnboardingFoodPlate");
             }}
             style={({ pressed }) => [
               styles.premiumCirclePressable,
