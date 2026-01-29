@@ -279,10 +279,23 @@ export default function MicroHabitsScreen() {
 
   return (
     <ThemedView style={styles.container}>
+      <View style={[styles.header, { paddingTop: insets.top }]}>
+        <Pressable
+          onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            navigation.goBack();
+          }}
+          style={styles.backButton}
+        >
+          <Feather name="arrow-left" size={24} color={Colors.dark.text} />
+        </Pressable>
+        <ThemedText style={styles.headerTitle}>Micro-Habits</ThemedText>
+        <View style={styles.headerRight} />
+      </View>
       <ScrollView
         contentContainerStyle={[
           styles.scrollContent,
-          { paddingTop: insets.top + Spacing.lg, paddingBottom: Spacing.xl + 100 },
+          { paddingBottom: Spacing.xl + 100 },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -478,8 +491,30 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,
   },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: Spacing.lg,
+    paddingBottom: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
+  backButton: {
+    padding: Spacing.sm,
+    marginLeft: -Spacing.sm,
+  },
+  headerTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.text,
+  },
+  headerRight: {
+    width: 40,
+  },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
   },
   screenTagline: {
     fontSize: 12,
