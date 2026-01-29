@@ -270,11 +270,6 @@ export default function RootStackNavigator() {
         }}
       />
       <Stack.Screen
-        name="OnboardingProgress"
-        component={require("@/screens/OnboardingProgressScreen").default}
-        options={{ headerShown: false, animation: "fade" }}
-      />
-      <Stack.Screen
         name="OnboardingWelcome"
         component={require("@/screens/OnboardingWelcomeScreen").default}
         options={{ headerShown: false, animation: "fade" }}
@@ -282,6 +277,11 @@ export default function RootStackNavigator() {
       <Stack.Screen
         name="OnboardingDiscover"
         component={require("@/screens/OnboardingDiscoverScreen").default}
+        options={{ headerShown: false, animation: "fade" }}
+      />
+      <Stack.Screen
+        name="OnboardingProgress"
+        component={require("@/screens/OnboardingProgressScreen").default}
         options={{ headerShown: false, animation: "fade" }}
       />
       <Stack.Screen
