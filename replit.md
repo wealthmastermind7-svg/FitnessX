@@ -10,9 +10,17 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.2 Build 4)
+## Recent Changes (v1.0.2 Build 5)
 
-**Exercise Library Enhancements:**
+**Video Sharing Feature:**
+- Added **"Share Video" button** to WorkoutDetailScreen for generating shareable workout summary videos
+- Implemented **Remotion integration** for server-side programmatic video generation
+- Videos include animated stats (duration, volume, calories, PRs), muscle group tags, and FitForge branding
+- Created `/api/video/workout-summary` POST endpoint for video generation
+- Videos are served from `/videos` static endpoint
+- Uses expo-file-system and expo-sharing for downloading and sharing videos on native platforms
+
+**Exercise Library Enhancements (v1.0.2 Build 4):**
 - Added **Categories browsing section** to Discover screen (strength, cardio, mobility, stretching, plyometrics)
 - Exercise details now display **difficulty levels** (beginner, intermediate, advanced) and **training categories**
 - Backend updated with **high-resolution GIF support** (up to 720p) via resolution parameter

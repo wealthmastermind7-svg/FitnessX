@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
-import * as FileSystem from "expo-file-system";
+import { documentDirectory, downloadAsync } from "expo-file-system";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -266,8 +266,8 @@ export default function WorkoutDetailScreen() {
       if (Platform.OS === "web") {
         window.open(fullVideoUrl, "_blank");
       } else {
-        const localUri = (FileSystem.documentDirectory || "") + "workout-summary.mp4";
-        const download = await FileSystem.downloadAsync(fullVideoUrl, localUri);
+        const localUri = (documentDirectory || "") + "workout-summary.mp4";
+        const download = await downloadAsync(fullVideoUrl, localUri);
         
         if (await Sharing.isAvailableAsync()) {
           await Sharing.shareAsync(download.uri, {
