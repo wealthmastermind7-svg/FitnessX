@@ -172,6 +172,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "rgba(255, 107, 107, 0.15)",
     alignItems: 'center',
+    overflow: 'hidden', // Add this
   },
   plateImageWrapper: {
     width: '100%',
@@ -179,37 +180,40 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     position: 'relative',
+    marginBottom: Spacing.md, // Add spacing here
   },
   scoreCircleOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 5,
+    zIndex: 10, // Increase zIndex
   },
   scoreCircle: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 4,
+    width: 100, // Reduced size slightly
+    height: 100, // Reduced size slightly
+    borderRadius: 50,
+    borderWidth: 3,
     borderColor: '#FF6B6B',
-    backgroundColor: 'rgba(13, 2, 33, 0.8)',
+    backgroundColor: 'rgba(13, 2, 33, 0.9)', // Higher opacity
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#FF6B6B',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 15,
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
   },
   scoreValue: {
-    fontSize: 40,
+    fontSize: 32, // Adjusted font size
     fontWeight: '800',
     color: '#FF6B6B',
+    lineHeight: 38, // Explicit line height
   },
   scoreLabel: {
     fontSize: 10,
     color: 'white',
     textTransform: 'uppercase',
     letterSpacing: 1,
+    lineHeight: 12, // Explicit line height
   },
   plateImage: {
     width: '100%',
@@ -217,7 +221,7 @@ const styles = StyleSheet.create({
   },
   scanningOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    backgroundColor: 'rgba(255, 107, 107, 0.05)',
   },
   scanLine: {
     height: 2,
@@ -227,19 +231,21 @@ const styles = StyleSheet.create({
     top: '40%',
     shadowColor: '#FF6B6B',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 1,
     shadowRadius: 10,
+    zIndex: 15,
   },
   foodLabel: {
     position: 'absolute',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
+    borderColor: 'rgba(255,255,255,0.3)',
+    zIndex: 20,
   },
   labelDot: {
     width: 6,
@@ -252,26 +258,31 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: 'white',
     fontWeight: '600',
+    lineHeight: 16,
   },
   statsRow: {
     flexDirection: 'row',
     width: '100%',
-    justifyContent: 'space-around',
-    marginTop: Spacing.lg,
-    paddingBottom: Spacing.sm,
+    justifyContent: 'space-between', // Changed to space-between
+    paddingHorizontal: Spacing.xs,
+    marginTop: Spacing.sm,
+    paddingBottom: Spacing.md,
   },
   statItem: {
     alignItems: 'center',
+    flex: 1, // Allow items to share space
   },
   statValue: {
-    fontSize: 20,
+    fontSize: 18, // Slightly smaller to prevent cut
     fontWeight: '800',
     color: '#FF6B6B',
+    lineHeight: 24,
   },
   statLabel: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.6)',
+    fontSize: 11,
+    color: 'rgba(255,255,255,0.7)',
     marginTop: 2,
+    lineHeight: 14,
   },
   descriptionSection: {
     alignItems: "center",
