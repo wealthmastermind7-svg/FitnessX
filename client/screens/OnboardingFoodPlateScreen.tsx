@@ -56,14 +56,22 @@ export default function OnboardingFoodPlateScreen() {
                 <View style={styles.scanLine} />
               </View>
               
+              {/* Health Score Circle Overlay */}
+              <View style={styles.scoreCircleOverlay}>
+                <View style={styles.scoreCircle}>
+                  <ThemedText style={styles.scoreValue}>85</ThemedText>
+                  <ThemedText style={styles.scoreLabel}>Health Score</ThemedText>
+                </View>
+              </View>
+
               {/* Labels overlay simulation */}
-              <View style={[styles.foodLabel, { top: '30%', left: '20%' }]}>
+              <View style={[styles.foodLabel, { top: '20%', left: '15%' }]}>
                 <View style={styles.labelDot} />
                 <ThemedText style={styles.labelText}>Salmon</ThemedText>
               </View>
-              <View style={[styles.foodLabel, { top: '50%', left: '60%' }]}>
+              <View style={[styles.foodLabel, { top: '65%', left: '55%' }]}>
                 <View style={styles.labelDot} />
-                <ThemedText style={styles.labelText}>Greens</ThemedText>
+                <ThemedText style={styles.labelText}>Mixed Greens</ThemedText>
               </View>
             </View>
 
@@ -79,6 +87,10 @@ export default function OnboardingFoodPlateScreen() {
               <View style={styles.statItem}>
                 <ThemedText style={styles.statValue}>25g</ThemedText>
                 <ThemedText style={styles.statLabel}>Carbs</ThemedText>
+              </View>
+              <View style={styles.statItem}>
+                <ThemedText style={styles.statValue}>20g</ThemedText>
+                <ThemedText style={styles.statLabel}>Fat</ThemedText>
               </View>
             </View>
           </View>
@@ -167,6 +179,37 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     overflow: 'hidden',
     position: 'relative',
+  },
+  scoreCircleOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 5,
+  },
+  scoreCircle: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    borderWidth: 4,
+    borderColor: '#FF6B6B',
+    backgroundColor: 'rgba(13, 2, 33, 0.8)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.5,
+    shadowRadius: 15,
+  },
+  scoreValue: {
+    fontSize: 40,
+    fontWeight: '800',
+    color: '#FF6B6B',
+  },
+  scoreLabel: {
+    fontSize: 10,
+    color: 'white',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   plateImage: {
     width: '100%',

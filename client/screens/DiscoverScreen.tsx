@@ -302,18 +302,52 @@ export default function DiscoverScreen() {
           { useNativeDriver: true }
         )}
       >
-        <Animated.View
-          style={[
-            styles.heroSection,
-            { transform: [{ translateY: parallaxTransform }] },
-          ]}
-        >
-          <ThemedText style={styles.heroTagline}>WELCOME TO</ThemedText>
-          <ThemedText style={styles.heroTitle}>FitForge</ThemedText>
-          <ThemedText style={styles.heroSubtitle}>
-            Your personal fitness journey starts here
-          </ThemedText>
-        </Animated.View>
+        {/* Premium Food Analysis Highlight */}
+        <View style={styles.premiumHighlightContainer}>
+          <Pressable
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+              navigation.navigate("PlateCalculator");
+            }}
+            style={({ pressed }) => [
+              styles.premiumCirclePressable,
+              pressed && { transform: [{ scale: 0.96 }] },
+            ]}
+          >
+            <View style={styles.premiumCircleOuter}>
+              <Image 
+                source={{ uri: "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80" }} 
+                style={styles.premiumCircleImage}
+              />
+              <LinearGradient
+                colors={["transparent", "rgba(13, 2, 33, 0.8)"]}
+                style={styles.premiumCircleGradient}
+              />
+              
+              <View style={styles.premiumCircleContent}>
+                <View style={styles.premiumBadge}>
+                  <Feather name="zap" size={14} color="#FFF" />
+                  <ThemedText style={styles.premiumBadgeText}>WOW</ThemedText>
+                </View>
+                <ThemedText style={styles.premiumCircleTitle}>Analyse Plate</ThemedText>
+                <View style={styles.premiumScanIndicator}>
+                  <Feather name="camera" size={24} color="#FFF" />
+                  <ThemedText style={styles.premiumScanText}>SCAN ME</ThemedText>
+                </View>
+              </View>
+
+              {/* Floating Result Bubbles */}
+              <BlurView intensity={60} tint="dark" style={[styles.resultBubble, { top: '15%', right: '-5%' }]}>
+                <ThemedText style={styles.resultBubbleValue}>450</ThemedText>
+                <ThemedText style={styles.resultBubbleLabel}>KCAL</ThemedText>
+              </BlurView>
+              <BlurView intensity={60} tint="dark" style={[styles.resultBubble, { bottom: '25%', left: '-5%' }]}>
+                <ThemedText style={styles.resultBubbleValue}>35g</ThemedText>
+                <ThemedText style={styles.resultBubbleLabel}>PRO</ThemedText>
+              </BlurView>
+            </View>
+          </Pressable>
+        </View>
 
         <ReadinessWidget />
 
@@ -462,51 +496,6 @@ export default function DiscoverScreen() {
             </View>
           </Pressable>
 
-          {/* Analyze Food Plate Card */}
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("PlateCalculator");
-            }}
-            style={({ pressed }) => [
-              styles.aiChatCard,
-              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
-              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
-            ]}
-          >
-            <LinearGradient
-              colors={["#FF6B6B", "#FF4B4B"]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.exerciseLibraryGradient}
-            >
-              <View style={styles.exerciseLibraryContent}>
-                <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <Feather name="star" size={14} color="#FFF" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
-                      WOW
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.exerciseLibraryTitle}>
-                    Analyse Food Plate
-                  </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.9)" }]}>
-                    Snap your meal for instant macro breakdown
-                  </ThemedText>
-                </View>
-                <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255, 255, 255, 0.2)', borderWidth: 0 }]}>
-                    <Feather name="camera" size={32} color="#FFF" />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#FFF" />
-              </View>
-            </LinearGradient>
-          </Pressable>
-
           {/* Micro-Habits Autopilot Card */}
           <Pressable
             onPress={() => {
@@ -631,6 +620,111 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     fontWeight: "400",
     lineHeight: 24,
+  },
+  premiumHighlightContainer: {
+    alignItems: 'center',
+    marginVertical: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
+  },
+  premiumCirclePressable: {
+    width: SCREEN_WIDTH * 0.75,
+    aspectRatio: 1,
+  },
+  premiumCircleOuter: {
+    width: '100%',
+    height: '100%',
+    borderRadius: SCREEN_WIDTH * 0.4,
+    overflow: 'visible',
+    backgroundColor: '#1A1A1A',
+    borderWidth: 4,
+    borderColor: '#FF6B6B',
+    shadowColor: '#FF6B6B',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.6,
+    shadowRadius: 20,
+    elevation: 10,
+    position: 'relative',
+  },
+  premiumCircleImage: {
+    width: '100%',
+    height: '100%',
+    borderRadius: SCREEN_WIDTH * 0.4,
+    opacity: 0.8,
+  },
+  premiumCircleGradient: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: SCREEN_WIDTH * 0.4,
+  },
+  premiumCircleContent: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.lg,
+  },
+  premiumBadge: {
+    position: 'absolute',
+    top: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF6B6B',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+  },
+  premiumBadgeText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: 'white',
+  },
+  premiumCircleTitle: {
+    fontSize: 32,
+    fontWeight: '900',
+    color: 'white',
+    textAlign: 'center',
+    textShadowColor: 'rgba(0,0,0,0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
+    marginBottom: Spacing.md,
+  },
+  premiumScanIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 24,
+    gap: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  premiumScanText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: 'white',
+    letterSpacing: 1,
+  },
+  resultBubble: {
+    position: 'absolute',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.2)',
+    overflow: 'hidden',
+  },
+  resultBubbleValue: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FF6B6B',
+  },
+  resultBubbleLabel: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: 'white',
+    opacity: 0.8,
   },
   section: {
     marginBottom: Spacing.xl,
