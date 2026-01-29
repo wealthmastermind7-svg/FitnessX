@@ -13,7 +13,7 @@ import PaywallScreen from "@/screens/PaywallScreen";
 import CustomerCenterScreen from "@/screens/CustomerCenterScreen";
 import HealthSyncScreen from "@/screens/HealthSyncScreen";
 import PlateCalculatorScreen from "@/screens/PlateCalculatorScreen";
-import OnboardingFoodPlateScreen from "@/screens/OnboardingFoodPlateScreen";
+import FoodPlateScreen from "@/screens/FoodPlateScreen";
 import InviteFriendsScreen from "@/screens/InviteFriendsScreen";
 import PostDetailScreen from "@/screens/PostDetailScreen";
 import CreatePostScreen from "@/screens/CreatePostScreen";
@@ -74,8 +74,6 @@ export type WorkoutPost = {
   isLiked: boolean;
   imageUrl?: string;
 };
-
-import OnboardingFoodPlateScreen from "@/screens/OnboardingFoodPlateScreen";
 
 export type RootStackParamList = {
   Main: undefined;
@@ -222,7 +220,7 @@ export default function RootStackNavigator() {
       />
       <Stack.Screen
         name="FoodPlate"
-        component={OnboardingFoodPlateScreen}
+        component={FoodPlateScreen}
         options={{
           presentation: "modal",
           headerShown: false,
@@ -272,7 +270,7 @@ export default function RootStackNavigator() {
       />
       <Stack.Screen
         name="OnboardingFoodPlate"
-        component={OnboardingFoodPlateScreen}
+        component={require("@/screens/OnboardingFoodPlateScreen").default}
         options={{ headerShown: false, animation: "fade" }}
       />
       <Stack.Screen
