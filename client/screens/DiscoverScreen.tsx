@@ -307,7 +307,7 @@ export default function DiscoverScreen() {
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-              navigation.navigate("PlateCalculator");
+              navigation.navigate("FoodPlate");
             }}
             style={({ pressed }) => [
               styles.premiumCirclePressable,
@@ -325,7 +325,7 @@ export default function DiscoverScreen() {
               />
               
               <View style={styles.premiumCircleContent}>
-                <ThemedText style={styles.premiumCircleTitle}>Analyse Plate</ThemedText>
+                <ThemedText style={styles.premiumCircleTitle}>Analyse Food Plate</ThemedText>
                 <View style={styles.premiumScanIndicator}>
                   <Feather name="camera" size={24} color="#FFF" />
                   <ThemedText style={styles.premiumScanText}>SCAN ME</ThemedText>
@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   premiumCircleTitle: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: '900',
     color: 'white',
     textAlign: 'center',
