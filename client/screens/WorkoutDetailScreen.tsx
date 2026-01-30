@@ -17,7 +17,7 @@ import { Feather } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import * as Sharing from "expo-sharing";
-import { documentDirectory, downloadAsync } from "expo-file-system";
+import * as FileSystem from "expo-file-system/legacy";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -227,70 +227,61 @@ export default function WorkoutDetailScreen() {
   );
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
 
-  const handleGenerateVideo = useCallback(async () => {
+  const handleShareWorkout = useCallback(async () => {
     try {
       setIsGeneratingVideo(true);
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-
-      const profileData = await AsyncStorage.getItem("userProfile");
-      const profile = profileData ? JSON.parse(profileData) : {};
-      const userName = profile.name || "Athlete";
 
       const totalVolume = workout.exercises.reduce((sum, ex) => {
         const repsNum = parseInt(ex.reps) || 10;
         return sum + (ex.sets * repsNum * 50);
       }, 0);
 
-      const response = await fetch(`${baseUrl}api/video/workout-summary`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          workoutName: workout.name,
-          duration: 45,
-          exerciseCount: workout.exercises.length,
-          totalVolume,
-          caloriesBurned: Math.round(workout.exercises.length * 50),
-          muscleGroups: workout.muscleGroups,
-          personalRecords: 0,
-          userName,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || "Failed to generate video");
-      }
-
-      const { videoUrl } = await response.json();
-      const fullVideoUrl = `${baseUrl}${videoUrl.replace(/^\//, "")}`;
+      const shareMessage = `${workout.name}\n\n` +
+        `Targeting: ${workout.muscleGroups.join(", ")}\n` +
+        `Exercises: ${workout.exercises.length}\n` +
+        `Difficulty: ${workout.difficulty}\n` +
+        `Est. Volume: ${totalVolume.toLocaleString()} lbs\n\n` +
+        `Exercises:\n${workout.exercises.map((ex, i) => `${i + 1}. ${ex.name} - ${ex.sets}x${ex.reps}`).join("\n")}\n\n` +
+        `Generated with FitForge`;
 
       if (Platform.OS === "web") {
-        window.open(fullVideoUrl, "_blank");
-      } else {
-        const localUri = (documentDirectory || "") + `workout-${workout.id}.mp4`;
-        const download = await downloadAsync(fullVideoUrl, localUri);
-        
-        if (await Sharing.isAvailableAsync()) {
-          await Sharing.shareAsync(download.uri, {
-            mimeType: "video/mp4",
-            dialogTitle: "Share Workout Summary",
+        if (navigator.share) {
+          await navigator.share({
+            title: workout.name,
+            text: shareMessage,
           });
         } else {
-          Alert.alert("Video Ready", "Your workout summary video has been generated!");
+          await navigator.clipboard.writeText(shareMessage);
+          Alert.alert("Copied!", "Workout details copied to clipboard.");
+        }
+      } else {
+        if (await Sharing.isAvailableAsync()) {
+          const docDir = FileSystem.documentDirectory || "";
+          const fileUri = docDir + `workout-${workout.id}.txt`;
+          await FileSystem.writeAsStringAsync(fileUri, shareMessage);
+          await Sharing.shareAsync(fileUri, {
+            mimeType: "text/plain",
+            dialogTitle: "Share Workout",
+          });
+        } else {
+          Alert.alert("Workout Summary", shareMessage);
         }
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     } catch (error: any) {
-      console.error("Error generating video:", error);
-      Alert.alert(
-        "Video Generation",
-        error.message || "Failed to generate video. Please try again later."
-      );
+      console.error("Error sharing workout:", error);
+      if (error.name !== "AbortError") {
+        Alert.alert(
+          "Share Failed",
+          "Unable to share workout. Please try again."
+        );
+      }
     } finally {
       setIsGeneratingVideo(false);
     }
-  }, [workout, baseUrl]);
+  }, [workout]);
 
   useEffect(() => {
     const normalizeExerciseName = (name: string): string[] => {
@@ -549,16 +540,16 @@ export default function WorkoutDetailScreen() {
             </Pressable>
             <Pressable 
               style={styles.socialButton} 
-              onPress={handleGenerateVideo}
+              onPress={handleShareWorkout}
               disabled={isGeneratingVideo}
             >
               {isGeneratingVideo ? (
                 <ActivityIndicator size="small" color={Colors.dark.accent} />
               ) : (
-                <Feather name="video" size={20} color={Colors.dark.accent} />
+                <Feather name="share-2" size={20} color={Colors.dark.accent} />
               )}
               <ThemedText style={[styles.socialButtonText, { color: Colors.dark.accent }]}>
-                {isGeneratingVideo ? "Creating..." : "Share Video"}
+                {isGeneratingVideo ? "Sharing..." : "Share"}
               </ThemedText>
             </Pressable>
           </View>
