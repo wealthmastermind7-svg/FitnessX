@@ -180,11 +180,12 @@
     }
 
     .hero-title {
-      font-size: clamp(40px, 6vw, 72px);
+      font-size: clamp(48px, 8vw, 90px);
       font-weight: 900;
-      line-height: 1.05;
-      margin-bottom: 24px;
-      letter-spacing: -2px;
+      line-height: 0.95;
+      margin-bottom: 28px;
+      letter-spacing: -3px;
+      text-transform: uppercase;
     }
 
     .hero-title-gradient {
@@ -428,10 +429,10 @@
     }
 
     .section-title {
-      font-size: clamp(32px, 5vw, 52px);
-      font-weight: 800;
+      font-size: clamp(36px, 6vw, 56px);
+      font-weight: 900;
       margin-bottom: 20px;
-      letter-spacing: -1px;
+      letter-spacing: -2px;
     }
 
     .section-description {
@@ -478,9 +479,10 @@
     }
 
     .pain-title {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
     }
 
     .pain-description {
@@ -541,10 +543,11 @@
     }
 
     .feature-title {
-      font-size: 36px;
-      font-weight: 800;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 900;
       margin-bottom: 16px;
-      letter-spacing: -0.5px;
+      letter-spacing: -1px;
+      line-height: 1.1;
     }
 
     .feature-description {
@@ -609,6 +612,24 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
+    }
+
+    .feature-image-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .feature-screenshot {
+      width: 280px;
+      height: auto;
+      border-radius: 32px;
+      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .feature-screenshot:hover {
+      transform: scale(1.02);
     }
 
     /* Micro-Habits Feature Visual */
@@ -876,7 +897,7 @@
     }
 
     .stat-value {
-      font-size: 56px;
+      font-size: clamp(48px, 8vw, 72px);
       font-weight: 900;
       background: linear-gradient(135deg, var(--coral), var(--coral-light));
       -webkit-background-clip: text;
@@ -884,6 +905,7 @@
       background-clip: text;
       line-height: 1;
       margin-bottom: 8px;
+      letter-spacing: -2px;
     }
 
     .stat-label {
@@ -931,9 +953,10 @@
     }
 
     .diff-title {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
     }
 
     .diff-description {
@@ -1029,10 +1052,11 @@
     }
 
     .cta-title {
-      font-size: clamp(36px, 5vw, 56px);
+      font-size: clamp(40px, 7vw, 64px);
       font-weight: 900;
-      margin-bottom: 20px;
-      letter-spacing: -1px;
+      margin-bottom: 24px;
+      letter-spacing: -2px;
+      line-height: 1;
     }
 
     .cta-description {
@@ -1563,31 +1587,8 @@
           </ul>
         </div>
         <div class="feature-visual">
-          <div class="feature-phone">
-            <div class="feature-phone-screen exercise-demo">
-              <div class="exercise-header">
-                <p class="exercise-title-demo">Exercise Library</p>
-                <h3 class="exercise-count">1,300+ <span>Exercises</span></h3>
-              </div>
-              <div class="muscle-grid">
-                <div class="muscle-card-demo active">
-                  <div class="muscle-icon-demo">&#128170;</div>
-                  <p class="muscle-name-demo">Chest</p>
-                </div>
-                <div class="muscle-card-demo">
-                  <div class="muscle-icon-demo">&#127939;</div>
-                  <p class="muscle-name-demo">Back</p>
-                </div>
-                <div class="muscle-card-demo">
-                  <div class="muscle-icon-demo">&#128587;</div>
-                  <p class="muscle-name-demo">Shoulders</p>
-                </div>
-                <div class="muscle-card-demo active">
-                  <div class="muscle-icon-demo">&#129470;</div>
-                  <p class="muscle-name-demo">Arms</p>
-                </div>
-              </div>
-            </div>
+          <div class="feature-image-container">
+            <img src="/landing/feature-workout-generator.png" alt="Custom Workout Generator" class="feature-screenshot" loading="lazy">
           </div>
         </div>
       </div>
@@ -1621,24 +1622,8 @@
           </ul>
         </div>
         <div class="feature-visual">
-          <div class="feature-phone">
-            <div class="feature-phone-screen ai-demo">
-              <div class="ai-message coach">
-                Hey! I'm your AI fitness coach. I can help you with workout advice, form checks, and recovery strategies.
-              </div>
-              <div class="ai-message user">
-                How can I build muscle faster?
-              </div>
-              <div class="ai-typing">
-                <span class="ai-typing-dot"></span>
-                <span class="ai-typing-dot"></span>
-                <span class="ai-typing-dot"></span>
-              </div>
-              <div class="ai-suggestions">
-                <span class="ai-suggestion">Best abs workout?</span>
-                <span class="ai-suggestion">Fix my squat form</span>
-              </div>
-            </div>
+          <div class="feature-image-container">
+            <img src="/landing/feature-ai-coach.png" alt="AI Fitness Coach" class="feature-screenshot" loading="lazy">
           </div>
         </div>
       </div>
@@ -1672,44 +1657,8 @@
           </ul>
         </div>
         <div class="feature-visual">
-          <div class="feature-phone">
-            <div class="feature-phone-screen food-demo">
-              <div class="food-header">Food Analysis</div>
-              <div class="food-image-container">
-                <div class="food-overlay">
-                  <div class="health-score-ring">
-                    <span class="health-score-value">85</span>
-                    <span class="health-score-label">Health Score</span>
-                  </div>
-                </div>
-                <div class="food-tag food-tag-1">
-                  <span class="food-tag-dot"></span>
-                  Salmon
-                </div>
-                <div class="food-tag food-tag-2">
-                  <span class="food-tag-dot"></span>
-                  Mixed Greens
-                </div>
-              </div>
-              <div class="macros-grid">
-                <div class="macro-item">
-                  <div class="macro-value">450</div>
-                  <div class="macro-label">Calories</div>
-                </div>
-                <div class="macro-item">
-                  <div class="macro-value">30g</div>
-                  <div class="macro-label">Protein</div>
-                </div>
-                <div class="macro-item">
-                  <div class="macro-value">20g</div>
-                  <div class="macro-label">Carbs</div>
-                </div>
-                <div class="macro-item">
-                  <div class="macro-value">25g</div>
-                  <div class="macro-label">Fat</div>
-                </div>
-              </div>
-            </div>
+          <div class="feature-image-container">
+            <img src="/landing/feature-food-analysis.png" alt="Food Plate Analysis" class="feature-screenshot" loading="lazy">
           </div>
         </div>
       </div>
@@ -1743,27 +1692,8 @@
           </ul>
         </div>
         <div class="feature-visual">
-          <div class="feature-phone">
-            <div class="feature-phone-screen habits-demo">
-              <div class="habit-card-demo">
-                <div class="habit-illustration">&#9749;</div>
-                <p class="habit-trigger">Waiting for coffee to brew</p>
-                <h4 class="habit-name">Calf Raises + Posture Reset</h4>
-                <div class="habit-stats-demo">
-                  <div class="habit-stat-demo">
-                    <div class="habit-stat-value">20</div>
-                    <div class="habit-stat-label">Reps</div>
-                  </div>
-                  <div class="habit-stat-demo">
-                    <div class="habit-stat-value">60s</div>
-                    <div class="habit-stat-label">Duration</div>
-                  </div>
-                </div>
-                <button class="habit-complete-btn">
-                  &#10003; Mark Complete
-                </button>
-              </div>
-            </div>
+          <div class="feature-image-container">
+            <img src="/landing/feature-microhabits.png" alt="Micro-Habits" class="feature-screenshot" loading="lazy">
           </div>
         </div>
       </div>
@@ -1797,22 +1727,8 @@
           </ul>
         </div>
         <div class="feature-visual">
-          <div class="feature-phone">
-            <div class="feature-phone-screen progress-demo">
-              <div class="progress-header">Progress Analytics</div>
-              <div class="progress-chart">
-                <div class="chart-value">57 kg</div>
-                <div class="chart-label">Bench Press (Barbell)</div>
-                <div class="chart-visual">
-                  <div class="chart-line"></div>
-                </div>
-              </div>
-              <div class="progress-pills">
-                <span class="progress-pill active">Heaviest Weight</span>
-                <span class="progress-pill inactive">One Rep Max</span>
-                <span class="progress-pill inactive">Volume</span>
-              </div>
-            </div>
+          <div class="feature-image-container">
+            <img src="/landing/feature-progress.png" alt="Progress Analytics" class="feature-screenshot" loading="lazy">
           </div>
         </div>
       </div>
