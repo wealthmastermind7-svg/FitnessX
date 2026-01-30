@@ -23,6 +23,14 @@ import { getApiUrl } from "@/lib/query-client";
 
 interface FoodAnalysisResult {
   healthScore: number;
+  recoveryMatch?: number;
+  recoveryDetails?: Array<{
+    label: string;
+    status: 'success' | 'warning';
+    value: string;
+  }>;
+  workoutContext?: string;
+  aiTip?: string;
   calories: number;
   protein: number;
   carbs: number;
@@ -151,13 +159,54 @@ export default function FoodPlateScreen() {
           )}
 
           <View style={styles.scoreSection}>
-            <View style={[styles.scoreCircle, { borderColor: getScoreColor(result.healthScore) }]}>
-              <ThemedText style={[styles.scoreValue, { color: getScoreColor(result.healthScore) }]}>
-                {result.healthScore}
+            <View style={[styles.scoreCircle, { borderColor: getScoreColor(result.recoveryMatch || result.healthScore) }]}>
+              <ThemedText style={[styles.scoreValue, { color: getScoreColor(result.recoveryMatch || result.healthScore) }]}>
+                {result.recoveryMatch || result.healthScore}%
               </ThemedText>
-              <ThemedText style={styles.scoreLabel}>Health Score</ThemedText>
+              <ThemedText style={styles.scoreLabel}>
+                {result.recoveryMatch ? "Recovery Match" : "Health Score"}
+              </ThemedText>
             </View>
+            {result.workoutContext && (
+              <ThemedText style={styles.contextText}>
+                Applied to: <ThemedText style={styles.workoutName}>{result.workoutContext}</ThemedText>
+              </ThemedText>
+            )}
           </View>
+
+          {result.recoveryDetails && (
+            <Card elevation={2} style={styles.recoveryCard}>
+              <ThemedText style={styles.sectionTitle}>Metabolic Recovery</ThemedText>
+              {result.recoveryDetails.map((detail, index) => (
+                <View key={index} style={styles.recoveryDetailItem}>
+                  <ThemedText style={styles.detailLabel}>{detail.label}</ThemedText>
+                  <View style={styles.detailValueContainer}>
+                    <Feather 
+                      name={detail.status === 'success' ? "check-circle" : "alert-circle"} 
+                      size={14} 
+                      color={detail.status === 'success' ? "#4CAF50" : "#FF9800"} 
+                    />
+                    <ThemedText style={[
+                      styles.detailValue, 
+                      { color: detail.status === 'success' ? "#4CAF50" : "#FF9800" }
+                    ]}>
+                      {detail.value}
+                    </ThemedText>
+                  </View>
+                </View>
+              ))}
+            </Card>
+          )}
+
+          {result.aiTip && (
+            <Card elevation={3} style={styles.aiTipCard}>
+              <View style={styles.aiTipHeader}>
+                <Feather name="zap" size={16} color="#FFD700" />
+                <ThemedText style={styles.aiTipTitle}>Coach Insight</ThemedText>
+              </View>
+              <ThemedText style={styles.aiTipText}>{result.aiTip}</ThemedText>
+            </Card>
+          )}
 
           <View style={styles.macrosRow}>
             <View style={styles.macroItem}>
@@ -307,9 +356,68 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   scoreValue: {
-    fontSize: 56,
+    fontSize: 42,
     fontWeight: "800",
-    lineHeight: 64,
+    lineHeight: 48,
+  },
+  contextText: {
+    marginTop: Spacing.md,
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+  },
+  workoutName: {
+    color: "#FF6B6B",
+    fontWeight: "600",
+  },
+  recoveryCard: {
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    backgroundColor: "rgba(255, 107, 107, 0.05)",
+  },
+  recoveryDetailItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: Spacing.xs,
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: Colors.dark.text,
+  },
+  detailValueContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  detailValue: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  aiTipCard: {
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(255, 215, 0, 0.3)",
+    backgroundColor: "rgba(255, 215, 0, 0.05)",
+  },
+  aiTipHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+    marginBottom: Spacing.xs,
+  },
+  aiTipTitle: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: "#FFD700",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  aiTipText: {
+    fontSize: 15,
+    color: Colors.dark.text,
+    lineHeight: 22,
+    fontStyle: "italic",
   },
   scoreLabel: {
     fontSize: 12,

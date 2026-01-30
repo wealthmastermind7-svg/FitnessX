@@ -35,6 +35,48 @@ interface Workout {
   equipment: string[];
   exercises: Exercise[];
   difficulty: string;
+  metabolicSignature?: {
+    muscleLoad: Record<string, number>;
+    volumeScore: number;
+    intensityScore: number;
+    estimatedEnergyBurn: number;
+    recoveryPriority: string[];
+  };
+}
+
+const savedWorkouts: Record<string, Workout> = {};
+
+function calculateMetabolicSignature(workout: Workout) {
+  const muscleLoad: Record<string, number> = {};
+  let totalSets = 0;
+  let totalReps = 0;
+
+  workout.exercises.forEach(ex => {
+    const muscle = ex.muscleGroup.toLowerCase();
+    muscleLoad[muscle] = (muscleLoad[muscle] || 0) + ex.sets;
+    totalSets += ex.sets;
+    // Basic rep count extraction
+    const repMatch = ex.reps.match(/\d+/);
+    if (repMatch) totalReps += parseInt(repMatch[0]) * ex.sets;
+  });
+
+  // Normalize muscle load
+  Object.keys(muscleLoad).forEach(k => {
+    muscleLoad[k] = parseFloat((muscleLoad[k] / totalSets).toFixed(2));
+  });
+
+  const intensityScore = workout.difficulty === "Advanced" ? 85 : workout.difficulty === "Intermediate" ? 70 : 50;
+  
+  return {
+    muscleLoad,
+    volumeScore: Math.min(100, totalSets * 2),
+    intensityScore,
+    estimatedEnergyBurn: totalSets * 15, // Rough estimate: 15kcal per set
+    recoveryPriority: Object.entries(muscleLoad)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(e => e[0])
+  };
 }
 
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
@@ -257,7 +299,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get("/api/workouts", async (req, res) => {
-    res.json([]);
+    res.json(Object.values(savedWorkouts));
+  });
+
+  app.post("/api/workouts/save", async (req, res) => {
+    const workout = req.body as Workout;
+    workout.metabolicSignature = calculateMetabolicSignature(workout);
+    savedWorkouts[workout.id] = workout;
+    res.json({ success: true, workout });
   });
 
   app.post("/api/ai/program", async (req, res) => {
@@ -591,17 +640,54 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/ai/analyze-food", async (req, res) => {
     try {
-      const { image, previousAnalysis } = req.body;
+      const { image, workoutId } = req.body;
       if (!image) return res.status(400).json({ error: "Image is required" });
       
       const result = await analyzeFoodImage(image) as any;
       
-      // If we have an analysis, generate a quick tip based on the macros
+      // Metabolic Linkage Logic
+      const workout = workoutId ? savedWorkouts[workoutId] : Object.values(savedWorkouts)[0];
+      
       if (result && (result.macronutrients || result.macros)) {
         const macros = result.macronutrients || result.macros;
+        
+        let recoveryMatch = 70; // Base score
+        const recoveryDetails: any[] = [];
+        
+        if (workout && workout.metabolicSignature) {
+          const { muscleLoad, recoveryPriority } = workout.metabolicSignature;
+          
+          // Protein logic
+          const proteinNeeds = 20 + (workout.metabolicSignature.volumeScore / 5);
+          const proteinMet = (macros.protein / proteinNeeds) * 100;
+          recoveryMatch += (proteinMet > 100 ? 10 : (proteinMet / 10));
+          
+          recoveryPriority.forEach(muscle => {
+            const met = proteinMet > 80;
+            recoveryDetails.push({
+              label: `${muscle.charAt(0).toUpperCase() + muscle.slice(1)} recovery`,
+              status: met ? 'success' : 'warning',
+              value: `${Math.min(100, Math.round(proteinMet))}%`
+            });
+          });
+
+          // Glycogen logic
+          const carbNeeds = 30 + (workout.metabolicSignature.volumeScore / 3);
+          const carbsMet = (macros.carbs / carbNeeds) * 100;
+          recoveryDetails.push({
+            label: "Glycogen replenishment",
+            status: carbsMet > 70 ? 'success' : 'warning',
+            value: carbsMet > 70 ? "Adequate" : "Low"
+          });
+
+          result.recoveryMatch = Math.min(100, Math.round(recoveryMatch));
+          result.recoveryDetails = recoveryDetails;
+          result.workoutContext = workout.name;
+        }
+
         const tipResponse = await generateChatResponse({
-          message: `Based on this meal analysis: ${JSON.stringify(macros)}. 
-          Provide one specific, actionable nutritional tip (1 sentence) for someone with a fitness goal.`,
+          message: `Based on this meal analysis: ${JSON.stringify(macros)} and the workout "${workout?.name || 'none'}". 
+          Provide one specific, actionable recovery-focused nutritional tip (1 sentence).`,
           history: [],
         });
         result.aiTip = typeof tipResponse === 'string' ? tipResponse : (tipResponse as any).response;
