@@ -1198,6 +1198,141 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   const httpServer = createServer(app);
 
+  // ==================== STRAVA INTEGRATION ====================
+  
+  const STRAVA_CLIENT_ID = process.env.STRAVA_CLIENT_ID;
+  const STRAVA_CLIENT_SECRET = process.env.STRAVA_CLIENT_SECRET;
+
+  app.get("/api/strava/config", async (req, res) => {
+    if (!STRAVA_CLIENT_ID) {
+      return res.status(500).json({ error: "Strava client ID not configured" });
+    }
+    res.json({ clientId: STRAVA_CLIENT_ID });
+  });
+
+  app.post("/api/strava/token", async (req, res) => {
+    try {
+      const { code, redirectUri } = req.body;
+
+      if (!code) {
+        return res.status(400).json({ error: "Authorization code is required" });
+      }
+
+      if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET) {
+        return res.status(500).json({ error: "Strava credentials not configured" });
+      }
+
+      const response = await fetch("https://www.strava.com/api/v3/oauth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: STRAVA_CLIENT_ID,
+          client_secret: STRAVA_CLIENT_SECRET,
+          code,
+          grant_type: "authorization_code",
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Strava token exchange error:", errorText);
+        return res.status(response.status).json({ error: "Failed to exchange code for token" });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error exchanging Strava code:", error);
+      res.status(500).json({ error: "Failed to exchange authorization code" });
+    }
+  });
+
+  app.post("/api/strava/refresh", async (req, res) => {
+    try {
+      const { refreshToken } = req.body;
+
+      if (!refreshToken) {
+        return res.status(400).json({ error: "Refresh token is required" });
+      }
+
+      if (!STRAVA_CLIENT_ID || !STRAVA_CLIENT_SECRET) {
+        return res.status(500).json({ error: "Strava credentials not configured" });
+      }
+
+      const response = await fetch("https://www.strava.com/api/v3/oauth/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: STRAVA_CLIENT_ID,
+          client_secret: STRAVA_CLIENT_SECRET,
+          grant_type: "refresh_token",
+          refresh_token: refreshToken,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Strava token refresh error:", errorText);
+        return res.status(response.status).json({ error: "Failed to refresh token" });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error refreshing Strava token:", error);
+      res.status(500).json({ error: "Failed to refresh token" });
+    }
+  });
+
+  app.get("/api/strava/activities", async (req, res) => {
+    try {
+      const authHeader = req.headers.authorization;
+      if (!authHeader?.startsWith("Bearer ")) {
+        return res.status(401).json({ error: "Authorization required" });
+      }
+
+      const accessToken = authHeader.substring(7);
+      const response = await fetch(
+        "https://www.strava.com/api/v3/athlete/activities?per_page=30",
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Strava activities fetch error:", errorText);
+        return res.status(response.status).json({ error: "Failed to fetch activities" });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error) {
+      console.error("Error fetching Strava activities:", error);
+      res.status(500).json({ error: "Failed to fetch activities" });
+    }
+  });
+
+  app.post("/api/strava/disconnect", async (req, res) => {
+    try {
+      const { accessToken } = req.body;
+
+      if (accessToken) {
+        await fetch(
+          `https://www.strava.com/oauth/deauthorize?access_token=${accessToken}`,
+          { method: "POST" }
+        );
+      }
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error disconnecting Strava:", error);
+      res.json({ success: true });
+    }
+  });
+
   return httpServer;
 }
 
