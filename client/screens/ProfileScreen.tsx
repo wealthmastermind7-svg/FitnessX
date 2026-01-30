@@ -578,9 +578,6 @@ export default function ProfileScreen() {
                 <ThemedText style={styles.progressAnalyticsSubtitle}>Track your strength gains over time</ThemedText>
               </View>
             </View>
-            <View style={styles.progressAnalyticsProBadge}>
-              <ThemedText style={styles.progressAnalyticsProText}>PRO</ThemedText>
-            </View>
           </LinearGradient>
         </Pressable>
 
