@@ -255,7 +255,7 @@ export function StravaProvider({ children }: StravaProviderProps) {
   };
 
   const value: StravaContextType = {
-    isConnected: !!tokens && !isTokenExpired(tokens.expiresAt),
+    isConnected: !!tokens,
     isLoading,
     athlete: tokens?.athlete || null,
     activities,

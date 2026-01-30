@@ -347,7 +347,7 @@ export default function DiscoverScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NavigationProp>();
-  const { isConnected: isStravaConnected, activities: stravaActivities } = useStrava();
+  const { isConnected: isStravaConnected, activities: stravaActivities, isLoading: isStravaLoading } = useStrava();
 
   const { data: generatedWorkouts, isLoading } = useQuery<Workout[]>({
     queryKey: ["/api/workouts"],
@@ -374,6 +374,8 @@ export default function DiscoverScreen() {
     outputRange: [50, 0, -100],
     extrapolate: "clamp",
   });
+
+  console.log("Strava State:", { isStravaConnected, activitiesCount: stravaActivities.length, isStravaLoading });
 
   return (
     <ThemedView style={styles.container}>
