@@ -53,6 +53,8 @@ export default function PostDetailScreen() {
     { id: "2", username: "gym_buddy", text: "Those numbers are impressive!", timestamp: new Date(Date.now() - 15 * 60 * 1000) },
   ]);
 
+  const [isSaved, setIsSaved] = useState(false);
+
   const initials = post.username.slice(0, 2).toUpperCase();
 
   const handleLike = () => {
@@ -72,7 +74,16 @@ export default function PostDetailScreen() {
 
   const handleShare = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert("Share", "Sharing options will appear here on a physical device.");
+    Alert.alert("Share Workout", "Sharing your stats with friends! (Native sharing will open on physical device)");
+  };
+
+  const handleSave = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setIsSaved(!isSaved);
+    Alert.alert(
+      isSaved ? "Removed from Saved" : "Workout Saved",
+      isSaved ? "Workout has been removed from your bookmarks." : "This workout has been saved to your library."
+    );
   };
 
   const handleComment = () => {
@@ -237,13 +248,16 @@ export default function PostDetailScreen() {
                 <Feather name="message-circle" size={22} color={Colors.dark.textSecondary} />
                 <ThemedText style={styles.actionCount}>{comments.length}</ThemedText>
               </View>
-              {post.userId === "current_user" && (
-                <Pressable onPress={handleShare} style={styles.actionButton}>
-                  <Feather name="share" size={22} color={Colors.dark.textSecondary} />
-                </Pressable>
-              )}
-              <Pressable style={styles.actionButton}>
-                <Feather name="bookmark" size={22} color={Colors.dark.textSecondary} />
+              <Pressable onPress={handleShare} style={styles.actionButton}>
+                <Feather name="share" size={22} color={Colors.dark.textSecondary} />
+              </Pressable>
+              <Pressable onPress={handleSave} style={styles.actionButton}>
+                <Feather 
+                  name="bookmark" 
+                  size={22} 
+                  color={isSaved ? Colors.dark.accent : Colors.dark.textSecondary} 
+                  fill={isSaved ? Colors.dark.accent : "transparent"}
+                />
               </Pressable>
             </View>
           </View>
