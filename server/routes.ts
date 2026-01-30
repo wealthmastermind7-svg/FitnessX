@@ -793,10 +793,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         `https://exercisedb.p.rapidapi.com/exercises/bodyPartList`,
         { headers: exerciseDbHeaders }
       );
-      if (!response.ok) throw new Error("ExerciseDB API error");
+      if (!response.ok) {
+        console.error("ExerciseDB bodyPartList Error:", response.status);
+        throw new Error("ExerciseDB API error");
+      }
       const data = await response.json();
       res.json(data);
     } catch (error) {
+      console.error("Error fetching body part list:", error);
       res.status(500).json({ error: "Failed to fetch body part list" });
     }
   });

@@ -90,13 +90,13 @@ export default function ExerciseBrowserScreen() {
 
   const fetchUrl = useMemo(() => {
     if (searchQuery.trim()) {
-      return `${baseUrl}api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=${exerciseLimit}`;
+      return `api/exercises/name/${encodeURIComponent(searchQuery.trim())}?limit=${exerciseLimit}`;
     }
-    if (selectedBodyPart !== "all") {
-      return `${baseUrl}api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=${exerciseLimit}`;
+    if (selectedBodyPart && selectedBodyPart !== "all") {
+      return `api/exercises/bodyPart/${encodeURIComponent(selectedBodyPart)}?limit=${exerciseLimit}`;
     }
-    return `${baseUrl}api/exercises?limit=${exerciseLimit}`;
-  }, [baseUrl, searchQuery, selectedBodyPart, exerciseLimit]);
+    return `api/exercises?limit=${exerciseLimit}`;
+  }, [searchQuery, selectedBodyPart, exerciseLimit]);
 
   const {
     data: exercises,
