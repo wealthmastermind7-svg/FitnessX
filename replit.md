@@ -10,9 +10,18 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.2 Build 5)
+## Recent Changes (v1.0.2 Build 6)
 
-**Video Sharing Feature:**
+**Strava Integration:**
+- Added **Strava OAuth connection** in Profile screen under Data & Connectivity
+- Users can connect their Strava account to sync activities
+- Displays connected athlete name and recent activities (last 30)
+- Activity cards show sport type, distance, duration, and date
+- Backend endpoints: `/api/strava/config`, `/api/strava/token`, `/api/strava/refresh`, `/api/strava/activities`, `/api/strava/disconnect`
+- Uses `expo-auth-session` for OAuth flow with secure token storage in AsyncStorage
+- Requires `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET` environment variables
+
+**Video Sharing Feature (v1.0.2 Build 5):**
 - Added **"Share Video" button** to WorkoutDetailScreen for generating shareable workout summary videos
 - Implemented **Remotion integration** for server-side programmatic video generation
 - Videos include animated stats (duration, volume, calories, PRs), muscle group tags, and FitForge branding
@@ -61,6 +70,7 @@ Preferred communication style: Simple, everyday language.
 - **Progress Tracking**: Chart weight, heart rate, and body measurements.
 - **Nutrition Planning**: Log meals, track macros, and get meal suggestions.
 - **Subscription Management**: Integration with RevenueCat for managing premium access.
+- **Strava Integration**: Connect Strava account to sync and display running, cycling, and other activities.
 - **Freemium Model**: Free users can generate and save up to 5 workouts (browse first 10 exercises only). Pro users can generate and save up to 100 workouts with access to all 1,300+ exercises and AI Chat Coach.
 
 ### Project Structure
@@ -101,9 +111,12 @@ Preferred communication style: Simple, everyday language.
 - `OPENAI_API_KEY` ✓ Configured
 - `EXPO_PUBLIC_REVENUECAT_API_KEY` ✓ Configured
 - `EXPO_PUBLIC_DOMAIN` (auto-set in Replit)
+- `STRAVA_CLIENT_ID` ✓ Configured
+- `STRAVA_CLIENT_SECRET` ✓ Configured
 
 ### Key API Endpoints
 - **AI Endpoints**: `/api/ai/program`, `/api/ai/feedback`, `/api/ai/substitutions`, `/api/ai/recovery`, `/api/ai/chat`.
 - **ExerciseDB Endpoints**: `/api/exercises`, `/api/exercises/bodyPart/:bodyPart`, `/api/exercises/target/:target`, `/api/exercises/equipment/:equipment`, `/api/exercises/name/:name`, `/api/exercises/image/:id`.
 - **Nutrition Endpoints**: `/api/nutrition/analyze`, `/api/nutrition/suggestions`.
+- **Strava Endpoints**: `/api/strava/config`, `/api/strava/token`, `/api/strava/refresh`, `/api/strava/activities`, `/api/strava/disconnect`.
 - **Other Endpoints**: `/api/muscle-image`, `/api/workouts`.
