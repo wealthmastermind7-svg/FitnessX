@@ -579,7 +579,7 @@ export default function ProfileScreen() {
               </View>
             </View>
             <View style={styles.progressAnalyticsProBadge}>
-              <ThemedText style={styles.progressAnalyticsProText}>PRO</ThemedText>
+              <ThemedText style={styles.progressAnalyticsProText} numberOfLines={1}>PRO</ThemedText>
             </View>
           </LinearGradient>
         </Pressable>
@@ -1513,11 +1513,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: BorderRadius.sm,
+    minWidth: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   progressAnalyticsProText: {
     fontSize: 10,
     fontWeight: "700",
     color: "#9D4EDD",
     letterSpacing: 1,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
 });
