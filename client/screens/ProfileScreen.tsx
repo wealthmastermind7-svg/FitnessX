@@ -888,21 +888,21 @@ export default function ProfileScreen() {
           <View style={styles.legalLinksContainer}>
             <Pressable 
               style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}
+              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/terms')}
             >
               <ThemedText style={styles.legalLinkText}>Terms of Use</ThemedText>
             </Pressable>
             
             <Pressable 
               style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}
+              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/privacy')}
             >
               <ThemedText style={styles.legalLinkText}>Privacy Policy</ThemedText>
             </Pressable>
             
             <Pressable 
               style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/sources')}
+              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/sources')}
             >
               <ThemedText style={styles.legalLinkText}>Sources & Citations</ThemedText>
             </Pressable>
