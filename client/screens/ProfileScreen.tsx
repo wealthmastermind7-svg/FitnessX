@@ -971,12 +971,21 @@ export default function ProfileScreen() {
                         <ThemedText style={styles.stravaActivityName} numberOfLines={1}>{activity.name}</ThemedText>
                         <ThemedText style={styles.stravaActivityMeta}>
                           {activity.sport_type} • {(activity.distance / 1000).toFixed(1)}km • {Math.floor(activity.moving_time / 60)}min
+                          {activity.achievement_count ? ` • ${activity.achievement_count} achievements` : ''}
                         </ThemedText>
                       </View>
                     </View>
-                    <ThemedText style={styles.stravaActivityDate}>
-                      {new Date(activity.start_date_local).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                    </ThemedText>
+                    <View style={{ alignItems: 'flex-end' }}>
+                      <ThemedText style={styles.stravaActivityDate}>
+                        {new Date(activity.start_date_local).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </ThemedText>
+                      {activity.kudos_count ? (
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 2 }}>
+                          <Feather name="thumbs-up" size={10} color="#FC4C02" />
+                          <ThemedText style={[styles.stravaActivityMeta, { marginTop: 0 }]}>{activity.kudos_count}</ThemedText>
+                        </View>
+                      ) : null}
+                    </View>
                   </View>
                 </React.Fragment>
               ))}

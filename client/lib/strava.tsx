@@ -41,6 +41,12 @@ interface StravaActivity {
   average_heartrate?: number;
   max_heartrate?: number;
   calories?: number;
+  map?: {
+    summary_polyline: string;
+    polyline: string;
+  };
+  achievement_count?: number;
+  kudos_count?: number;
 }
 
 interface StravaContextType {
