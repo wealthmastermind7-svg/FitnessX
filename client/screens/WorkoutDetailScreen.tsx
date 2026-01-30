@@ -257,7 +257,8 @@ export default function WorkoutDetailScreen() {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to generate video");
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to generate video");
       }
 
       const { videoUrl } = await response.json();
@@ -266,7 +267,7 @@ export default function WorkoutDetailScreen() {
       if (Platform.OS === "web") {
         window.open(fullVideoUrl, "_blank");
       } else {
-        const localUri = (documentDirectory || "") + "workout-summary.mp4";
+        const localUri = (documentDirectory || "") + `workout-${workout.id}.mp4`;
         const download = await downloadAsync(fullVideoUrl, localUri);
         
         if (await Sharing.isAvailableAsync()) {
@@ -280,11 +281,11 @@ export default function WorkoutDetailScreen() {
       }
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating video:", error);
       Alert.alert(
         "Video Generation",
-        "Video generation is a premium feature that requires server-side rendering. This feature will be available soon!"
+        error.message || "Failed to generate video. Please try again later."
       );
     } finally {
       setIsGeneratingVideo(false);
