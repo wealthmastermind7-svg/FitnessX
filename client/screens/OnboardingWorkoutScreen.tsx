@@ -24,8 +24,12 @@ export default function OnboardingWorkoutScreen() {
   const insets = useSafeAreaInsets();
   const { completeOnboarding } = useOnboarding();
 
-  const handleGetStarted = () => {
-    completeOnboarding();
+  const handleGetStarted = async () => {
+    try {
+      await completeOnboarding();
+    } catch (error) {
+      console.error("Failed to complete onboarding:", error);
+    }
   };
 
   const handleSkip = () => {
