@@ -349,6 +349,34 @@ export default function DiscoverScreen() {
   const navigation = useNavigation<NavigationProp>();
   const { isConnected: isStravaConnected, activities: stravaActivities, isLoading: isStravaLoading } = useStrava();
 
+  // Demo activities to show when not connected or no activities
+  const demoActivities = [
+    {
+      id: 'demo-1',
+      name: 'Morning Coastal Run',
+      sport_type: 'Run',
+      distance: 8500,
+      moving_time: 2700,
+      total_elevation_gain: 45,
+      map: {
+        summary_polyline: '|_~iFv~uVGY_@c@u@w@mAgAmBeBoCcCwDqDsEiEmFiFmGiGqHiHqIiIiJiJkKkKmLiLmMiMmNiNmOiOmPiPmQiQmRiRmSiSmTiTmUiUmViVmWiWmXiXmYiYmZiZm[i[m\\i\\m]i]m^i^m_i_m`i`maia'
+      }
+    },
+    {
+      id: 'demo-2',
+      name: 'Mountain Peak Climb',
+      sport_type: 'Ride',
+      distance: 25400,
+      moving_time: 5400,
+      total_elevation_gain: 850,
+      map: {
+        summary_polyline: 's_~iFv~uV_@c@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@'
+      }
+    }
+  ];
+
+  const displayActivities = isStravaConnected && stravaActivities.length > 0 ? stravaActivities : demoActivities;
+
   const { data: generatedWorkouts, isLoading } = useQuery<Workout[]>({
     queryKey: ["/api/workouts"],
   });
@@ -436,33 +464,40 @@ export default function DiscoverScreen() {
 
         <ReadinessWidget />
 
-        {isStravaConnected && stravaActivities.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <View style={styles.stravaSectionTitle}>
-                <Feather name="compass" size={18} color="#FC4C02" />
-                <ThemedText style={[styles.sectionTitle, { color: "#FC4C02" }]}>Strava Activities</ThemedText>
-              </View>
-              <Pressable
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  navigation.navigate("Main", { screen: "Profile" } as any);
-                }}
-              >
-                <ThemedText style={styles.seeAllText}>See All</ThemedText>
-              </Pressable>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <View style={styles.stravaSectionTitle}>
+              <Feather name="compass" size={18} color="#FC4C02" />
+              <ThemedText style={[styles.sectionTitle, { color: "#FC4C02" }]}>
+                {isStravaConnected && stravaActivities.length > 0 ? "Strava Activities" : "Strava Performance"}
+              </ThemedText>
             </View>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.horizontalScroll}
+            <Pressable
+              onPress={() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                navigation.navigate("Main", { screen: "Profile" } as any);
+              }}
             >
-              {stravaActivities.slice(0, 5).map((activity) => (
-                <StravaActivityMapCard key={activity.id} activity={activity} />
-              ))}
-            </ScrollView>
+              <ThemedText style={styles.seeAllText}>
+                {isStravaConnected ? "See All" : "Connect"}
+              </ThemedText>
+            </Pressable>
           </View>
-        )}
+          {!isStravaConnected && (
+            <ThemedText style={[styles.stravaMapStatText, { marginLeft: Spacing.lg, marginBottom: Spacing.sm }]}>
+              Sync your runs and rides to see interactive maps and stats
+            </ThemedText>
+          )}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.horizontalScroll}
+          >
+            {displayActivities.slice(0, 5).map((activity) => (
+              <StravaActivityMapCard key={activity.id} activity={activity} />
+            ))}
+          </ScrollView>
+        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
