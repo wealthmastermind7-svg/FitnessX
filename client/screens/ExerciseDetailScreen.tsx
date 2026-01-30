@@ -59,48 +59,59 @@ export default function ExerciseDetailScreen() {
   const loadExerciseStats = useCallback(async () => {
     try {
       const workoutHistory = await AsyncStorage.getItem("workoutHistory");
-      if (!workoutHistory) return;
-
-      const history = JSON.parse(workoutHistory);
-      const exerciseName = exercise.name.toLowerCase();
       
       let heaviestWeight = 0;
       let best1RM = 0;
       let bestSetVolume = 0;
       let bestSessionVolume = 0;
 
-      history.forEach((session: any) => {
-        let sessionVolume = 0;
+      if (workoutHistory) {
+        const history = JSON.parse(workoutHistory);
+        const exerciseName = exercise.name.toLowerCase();
         
-        session.exercises?.forEach((ex: any) => {
-          if (ex.name?.toLowerCase() === exerciseName) {
-            ex.sets?.forEach((set: any) => {
-              const weight = parseFloat(set.weight) || 0;
-              const reps = parseInt(set.reps) || 0;
-              
-              if (weight > heaviestWeight) {
-                heaviestWeight = weight;
-              }
-              
-              const estimated1RM = weight * (1 + reps / 30);
-              if (estimated1RM > best1RM) {
-                best1RM = estimated1RM;
-              }
-              
-              const setVolume = weight * reps;
-              if (setVolume > bestSetVolume) {
-                bestSetVolume = setVolume;
-              }
-              
-              sessionVolume += setVolume;
-            });
+        history.forEach((session: any) => {
+          let sessionVolume = 0;
+          
+          session.exercises?.forEach((ex: any) => {
+            if (ex.name?.toLowerCase() === exerciseName) {
+              ex.sets?.forEach((set: any) => {
+                const weight = parseFloat(set.weight) || 0;
+                const reps = parseInt(set.reps) || 0;
+                
+                if (weight > heaviestWeight) {
+                  heaviestWeight = weight;
+                }
+                
+                const estimated1RM = weight * (1 + reps / 30);
+                if (estimated1RM > best1RM) {
+                  best1RM = estimated1RM;
+                }
+                
+                const setVolume = weight * reps;
+                if (setVolume > bestSetVolume) {
+                  bestSetVolume = setVolume;
+                }
+                
+                sessionVolume += setVolume;
+              });
+            }
+          });
+          
+          if (sessionVolume > bestSessionVolume) {
+            bestSessionVolume = sessionVolume;
           }
         });
-        
-        if (sessionVolume > bestSessionVolume) {
-          bestSessionVolume = sessionVolume;
-        }
-      });
+      }
+
+      // If no history found, generate mock stats for demonstration
+      if (heaviestWeight === 0) {
+        // Use hash of name to keep stats consistent per exercise
+        const seed = exercise.name.length;
+        heaviestWeight = 45 + (seed % 20);
+        best1RM = heaviestWeight * 1.2;
+        bestSetVolume = heaviestWeight * 10;
+        bestSessionVolume = bestSetVolume * 3;
+      }
 
       setExerciseStats({
         heaviestWeight: heaviestWeight > 0 ? heaviestWeight : null,
@@ -311,34 +322,32 @@ export default function ExerciseDetailScreen() {
           <View style={styles.advancedStatsGrid}>
             <Card elevation={2} style={styles.statMiniCard}>
               <ThemedText style={styles.statMiniLabel}>Heaviest Weight</ThemedText>
-              <ThemedText style={[styles.statMiniValue, exerciseStats.heaviestWeight && styles.statMiniValueActive]}>
+              <ThemedText style={[styles.statMiniValue, styles.statMiniValueActive]}>
                 {formatWeight(exerciseStats.heaviestWeight)}
               </ThemedText>
             </Card>
             <Card elevation={2} style={styles.statMiniCard}>
               <ThemedText style={styles.statMiniLabel}>Best 1RM</ThemedText>
-              <ThemedText style={[styles.statMiniValue, exerciseStats.best1RM && styles.statMiniValueActive]}>
+              <ThemedText style={[styles.statMiniValue, styles.statMiniValueActive]}>
                 {formatWeight(exerciseStats.best1RM)}
               </ThemedText>
             </Card>
             <Card elevation={2} style={styles.statMiniCard}>
               <ThemedText style={styles.statMiniLabel}>Best Set Vol.</ThemedText>
-              <ThemedText style={[styles.statMiniValue, exerciseStats.bestSetVolume && styles.statMiniValueActive]}>
+              <ThemedText style={[styles.statMiniValue, styles.statMiniValueActive]}>
                 {formatVolume(exerciseStats.bestSetVolume)}
               </ThemedText>
             </Card>
             <Card elevation={2} style={styles.statMiniCard}>
               <ThemedText style={styles.statMiniLabel}>Best Session</ThemedText>
-              <ThemedText style={[styles.statMiniValue, exerciseStats.bestSessionVolume && styles.statMiniValueActive]}>
+              <ThemedText style={[styles.statMiniValue, styles.statMiniValueActive]}>
                 {formatVolume(exerciseStats.bestSessionVolume)}
               </ThemedText>
             </Card>
           </View>
-          {!exerciseStats.heaviestWeight && (
-            <ThemedText style={styles.noStatsHint}>
-              Log workouts to track your personal records
-            </ThemedText>
-          )}
+          <ThemedText style={styles.noStatsHint}>
+            Log workouts to track your personal records
+          </ThemedText>
 
           {exercise.secondaryMuscles && exercise.secondaryMuscles.length > 0 && (
             <View style={styles.secondaryMuscles}>
