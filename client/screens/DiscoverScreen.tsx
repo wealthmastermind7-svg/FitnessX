@@ -19,6 +19,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { BlurView } from "expo-blur";
+import polyline from "@mapbox/polyline";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -27,6 +28,8 @@ import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
 import { Image as ExpoImage } from "expo-image";
+import { useStrava } from "@/lib/strava";
+import Svg, { Polyline as SvgPolyline } from "react-native-svg";
 
 import CommunityFeedScreen from "./CommunityFeedScreen";
 
@@ -256,11 +259,95 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
   );
 }
 
+function StravaActivityMapCard({ activity }: { activity: any }) {
+  const MAP_WIDTH = SCREEN_WIDTH * 0.7;
+  const MAP_HEIGHT = 120;
+  
+  const decodeAndNormalize = () => {
+    if (!activity.map?.summary_polyline) return null;
+    
+    try {
+      const decoded = polyline.decode(activity.map.summary_polyline);
+      if (decoded.length < 2) return null;
+      
+      const lats = decoded.map(([lat]) => lat);
+      const lngs = decoded.map(([, lng]) => lng);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      
+      const padding = 10;
+      const width = MAP_WIDTH - padding * 2;
+      const height = MAP_HEIGHT - padding * 2;
+      
+      const points = decoded.map(([lat, lng]) => {
+        const x = padding + ((lng - minLng) / (maxLng - minLng || 1)) * width;
+        const y = padding + ((maxLat - lat) / (maxLat - minLat || 1)) * height;
+        return `${x},${y}`;
+      }).join(' ');
+      
+      return points;
+    } catch (e) {
+      return null;
+    }
+  };
+  
+  const pathPoints = decodeAndNormalize();
+  
+  const sportIcon = activity.sport_type === 'Run' ? 'wind' : 
+                    activity.sport_type === 'Ride' ? 'compass' : 
+                    activity.sport_type === 'Swim' ? 'droplet' : 'activity';
+  
+  return (
+    <View style={styles.stravaMapCard}>
+      <View style={styles.stravaMapContainer}>
+        {pathPoints ? (
+          <Svg width={MAP_WIDTH} height={MAP_HEIGHT}>
+            <SvgPolyline
+              points={pathPoints}
+              fill="none"
+              stroke="#FC4C02"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </Svg>
+        ) : (
+          <View style={styles.stravaMapPlaceholder}>
+            <Feather name={sportIcon} size={32} color="#FC4C02" />
+          </View>
+        )}
+      </View>
+      <View style={styles.stravaMapInfo}>
+        <ThemedText style={styles.stravaMapName} numberOfLines={1}>{activity.name}</ThemedText>
+        <View style={styles.stravaMapStats}>
+          <View style={styles.stravaMapStat}>
+            <Feather name="map-pin" size={12} color="#FC4C02" />
+            <ThemedText style={styles.stravaMapStatText}>{(activity.distance / 1000).toFixed(1)}km</ThemedText>
+          </View>
+          <View style={styles.stravaMapStat}>
+            <Feather name="clock" size={12} color={Colors.dark.textSecondary} />
+            <ThemedText style={styles.stravaMapStatText}>{Math.floor(activity.moving_time / 60)}min</ThemedText>
+          </View>
+          {activity.total_elevation_gain > 0 && (
+            <View style={styles.stravaMapStat}>
+              <Feather name="trending-up" size={12} color={Colors.dark.textSecondary} />
+              <ThemedText style={styles.stravaMapStatText}>{Math.round(activity.total_elevation_gain)}m</ThemedText>
+            </View>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NavigationProp>();
+  const { isConnected: isStravaConnected, activities: stravaActivities } = useStrava();
 
   const { data: generatedWorkouts, isLoading } = useQuery<Workout[]>({
     queryKey: ["/api/workouts"],
@@ -346,6 +433,34 @@ export default function DiscoverScreen() {
         </View>
 
         <ReadinessWidget />
+
+        {isStravaConnected && stravaActivities.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <View style={styles.stravaSectionTitle}>
+                <Feather name="compass" size={18} color="#FC4C02" />
+                <ThemedText style={[styles.sectionTitle, { color: "#FC4C02" }]}>Strava Activities</ThemedText>
+              </View>
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  navigation.navigate("Main", { screen: "Profile" } as any);
+                }}
+              >
+                <ThemedText style={styles.seeAllText}>See All</ThemedText>
+              </Pressable>
+            </View>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalScroll}
+            >
+              {stravaActivities.slice(0, 5).map((activity) => (
+                <StravaActivityMapCard key={activity.id} activity={activity} />
+              ))}
+            </ScrollView>
+          </View>
+        )}
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -1006,5 +1121,59 @@ const styles = StyleSheet.create({
     ...Typography.small,
     color: Colors.dark.textSecondary,
     marginTop: Spacing.xs,
+  },
+  stravaSectionTitle: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  seeAllText: {
+    ...Typography.small,
+    color: "#FC4C02",
+    fontWeight: "600",
+  },
+  stravaMapCard: {
+    width: SCREEN_WIDTH * 0.7,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.lg,
+    overflow: "hidden",
+    marginRight: Spacing.md,
+    borderWidth: 1,
+    borderColor: "rgba(252, 76, 2, 0.2)",
+  },
+  stravaMapContainer: {
+    height: 120,
+    backgroundColor: "rgba(252, 76, 2, 0.05)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  stravaMapPlaceholder: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(252, 76, 2, 0.08)",
+  },
+  stravaMapInfo: {
+    padding: Spacing.md,
+  },
+  stravaMapName: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: Colors.dark.text,
+    marginBottom: Spacing.xs,
+  },
+  stravaMapStats: {
+    flexDirection: "row",
+    gap: Spacing.md,
+  },
+  stravaMapStat: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+  stravaMapStatText: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
   },
 });
