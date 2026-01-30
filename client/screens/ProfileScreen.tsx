@@ -25,6 +25,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
 import { useRevenueCat } from "@/lib/revenuecat";
+import { useStrava } from "@/lib/strava";
 
 import Svg, { Polygon, Line, Text as SvgText, Circle } from 'react-native-svg';
 
@@ -227,6 +228,7 @@ export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isProUser, isLoading: isRevenueCatLoading } = useRevenueCat();
+  const { isConnected: isStravaConnected, isLoading: isStravaLoading, athlete: stravaAthlete, connect: connectStrava, disconnect: disconnectStrava, activities: stravaActivities, refreshActivities } = useStrava();
   const [profile, setProfile] = useState<UserProfile>({
     displayName: "Athlete",
     experienceLevel: "Intermediate",
@@ -874,6 +876,62 @@ export default function ProfileScreen() {
               }}
             />
             <View style={styles.settingsDivider} />
+            <Pressable
+              style={styles.settingsRow}
+              onPress={async () => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                if (isStravaConnected) {
+                  Alert.alert(
+                    "Disconnect Strava",
+                    "Are you sure you want to disconnect your Strava account?",
+                    [
+                      { text: "Cancel", style: "cancel" },
+                      {
+                        text: "Disconnect",
+                        style: "destructive",
+                        onPress: async () => {
+                          await disconnectStrava();
+                          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                        },
+                      },
+                    ]
+                  );
+                } else {
+                  const success = await connectStrava();
+                  if (success) {
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                  }
+                }
+              }}
+              disabled={isStravaLoading}
+            >
+              <View style={styles.settingsRowLeft}>
+                <View style={[styles.settingsIconContainer, isStravaConnected && { backgroundColor: '#FC4C02' + '20' }]}>
+                  <Feather name="compass" size={20} color={isStravaConnected ? '#FC4C02' : '#FF6B6B'} />
+                </View>
+                <View>
+                  <ThemedText style={styles.settingsLabel}>Strava</ThemedText>
+                  {isStravaConnected && stravaAthlete && (
+                    <ThemedText style={[styles.settingsValue, { marginLeft: 0, marginTop: 2 }]}>
+                      {stravaAthlete.firstname} {stravaAthlete.lastname}
+                    </ThemedText>
+                  )}
+                </View>
+              </View>
+              <View style={styles.settingsRowRight}>
+                {isStravaLoading ? (
+                  <ThemedText style={styles.settingsValue}>Loading...</ThemedText>
+                ) : isStravaConnected ? (
+                  <View style={[styles.proBadge, { backgroundColor: '#FC4C02' + '20' }]}>
+                    <ThemedText style={[styles.proBadgeText, { color: '#FC4C02' }]}>CONNECTED</ThemedText>
+                  </View>
+                ) : (
+                  <ThemedText style={styles.settingsValue}>Connect</ThemedText>
+                )}
+                <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
+              </View>
+            </Pressable>
+            <View style={styles.settingsDivider} />
             <SettingsRow
               icon="trash-2"
               label="Clear All Data"
@@ -881,6 +939,50 @@ export default function ProfileScreen() {
             />
           </View>
         </View>
+
+        {isStravaConnected && stravaActivities.length > 0 && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionTitle}>Recent Strava Activities</ThemedText>
+              <Pressable
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                  refreshActivities();
+                }}
+                style={styles.streakBadge}
+              >
+                <Feather name="refresh-cw" size={14} color="#FC4C02" />
+              </Pressable>
+            </View>
+            <View style={styles.settingsCard}>
+              {stravaActivities.slice(0, 5).map((activity, index) => (
+                <React.Fragment key={activity.id}>
+                  {index > 0 && <View style={styles.settingsDivider} />}
+                  <View style={styles.stravaActivityRow}>
+                    <View style={styles.stravaActivityLeft}>
+                      <View style={[styles.settingsIconContainer, { backgroundColor: '#FC4C02' + '20' }]}>
+                        <Feather 
+                          name={activity.sport_type === 'Run' ? 'wind' : activity.sport_type === 'Ride' ? 'compass' : activity.sport_type === 'Swim' ? 'droplet' : 'activity'} 
+                          size={18} 
+                          color="#FC4C02" 
+                        />
+                      </View>
+                      <View style={styles.stravaActivityInfo}>
+                        <ThemedText style={styles.stravaActivityName} numberOfLines={1}>{activity.name}</ThemedText>
+                        <ThemedText style={styles.stravaActivityMeta}>
+                          {activity.sport_type} • {(activity.distance / 1000).toFixed(1)}km • {Math.floor(activity.moving_time / 60)}min
+                        </ThemedText>
+                      </View>
+                    </View>
+                    <ThemedText style={styles.stravaActivityDate}>
+                      {new Date(activity.start_date_local).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    </ThemedText>
+                  </View>
+                </React.Fragment>
+              ))}
+            </View>
+          </View>
+        )}
 
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Legal</ThemedText>
@@ -1516,5 +1618,35 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#9D4EDD",
     letterSpacing: 1,
+  },
+  stravaActivityRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: Spacing.md,
+  },
+  stravaActivityLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    flex: 1,
+    gap: Spacing.md,
+  },
+  stravaActivityInfo: {
+    flex: 1,
+  },
+  stravaActivityName: {
+    ...Typography.body,
+    color: Colors.dark.text,
+    fontWeight: "600",
+  },
+  stravaActivityMeta: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginTop: 2,
+  },
+  stravaActivityDate: {
+    ...Typography.small,
+    color: Colors.dark.textSecondary,
+    marginLeft: Spacing.sm,
   },
 });
