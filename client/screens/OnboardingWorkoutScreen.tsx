@@ -32,8 +32,12 @@ export default function OnboardingWorkoutScreen() {
     }
   };
 
-  const handleSkip = () => {
-    completeOnboarding();
+  const handleSkip = async () => {
+    try {
+      await completeOnboarding();
+    } catch (error) {
+      console.error("Failed to skip onboarding:", error);
+    }
   };
 
   return (
