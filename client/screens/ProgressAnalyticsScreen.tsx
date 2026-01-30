@@ -195,7 +195,8 @@ export default function ProgressAnalyticsScreen() {
 
   const handleScroll = (event: any) => {
     const offsetX = event.nativeEvent.contentOffset.x;
-    const index = Math.round(offsetX / (SCREEN_WIDTH - Spacing.lg * 2));
+    const itemWidth = 140 + Spacing.md; // width + gap
+    const index = Math.round(offsetX / itemWidth);
     if (index !== currentIndex && index >= 0 && index < SAMPLE_EXERCISES.length) {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       setCurrentIndex(index);
@@ -310,7 +311,7 @@ export default function ProgressAnalyticsScreen() {
               key={idx}
               onPress={() => {
                 setCurrentIndex(idx);
-                scrollRef.current?.scrollTo({ x: idx * (SCREEN_WIDTH - Spacing.lg * 2), animated: true });
+                scrollRef.current?.scrollTo({ x: idx * (140 + Spacing.md), animated: true });
               }}
             >
               <View
@@ -382,11 +383,13 @@ export default function ProgressAnalyticsScreen() {
         <ScrollView
           ref={scrollRef}
           horizontal
-          pagingEnabled
           showsHorizontalScrollIndicator={false}
-          onMomentumScrollEnd={handleScroll}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
           style={styles.exerciseScroll}
           contentContainerStyle={styles.exerciseScrollContent}
+          snapToInterval={140 + Spacing.md}
+          decelerationRate="fast"
         >
           {SAMPLE_EXERCISES.map((exercise, idx) => (
             <Pressable
@@ -538,6 +541,7 @@ const styles = StyleSheet.create({
   },
   metricTabs: {
     flexDirection: "row",
+    flexWrap: "wrap",
     gap: Spacing.sm,
     marginTop: Spacing.md,
   },
@@ -546,6 +550,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(0, 0, 0, 0.05)",
+    minWidth: 80,
+    alignItems: 'center',
   },
   metricTabActive: {
     backgroundColor: "#FF6B6B",
@@ -642,10 +648,11 @@ const styles = StyleSheet.create({
   },
   exerciseScroll: {
     marginTop: Spacing.xl,
+    flexGrow: 0,
   },
   exerciseScrollContent: {
     paddingHorizontal: Spacing.lg,
-    gap: Spacing.md,
+    paddingRight: Spacing.lg + Spacing.md,
   },
   exerciseScrollCard: {
     width: 140,
