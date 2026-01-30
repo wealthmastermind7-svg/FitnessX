@@ -30,7 +30,7 @@ export default function OnboardingWelcomeScreen() {
 
   const handleGetStarted = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    navigation.navigate("OnboardingDiscover");
+    navigation.navigate("OnboardingDiscover" as any);
   };
 
   const handleSkip = () => {

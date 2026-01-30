@@ -32,7 +32,7 @@ export default function OnboardingDiscoverScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingProgress");
+    navigation.navigate("OnboardingProgress" as any);
   };
 
   const handleBack = () => {
