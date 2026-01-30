@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContentContainer: {
+    paddingTop: Spacing.xl,
     paddingBottom: Spacing.lg,
     justifyContent: "center",
     flexGrow: 1,
