@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   muscleCard: {
     width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.md * 2) / 2,
     height: 120,
-    backgroundColor: Colors.dark.card,
+    backgroundColor: Colors.dark.backgroundSecondary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.md,
     overflow: "hidden",

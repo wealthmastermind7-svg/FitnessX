@@ -80,16 +80,7 @@ interface ExternalIntegration {
   description: string;
 }
 
-const EXTERNAL_INTEGRATIONS: ExternalIntegration[] = [
-  {
-    id: "strava",
-    name: "Strava",
-    subtitle: "Sync Workouts",
-    icon: "map-pin",
-    color: "#FC4C02",
-    description: "Share your FitForge workouts with your Strava community",
-  },
-];
+const EXTERNAL_INTEGRATIONS: ExternalIntegration[] = [];
 
 const BENEFITS = [
   {
@@ -117,21 +108,6 @@ export default function HealthSyncScreen() {
   const [selectedPlatforms, setSelectedPlatforms] = useState<Set<string>>(new Set(["apple_health"]));
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set(["steps", "calories", "heart_rate", "workouts"]));
   const [isSyncing, setIsSyncing] = useState(false);
-  const [stravaConnected, setStravaConnected] = useState(false);
-  const [isConnectingStrava, setIsConnectingStrava] = useState(false);
-
-  useEffect(() => {
-    loadStravaStatus();
-  }, []);
-
-  const loadStravaStatus = async () => {
-    try {
-      const stravaStatus = await AsyncStorage.getItem("stravaConnected");
-      setStravaConnected(stravaStatus === "true");
-    } catch (error) {
-      console.error("Error loading Strava status:", error);
-    }
-  };
 
   const togglePlatform = (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -157,62 +133,6 @@ export default function HealthSyncScreen() {
       }
       return newSet;
     });
-  };
-
-  const handleConnectStrava = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setIsConnectingStrava(true);
-
-    try {
-      // Note: In production, this would redirect to Strava OAuth
-      // For now, we simulate the connection process
-      Alert.alert(
-        "Connect with Strava",
-        "To connect with Strava, you'll need to authorize FitForgeX in your Strava account settings.\n\n" +
-        "Once connected, your workouts will automatically sync to your Strava feed.",
-        [
-          {
-            text: "Cancel",
-            style: "cancel",
-            onPress: () => setIsConnectingStrava(false),
-          },
-          {
-            text: "Connect",
-            onPress: async () => {
-              // Simulate connection
-              await new Promise(resolve => setTimeout(resolve, 1000));
-              await AsyncStorage.setItem("stravaConnected", "true");
-              setStravaConnected(true);
-              setIsConnectingStrava(false);
-              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-            },
-          },
-        ]
-      );
-    } catch (error) {
-      setIsConnectingStrava(false);
-      Alert.alert("Error", "Failed to connect with Strava. Please try again.");
-    }
-  };
-
-  const handleDisconnectStrava = async () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    Alert.alert(
-      "Disconnect Strava",
-      "Are you sure you want to disconnect your Strava account? Your workouts will no longer sync.",
-      [
-        { text: "Cancel", style: "cancel" },
-        {
-          text: "Disconnect",
-          style: "destructive",
-          onPress: async () => {
-            await AsyncStorage.setItem("stravaConnected", "false");
-            setStravaConnected(false);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
-          },
-        },
-      ]
-    );
   };
 
   const handleConnectAll = async () => {
@@ -285,45 +205,6 @@ export default function HealthSyncScreen() {
           <ThemedText style={styles.subtitle}>
             INTEGRATE YOUR FAVORITE ECOSYSTEMS
           </ThemedText>
-        </View>
-
-        {/* Strava Integration Section */}
-        <View style={styles.integrationSection}>
-          <ThemedText style={styles.sectionLabel}>INTEGRATIONS</ThemedText>
-          <View style={styles.stravaCard}>
-            <BlurView intensity={15} tint="dark" style={styles.stravaCardInner}>
-              <View style={[styles.stravaIconContainer, { backgroundColor: "#FC4C02" }]}>
-                <Feather name="map-pin" size={24} color="white" />
-              </View>
-              <View style={styles.stravaInfo}>
-                <ThemedText style={styles.stravaName}>Strava</ThemedText>
-                <ThemedText style={styles.stravaDescription}>
-                  {stravaConnected 
-                    ? "Connected - Workouts will sync automatically" 
-                    : "Share workouts with your Strava community"}
-                </ThemedText>
-              </View>
-              <Pressable
-                style={[
-                  styles.stravaButton,
-                  stravaConnected && styles.stravaButtonConnected,
-                ]}
-                onPress={stravaConnected ? handleDisconnectStrava : handleConnectStrava}
-                disabled={isConnectingStrava}
-              >
-                {isConnectingStrava ? (
-                  <ActivityIndicator size="small" color={stravaConnected ? "#FC4C02" : "white"} />
-                ) : (
-                  <ThemedText style={[
-                    styles.stravaButtonText,
-                    stravaConnected && styles.stravaButtonTextConnected,
-                  ]}>
-                    {stravaConnected ? "Disconnect" : "Connect"}
-                  </ThemedText>
-                )}
-              </Pressable>
-            </BlurView>
-          </View>
         </View>
 
         {/* Health Platforms Section */}
@@ -555,59 +436,6 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.4)",
     letterSpacing: 1.5,
     marginBottom: Spacing.md,
-  },
-  stravaCard: {
-    borderRadius: BorderRadius.xl,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-  },
-  stravaCardInner: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: Spacing.lg,
-    gap: Spacing.md,
-  },
-  stravaIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stravaInfo: {
-    flex: 1,
-  },
-  stravaName: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "white",
-    marginBottom: 2,
-  },
-  stravaDescription: {
-    fontSize: 12,
-    color: "rgba(255,255,255,0.5)",
-  },
-  stravaButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.lg,
-    backgroundColor: "#FC4C02",
-    minWidth: 90,
-    alignItems: "center",
-  },
-  stravaButtonConnected: {
-    backgroundColor: "transparent",
-    borderWidth: 1,
-    borderColor: "#FC4C02",
-  },
-  stravaButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "white",
-  },
-  stravaButtonTextConnected: {
-    color: "#FC4C02",
   },
   healthNote: {
     flexDirection: "row",

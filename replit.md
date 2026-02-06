@@ -10,16 +10,13 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.2 Build 6)
+## Recent Changes (v1.0.2 Build 7)
 
-**Strava Integration:**
-- Added **Strava OAuth connection** in Profile screen under Data & Connectivity
-- Users can connect their Strava account to sync activities
-- Displays connected athlete name and recent activities (last 30)
-- Activity cards show sport type, distance, duration, and date
-- Backend endpoints: `/api/strava/config`, `/api/strava/token`, `/api/strava/refresh`, `/api/strava/activities`, `/api/strava/disconnect`
-- Uses `expo-auth-session` for OAuth flow with secure token storage in AsyncStorage
-- Requires `STRAVA_CLIENT_ID` and `STRAVA_CLIENT_SECRET` environment variables
+**Strava Removal:**
+- Completely removed Strava integration from the application due to API limitations for commercial apps.
+- Cleaned up `ProfileScreen.tsx`, `DiscoverScreen.tsx`, and `App.tsx`.
+- Removed backend routes and service configurations for Strava.
+- Updated `HealthSyncScreen.tsx` to remove Strava-specific UI and logic.
 
 **Video Sharing Feature (v1.0.2 Build 5):**
 - Added **"Share Video" button** to WorkoutDetailScreen for generating shareable workout summary videos
