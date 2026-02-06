@@ -25,7 +25,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from "@/constants/theme";
 import { useRevenueCat } from "@/lib/revenuecat";
-import { useStrava } from "@/lib/strava";
 
 import Svg, { Polygon, Line, Text as SvgText, Circle } from 'react-native-svg';
 
@@ -228,7 +227,6 @@ export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { isProUser, isLoading: isRevenueCatLoading } = useRevenueCat();
-  const { isConnected: isStravaConnected, isLoading: isStravaLoading, athlete: stravaAthlete, connect: connectStrava, disconnect: disconnectStrava, activities: stravaActivities, refreshActivities } = useStrava();
   const [profile, setProfile] = useState<UserProfile>({
     displayName: "Athlete",
     experienceLevel: "Intermediate",
@@ -370,7 +368,6 @@ export default function ProfileScreen() {
 
   const loadStats = async () => {
     try {
-      // Always get the true count from saved workouts to ensure accuracy
       const savedWorkouts = await AsyncStorage.getItem("savedWorkouts");
       const workoutsList = savedWorkouts ? JSON.parse(savedWorkouts) : [];
       const actualWorkoutCount = workoutsList.length;
@@ -378,9 +375,7 @@ export default function ProfileScreen() {
       const savedStats = await AsyncStorage.getItem("workoutStats");
       const stats = savedStats ? JSON.parse(savedStats) : { totalWorkouts: 0, favoriteMuscle: "None yet", currentStreak: 0 };
       
-      // Update totalWorkouts to match actual saved count
       stats.totalWorkouts = actualWorkoutCount;
-      
       setStats(stats);
     } catch (error) {
       console.error("Error loading stats:", error);
@@ -396,17 +391,6 @@ export default function ProfileScreen() {
     } catch (error) {
       console.error("Error loading health sync settings:", error);
     }
-  };
-
-  const toggleHealthService = async (service: "appleHealth" | "googleFit") => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const newSettings = {
-      ...healthSync,
-      [service]: !healthSync[service],
-      syncEnabled: true,
-    };
-    setHealthSync(newSettings);
-    await AsyncStorage.setItem("healthSyncSettings", JSON.stringify(newSettings));
   };
 
   const saveProfile = async (newProfile: UserProfile) => {
@@ -500,7 +484,6 @@ export default function ProfileScreen() {
               });
               Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
               
-              // Force a reset of the app navigation to refresh all screens with empty state
               Alert.alert(
                 "Data Cleared",
                 "Your data has been cleared. The app will now refresh.",
@@ -557,7 +540,6 @@ export default function ProfileScreen() {
           </View>
         </Pressable>
 
-        {/* Progress Analytics Card */}
         <Pressable
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -583,7 +565,6 @@ export default function ProfileScreen() {
           </LinearGradient>
         </Pressable>
 
-        {/* Workout Days Log - Real Data */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <ThemedText style={styles.sectionTitle}>Workout Days Log</ThemedText>
@@ -622,7 +603,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Muscle Distribution - Radar Chart */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Muscle Distribution</ThemedText>
           <View style={styles.muscleDistCard}>
@@ -635,7 +615,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {/* Personal Records Modal */}
         <Modal
           animationType="fade"
           transparent={true}
@@ -658,32 +637,22 @@ export default function ProfileScreen() {
                   <View style={styles.prModalItem}>
                     <ThemedText style={styles.prModalLabel}>Best 1RM</ThemedText>
                     <ThemedText style={styles.prModalDescription}>
-                      1RM (One Rep Max) uses reps and weight from a set to estimate the max weight you could lift for a single rep. This is the highest 1RM you've ever achieved.
-                    </ThemedText>
-                  </View>
-
-                  <View style={styles.prModalItem}>
-                    <ThemedText style={styles.prModalLabel}>Best Set Volume</ThemedText>
-                    <ThemedText style={styles.prModalDescription}>
-                      The set in which you lifted the most volume (weight x reps).
+                      Calculated 1-Rep Max based on your best set.
                     </ThemedText>
                   </View>
 
                   <View style={styles.prModalItem}>
                     <ThemedText style={styles.prModalLabel}>Best Session Volume</ThemedText>
                     <ThemedText style={styles.prModalDescription}>
-                      Max Session Volume is the session you lifted the most weight in total over all your sets in this exercise.
+                      Total weight moved in a single exercise session (sets x reps x weight).
                     </ThemedText>
                   </View>
 
                   <Pressable
-                    style={styles.prModalButton}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      setIsPRModalVisible(false);
-                    }}
+                    style={styles.prModalCloseButton}
+                    onPress={() => setIsPRModalVisible(false)}
                   >
-                    <ThemedText style={styles.prModalButtonText}>Ok</ThemedText>
+                    <ThemedText style={styles.prModalCloseText}>Close</ThemedText>
                   </Pressable>
                 </View>
               </TouchableWithoutFeedback>
@@ -691,176 +660,84 @@ export default function ProfileScreen() {
           </TouchableWithoutFeedback>
         </Modal>
 
-        {/* Exercise Records */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Personal Records</ThemedText>
-            <Pressable 
+            <ThemedText style={styles.sectionTitle}>Personal Bests</ThemedText>
+            <Pressable
               onPress={() => {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                 setIsPRModalVisible(true);
               }}
-              style={styles.infoIcon}
             >
-              <Feather name="info" size={18} color="#FF6B6B" />
+              <Feather name="info" size={16} color={Colors.dark.textSecondary} />
             </Pressable>
           </View>
-          <View style={styles.recordsGrid}>
-            <View style={styles.recordCard}>
-              <Feather name="trending-up" size={20} color="#FF6B6B" />
+          <View style={styles.settingsCard}>
+            <View style={styles.recordRow}>
+              <View style={styles.recordLeft}>
+                <View style={[styles.recordIconContainer, { backgroundColor: 'rgba(255, 107, 107, 0.1)' }]}>
+                  <Feather name="trending-up" size={18} color="#FF6B6B" />
+                </View>
+                <ThemedText style={styles.recordLabel}>Heaviest Weight</ThemedText>
+              </View>
               <ThemedText style={styles.recordValue}>{exerciseRecords.heaviestWeight}</ThemedText>
-              <ThemedText style={styles.recordLabel}>Heaviest Weight</ThemedText>
             </View>
-            <View style={styles.recordCard}>
-              <Feather name="target" size={20} color="#FF6B6B" />
+            <View style={styles.settingsDivider} />
+            <View style={styles.recordRow}>
+              <View style={styles.recordLeft}>
+                <View style={[styles.recordIconContainer, { backgroundColor: 'rgba(255, 107, 107, 0.1)' }]}>
+                  <Feather name="star" size={18} color="#FF6B6B" />
+                </View>
+                <ThemedText style={styles.recordLabel}>Best 1RM</ThemedText>
+              </View>
               <ThemedText style={styles.recordValue}>{exerciseRecords.best1RM}</ThemedText>
-              <ThemedText style={styles.recordLabel}>Best 1RM</ThemedText>
             </View>
-            <View style={styles.recordCard}>
-              <Feather name="layers" size={20} color="#FF6B6B" />
+            <View style={styles.settingsDivider} />
+            <View style={styles.recordRow}>
+              <View style={styles.recordLeft}>
+                <View style={[styles.recordIconContainer, { backgroundColor: 'rgba(255, 107, 107, 0.1)' }]}>
+                  <Feather name="layers" size={18} color="#FF6B6B" />
+                </View>
+                <ThemedText style={styles.recordLabel}>Max Set Volume</ThemedText>
+              </View>
               <ThemedText style={styles.recordValue}>{exerciseRecords.bestSetVolume}</ThemedText>
-              <ThemedText style={styles.recordLabel}>Best Set Vol.</ThemedText>
             </View>
-            <View style={styles.recordCard}>
-              <Feather name="award" size={20} color="#FF6B6B" />
+            <View style={styles.settingsDivider} />
+            <View style={styles.recordRow}>
+              <View style={styles.recordLeft}>
+                <View style={[styles.recordIconContainer, { backgroundColor: 'rgba(255, 107, 107, 0.1)' }]}>
+                  <Feather name="zap" size={18} color="#FF6B6B" />
+                </View>
+                <ThemedText style={styles.recordLabel}>Longest Session</ThemedText>
+              </View>
               <ThemedText style={styles.recordValue}>{exerciseRecords.bestSession}</ThemedText>
-              <ThemedText style={styles.recordLabel}>Best Session</ThemedText>
             </View>
           </View>
         </View>
 
         <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Settings</ThemedText>
-          
+          <ThemedText style={styles.sectionTitle}>Account</ThemedText>
           <View style={styles.settingsCard}>
             <SettingsRow
-              icon="activity"
-              label="Health Sync"
-              value={healthSync.syncEnabled ? "Active" : "Not Connected"}
-              onPress={() => navigation.navigate("HealthSync")}
-            />
-            <View style={styles.settingsDivider} />
-            <SettingsRow
               icon="user"
-              label="Display Name"
+              label="Name"
               value={profile.displayName}
               onPress={handleNameChange}
             />
             <View style={styles.settingsDivider} />
-            
-            <View style={styles.settingRowContainer}>
-              <View style={styles.settingsRowLeft}>
-                <View style={styles.settingsIconContainer}>
-                  <Feather name="bar-chart-2" size={20} color="#FF6B6B" />
-                </View>
-                <ThemedText style={styles.settingsLabel}>Experience Level</ThemedText>
-              </View>
-              <View style={styles.buttonTabContainer}>
-                {["Beginner", "Intermediate", "Advanced"].map((level) => (
-                  <Pressable
-                    key={level}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      saveProfile({ ...profile, experienceLevel: level });
-                    }}
-                    style={[
-                      styles.buttonTab,
-                      profile.experienceLevel === level && styles.buttonTabActive,
-                    ]}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.buttonTabText,
-                        profile.experienceLevel === level && styles.buttonTabTextActive,
-                      ]}
-                    >
-                      {level.slice(0, 3)}
-                    </ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-
+            <SettingsRow
+              icon="award"
+              label="Experience"
+              value={profile.experienceLevel}
+              onPress={handleExperienceChange}
+            />
             <View style={styles.settingsDivider} />
-            
-            <View style={styles.settingRowContainer}>
-              <View style={styles.settingsRowLeft}>
-                <View style={styles.settingsIconContainer}>
-                  <Feather name="globe" size={20} color="#FF6B6B" />
-                </View>
-                <ThemedText style={styles.settingsLabel}>Units</ThemedText>
-              </View>
-              <View style={styles.buttonTabContainer}>
-                {[
-                  { label: "kg", value: "metric" },
-                  { label: "lbs", value: "imperial" },
-                ].map((unit) => (
-                  <Pressable
-                    key={unit.value}
-                    onPress={() => {
-                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                      saveProfile({ ...profile, preferredUnits: unit.value as "metric" | "imperial" });
-                    }}
-                    style={[
-                      styles.buttonTab,
-                      profile.preferredUnits === unit.value && styles.buttonTabActive,
-                    ]}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.buttonTabText,
-                        profile.preferredUnits === unit.value && styles.buttonTabTextActive,
-                      ]}
-                    >
-                      {unit.label}
-                    </ThemedText>
-                  </Pressable>
-                ))}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Subscription</ThemedText>
-          
-          <View style={styles.settingsCard}>
-            <Pressable
-              style={styles.settingsRow}
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                if (isProUser) {
-                  navigation.navigate("CustomerCenter");
-                } else {
-                  navigation.navigate("Paywall");
-                }
-              }}
-            >
-              <View style={styles.settingsRowLeft}>
-                <View style={[styles.settingsIconContainer, { backgroundColor: "#FF6B6B" + '20' }]}>
-                  <Feather name="zap" size={20} color="#FF6B6B" />
-                </View>
-                <View>
-                  <ThemedText style={styles.settingsLabel}>
-                    {isRevenueCatLoading ? "Loading..." : isProUser ? "FitForgeX Pro" : "Upgrade to Pro"}
-                  </ThemedText>
-                  {!isRevenueCatLoading && !isProUser && (
-                    <ThemedText style={[styles.settingsValue, { marginLeft: 0, marginTop: 2 }]}>
-                      Unlock all AI features
-                    </ThemedText>
-                  )}
-                </View>
-              </View>
-              <View style={styles.settingsRowRight}>
-                {isProUser ? (
-                  <View style={styles.proBadge}>
-                    <ThemedText style={styles.proBadgeText}>ACTIVE</ThemedText>
-                  </View>
-                ) : (
-                  <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
-                )}
-              </View>
-            </Pressable>
+            <SettingsRow
+              icon="settings"
+              label="Units"
+              value={profile.preferredUnits.charAt(0).toUpperCase() + profile.preferredUnits.slice(1)}
+              onPress={toggleUnits}
+            />
           </View>
         </View>
 
@@ -876,62 +753,6 @@ export default function ProfileScreen() {
               }}
             />
             <View style={styles.settingsDivider} />
-            <Pressable
-              style={styles.settingsRow}
-              onPress={async () => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                if (isStravaConnected) {
-                  Alert.alert(
-                    "Disconnect Strava",
-                    "Are you sure you want to disconnect your Strava account?",
-                    [
-                      { text: "Cancel", style: "cancel" },
-                      {
-                        text: "Disconnect",
-                        style: "destructive",
-                        onPress: async () => {
-                          await disconnectStrava();
-                          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                        },
-                      },
-                    ]
-                  );
-                } else {
-                  const success = await connectStrava();
-                  if (success) {
-                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-                  }
-                }
-              }}
-              disabled={isStravaLoading}
-            >
-              <View style={styles.settingsRowLeft}>
-                <View style={[styles.settingsIconContainer, isStravaConnected && { backgroundColor: '#FC4C02' + '20' }]}>
-                  <Feather name="compass" size={20} color={isStravaConnected ? '#FC4C02' : '#FF6B6B'} />
-                </View>
-                <View>
-                  <ThemedText style={styles.settingsLabel}>Strava</ThemedText>
-                  {isStravaConnected && stravaAthlete && (
-                    <ThemedText style={[styles.settingsValue, { marginLeft: 0, marginTop: 2 }]}>
-                      {stravaAthlete.firstname} {stravaAthlete.lastname}
-                    </ThemedText>
-                  )}
-                </View>
-              </View>
-              <View style={styles.settingsRowRight}>
-                {isStravaLoading ? (
-                  <ThemedText style={styles.settingsValue}>Loading...</ThemedText>
-                ) : isStravaConnected ? (
-                  <View style={[styles.proBadge, { backgroundColor: '#FC4C02' + '20' }]}>
-                    <ThemedText style={[styles.proBadgeText, { color: '#FC4C02' }]}>CONNECTED</ThemedText>
-                  </View>
-                ) : (
-                  <ThemedText style={styles.settingsValue}>Connect</ThemedText>
-                )}
-                <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
-              </View>
-            </Pressable>
-            <View style={styles.settingsDivider} />
             <SettingsRow
               icon="trash-2"
               label="Clear All Data"
@@ -940,89 +761,26 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        {isStravaConnected && stravaActivities.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Recent Strava Activities</ThemedText>
-              <Pressable
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  refreshActivities();
-                }}
-                style={styles.streakBadge}
-              >
-                <Feather name="refresh-cw" size={14} color="#FC4C02" />
-              </Pressable>
-            </View>
-            <View style={styles.settingsCard}>
-              {stravaActivities.slice(0, 5).map((activity, index) => (
-                <React.Fragment key={activity.id}>
-                  {index > 0 && <View style={styles.settingsDivider} />}
-                  <View style={styles.stravaActivityRow}>
-                    <View style={styles.stravaActivityLeft}>
-                      <View style={[styles.settingsIconContainer, { backgroundColor: '#FC4C02' + '20' }]}>
-                        <Feather 
-                          name={activity.sport_type === 'Run' ? 'wind' : activity.sport_type === 'Ride' ? 'compass' : activity.sport_type === 'Swim' ? 'droplet' : 'activity'} 
-                          size={18} 
-                          color="#FC4C02" 
-                        />
-                      </View>
-                      <View style={styles.stravaActivityInfo}>
-                        <ThemedText style={styles.stravaActivityName} numberOfLines={1}>{activity.name}</ThemedText>
-                        <ThemedText style={styles.stravaActivityMeta}>
-                          {activity.sport_type} • {(activity.distance / 1000).toFixed(1)}km • {Math.floor(activity.moving_time / 60)}min
-                          {activity.achievement_count ? ` • ${activity.achievement_count} achievements` : ''}
-                        </ThemedText>
-                      </View>
-                    </View>
-                    <View style={{ alignItems: 'flex-end' }}>
-                      <ThemedText style={styles.stravaActivityDate}>
-                        {new Date(activity.start_date_local).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                      </ThemedText>
-                      {activity.kudos_count ? (
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, gap: 2 }}>
-                          <Feather name="thumbs-up" size={10} color="#FC4C02" />
-                          <ThemedText style={[styles.stravaActivityMeta, { marginTop: 0 }]}>{activity.kudos_count}</ThemedText>
-                        </View>
-                      ) : null}
-                    </View>
-                  </View>
-                </React.Fragment>
-              ))}
-            </View>
-          </View>
-        )}
-
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Legal</ThemedText>
-          
-          <View style={styles.legalLinksContainer}>
-            <Pressable 
-              style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/terms')}
-            >
-              <ThemedText style={styles.legalLinkText}>Terms of Use</ThemedText>
-            </Pressable>
-            
-            <Pressable 
-              style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/privacy')}
-            >
-              <ThemedText style={styles.legalLinkText}>Privacy Policy</ThemedText>
-            </Pressable>
-            
-            <Pressable 
-              style={styles.legalLink}
-              onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/sources')}
-            >
-              <ThemedText style={styles.legalLinkText}>Sources & Citations</ThemedText>
-            </Pressable>
+          <View style={styles.settingsCard}>
+            <SettingsRow
+              icon="shield"
+              label="Privacy Policy"
+              onPress={() => WebBrowser.openBrowserAsync("https://fitforgex.com/privacy")}
+            />
+            <View style={styles.settingsDivider} />
+            <SettingsRow
+              icon="file-text"
+              label="Terms of Service"
+              onPress={() => WebBrowser.openBrowserAsync("https://fitforgex.com/terms")}
+            />
           </View>
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={styles.footerText}>FitForge v1.0.2</ThemedText>
-          <ThemedText style={styles.footerSubtext}>Crafted for Champions</ThemedText>
+          <ThemedText style={styles.versionText}>FitForgeX v1.0.2 Build 6</ThemedText>
+          <ThemedText style={styles.copyrightText}>© 2026 FitForgeX. All rights reserved.</ThemedText>
         </View>
       </ScrollView>
     </ThemedView>
@@ -1032,25 +790,20 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
   },
   scrollContent: {
     paddingHorizontal: Spacing.lg,
   },
   screenTagline: {
-    fontSize: 12,
-    fontWeight: "600",
+    ...Typography.caption,
+    color: "#FF6B6B",
     letterSpacing: 2,
-    color: Colors.dark.accent,
     marginBottom: Spacing.xs,
   },
   screenTitle: {
+    ...Typography.h1,
     fontSize: 42,
-    fontWeight: "800",
-    color: Colors.dark.text,
     marginBottom: Spacing.xl,
-    letterSpacing: -0.5,
-    lineHeight: 58,
   },
   avatarSection: {
     alignItems: "center",
@@ -1065,533 +818,45 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   displayName: {
-    ...Typography.h1,
-    color: Colors.dark.text,
-    lineHeight: 40,
+    ...Typography.h3,
+    marginBottom: Spacing.xs,
   },
   experienceLevel: {
     ...Typography.body,
     color: Colors.dark.textSecondary,
-    marginTop: Spacing.xs,
   },
   statsContainer: {
     flexDirection: "row",
-    gap: Spacing.md,
+    justifyContent: "space-between",
     marginBottom: Spacing.xl,
   },
   statCard: {
     flex: 1,
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
+    marginHorizontal: Spacing.xs,
   },
   statValue: {
-    ...Typography.h2,
-    color: Colors.dark.text,
-  },
-  statLabel: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    marginTop: Spacing.xs,
-  },
-  section: {
-    marginBottom: Spacing.xl,
-  },
-  sectionTitle: {
     ...Typography.h3,
-    color: Colors.dark.text,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  streakBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 107, 107, 0.1)',
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
-    gap: 4,
-  },
-  streakBadgeText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#FF6B6B',
-  },
-  calendarCard: {
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-  },
-  calendarHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: Spacing.sm,
-  },
-  calendarDayLabel: {
-    fontSize: 12,
-    color: Colors.dark.textSecondary,
-    width: 32,
-    textAlign: 'center',
-  },
-  calendarGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-start',
-    gap: 8,
-  },
-  calendarDay: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  calendarDayActive: {
-    backgroundColor: '#FF6B6B',
-  },
-  calendarDayText: {
-    fontSize: 14,
-    color: Colors.dark.text,
-  },
-  calendarDayTextActive: {
-    color: '#FFF',
-    fontWeight: '700',
-  },
-  calendarMonthLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    textAlign: 'center',
-    marginBottom: Spacing.md,
-  },
-  calendarEmptyText: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    textAlign: 'center',
-    marginTop: Spacing.md,
-    fontStyle: 'italic',
-  },
-  muscleDistCard: {
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  muscleDistEmptyOverlayText: {
-    position: 'absolute',
-    bottom: Spacing.md,
-    fontSize: 12,
-    color: Colors.dark.textSecondary,
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
-  muscleBarRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: Spacing.sm,
-  },
-  muscleBarLabel: {
-    width: 50,
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-  },
-  muscleBarContainer: {
-    flex: 1,
-    height: 12,
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: 6,
-    marginHorizontal: Spacing.sm,
-    overflow: 'hidden',
-  },
-  muscleBarFill: {
-    height: '100%',
-    borderRadius: 6,
-  },
-  muscleBarValue: {
-    width: 40,
-    fontSize: 14,
-    fontWeight: '600',
-    color: Colors.dark.text,
-    textAlign: 'right',
-  },
-  infoIcon: {
-    padding: 4,
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.xl,
-  },
-  prModalContent: {
-    backgroundColor: '#FFF',
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.xl,
-    width: '100%',
-    alignItems: 'center',
-  },
-  prModalTitle: {
-    ...Typography.h3,
-    color: '#000',
-    marginBottom: Spacing.lg,
-  },
-  prModalItem: {
-    width: '100%',
-    alignItems: 'center',
-    marginBottom: Spacing.md,
-  },
-  prModalLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#000',
+    fontSize: 20,
     marginBottom: 4,
   },
-  prModalDescription: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    lineHeight: 20,
-    marginBottom: Spacing.sm,
-  },
-  prModalButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: BorderRadius.lg,
-    paddingVertical: Spacing.md,
-    width: '100%',
-    alignItems: 'center',
-    marginTop: Spacing.md,
-  },
-  prModalButtonText: {
-    color: '#FFF',
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  muscleDistEmpty: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-    gap: Spacing.md,
-  },
-  muscleDistEmptyText: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    textAlign: 'center',
-  },
-  recordsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.md,
-    marginTop: Spacing.md,
-  },
-  recordCard: {
-    flex: 1,
-    minWidth: "45%",
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-    gap: Spacing.xs,
-  },
-  recordValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.dark.text,
-  },
-  recordLabel: {
-    fontSize: 12,
+  statLabel: {
+    ...Typography.caption,
     color: Colors.dark.textSecondary,
     textAlign: "center",
   },
-  radarCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  radarContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: 300,
-    width: '100%',
-  },
-  radarWebContainer: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  radarWebLine: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 100,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.05)',
-    position: 'absolute',
-  },
-  radarPoint: {
-    position: 'absolute',
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: '#FF6B6B',
-    shadowColor: '#FF6B6B',
-    shadowRadius: 4,
-    shadowOpacity: 0.5,
-  },
-  radarLabels: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  radarLabelText: {
-    position: 'absolute',
-    fontSize: 10,
-    color: Colors.dark.textSecondary,
-    fontWeight: '600',
-    width: 60,
-    textAlign: 'center',
-    alignSelf: 'center',
-  },
-  radarLegend: {
-    flexDirection: 'row',
-    gap: Spacing.lg,
-    marginTop: Spacing.md,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  legendDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-  },
-  legendText: {
-    fontSize: 12,
-    color: Colors.dark.textSecondary,
-  },
-  settingsCard: {
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-  },
-  settingsRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: Spacing.md,
-  },
-  settingsRowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  settingsIconContainer: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.dark.accent + "20",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: Spacing.md,
-  },
-  settingsLabel: {
-    ...Typography.body,
-    color: Colors.dark.text,
-  },
-  settingsRowRight: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  settingsValue: {
-    ...Typography.body,
-    color: Colors.dark.textSecondary,
-  },
-  settingsDivider: {
-    height: 1,
-    backgroundColor: Colors.dark.border,
-    marginLeft: Spacing.md + 36 + Spacing.md,
-  },
-  settingRowContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
-  },
-  buttonTabContainer: {
-    flexDirection: "row",
-    gap: Spacing.xs,
-    flexShrink: 0,
-  },
-  buttonTab: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.sm,
-    backgroundColor: Colors.dark.border,
-    borderRadius: BorderRadius.sm,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-    minWidth: 40,
-    alignItems: "center",
-  },
-  buttonTabActive: {
-    backgroundColor: "#FF6B6B",
-    borderColor: "#FF6B6B",
-  },
-  buttonTabText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    fontWeight: "500",
-  },
-  buttonTabTextActive: {
-    color: "#FFF",
-    fontWeight: "600",
-  },
-  footer: {
-    alignItems: "center",
-    paddingVertical: Spacing.xl,
-  },
-  footerText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    marginBottom: 4,
-  },
-  footerSubtext: {
-    ...Typography.small,
-    fontSize: 10,
-    color: Colors.dark.textSecondary,
-    fontStyle: "italic",
-    opacity: 0.7,
-  },
-  proBadge: {
-    backgroundColor: "#FF6B6B20",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-  },
-  proBadgeText: {
-    ...Typography.small,
-    color: "#FFF",
-    fontWeight: "700" as const,
-    fontSize: 10,
-  },
-  legalLinksContainer: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  legalLink: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.md,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.dark.border,
-  },
-  legalLinkText: {
-    ...Typography.body,
-    color: "#FF6B6B",
-    fontWeight: "500",
-  },
-  healthSyncCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  healthSyncRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    padding: Spacing.md,
-  },
-  healthSyncRowLeft: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-  },
-  healthSyncIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: "rgba(255,255,255,0.05)",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
-  },
-  healthSyncIconActive: {
-    backgroundColor: `${HEALTH_SYNC_BLUE}20`,
-    borderColor: `${HEALTH_SYNC_BLUE}40`,
-  },
-  healthSyncSubtitle: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    marginTop: 2,
-  },
-  healthSyncToggle: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: "rgba(255,255,255,0.1)",
-    padding: 3,
-    justifyContent: "center",
-  },
-  healthSyncToggleActive: {
-    backgroundColor: HEALTH_SYNC_BLUE,
-  },
-  healthSyncToggleKnob: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "rgba(255,255,255,0.5)",
-  },
-  healthSyncToggleKnobActive: {
-    backgroundColor: "white",
-    alignSelf: "flex-end",
-  },
-  healthSyncSetupRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: Spacing.md,
-    gap: Spacing.xs,
-  },
-  healthSyncSetupText: {
-    ...Typography.body,
-    color: HEALTH_SYNC_BLUE,
-    fontWeight: "600",
-  },
   progressAnalyticsCard: {
-    marginHorizontal: Spacing.lg,
-    marginTop: Spacing.lg,
-    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.xl,
+    borderRadius: BorderRadius.xl,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: "rgba(255, 107, 107, 0.2)",
   },
   progressAnalyticsGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: Spacing.md,
+    padding: Spacing.lg,
   },
   progressAnalyticsLeft: {
     flexDirection: "row",
@@ -1601,61 +866,249 @@ const styles = StyleSheet.create({
   progressAnalyticsIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
-    backgroundColor: "rgba(255, 107, 107, 0.2)",
+    borderRadius: 12,
+    backgroundColor: "rgba(255, 107, 107, 0.1)",
     justifyContent: "center",
     alignItems: "center",
   },
   progressAnalyticsTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: Colors.dark.text,
+    ...Typography.h3,
+    fontSize: 18,
+    marginBottom: 2,
   },
   progressAnalyticsSubtitle: {
-    fontSize: 12,
+    ...Typography.caption,
     color: Colors.dark.textSecondary,
-    marginTop: 2,
   },
-  progressAnalyticsProBadge: {
-    backgroundColor: "rgba(157, 78, 221, 0.3)",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
-    borderRadius: BorderRadius.sm,
+  section: {
+    marginBottom: Spacing.xl,
   },
-  progressAnalyticsProText: {
-    fontSize: 10,
-    fontWeight: "700",
-    color: "#9D4EDD",
-    letterSpacing: 1,
-  },
-  stravaActivityRow: {
+  sectionHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: Spacing.md,
+    marginBottom: Spacing.md,
   },
-  stravaActivityLeft: {
+  sectionTitle: {
+    ...Typography.h3,
+    fontSize: 18,
+    color: Colors.dark.textSecondary,
+  },
+  streakBadge: {
     flexDirection: "row",
     alignItems: "center",
-    flex: 1,
-    gap: Spacing.md,
+    backgroundColor: "rgba(255, 107, 107, 0.1)",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 6,
   },
-  stravaActivityInfo: {
-    flex: 1,
+  streakBadgeText: {
+    ...Typography.caption,
+    color: "#FF6B6B",
+    fontWeight: "700",
   },
-  stravaActivityName: {
+  calendarCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+  },
+  calendarMonthLabel: {
+    ...Typography.h3,
+    fontSize: 16,
+    marginBottom: Spacing.md,
+  },
+  calendarHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: Spacing.sm,
+  },
+  calendarDayLabel: {
+    ...Typography.caption,
+    width: 35,
+    textAlign: "center",
+    color: Colors.dark.textSecondary,
+    fontWeight: "700",
+  },
+  calendarGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
+    gap: 12,
+  },
+  calendarDay: {
+    width: 35,
+    height: 35,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  calendarDayActive: {
+    backgroundColor: "#FF6B6B",
+  },
+  calendarDayText: {
+    ...Typography.caption,
+    fontSize: 12,
+  },
+  calendarDayTextActive: {
+    color: "#FFF",
+    fontWeight: "700",
+  },
+  calendarEmptyText: {
+    ...Typography.caption,
+    textAlign: "center",
+    color: Colors.dark.textSecondary,
+    marginTop: Spacing.md,
+    fontStyle: "italic",
+  },
+  muscleDistCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.lg,
+    alignItems: "center",
+    position: "relative",
+  },
+  radarContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  muscleDistEmptyOverlayText: {
+    ...Typography.caption,
+    position: "absolute",
+    bottom: Spacing.xl,
+    color: Colors.dark.textSecondary,
+    fontStyle: "italic",
+  },
+  settingsCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    borderRadius: BorderRadius.xl,
+    overflow: "hidden",
+  },
+  settingsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: Spacing.lg,
+  },
+  settingsRowLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  settingsIconContainer: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 107, 107, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  settingsLabel: {
     ...Typography.body,
-    color: Colors.dark.text,
     fontWeight: "600",
   },
-  stravaActivityMeta: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    marginTop: 2,
+  settingsRowRight: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  stravaActivityDate: {
-    ...Typography.small,
+  settingsValue: {
+    ...Typography.body,
     color: Colors.dark.textSecondary,
-    marginLeft: Spacing.sm,
+    marginRight: Spacing.xs,
+  },
+  settingsDivider: {
+    height: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.05)",
+    marginLeft: Spacing.lg + 36 + Spacing.md,
+  },
+  recordRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: Spacing.lg,
+  },
+  recordLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  recordIconContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: Spacing.md,
+  },
+  recordLabel: {
+    ...Typography.body,
+    fontWeight: "500",
+  },
+  recordValue: {
+    ...Typography.h3,
+    fontSize: 16,
+    color: "#FF6B6B",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.xl,
+  },
+  prModalContent: {
+    width: "100%",
+    backgroundColor: "#1A1A1A",
+    borderRadius: BorderRadius.xl,
+    padding: Spacing.xl,
+    borderWidth: 1,
+    borderColor: "rgba(255, 255, 255, 0.1)",
+  },
+  prModalTitle: {
+    ...Typography.h2,
+    marginBottom: Spacing.lg,
+    textAlign: "center",
+  },
+  prModalItem: {
+    marginBottom: Spacing.lg,
+  },
+  prModalLabel: {
+    ...Typography.h3,
+    fontSize: 18,
+    color: "#FF6B6B",
+    marginBottom: 4,
+  },
+  prModalDescription: {
+    ...Typography.body,
+    color: Colors.dark.textSecondary,
+    lineHeight: 20,
+  },
+  prModalCloseButton: {
+    backgroundColor: "#FF6B6B",
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    alignItems: "center",
+    marginTop: Spacing.md,
+  },
+  prModalCloseText: {
+    ...Typography.body,
+    fontWeight: "700",
+    color: "#FFF",
+  },
+  footer: {
+    alignItems: "center",
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.xl,
+  },
+  versionText: {
+    ...Typography.caption,
+    color: Colors.dark.textSecondary,
+    marginBottom: 4,
+  },
+  copyrightText: {
+    ...Typography.caption,
+    fontSize: 10,
+    color: Colors.dark.textSecondary,
+    opacity: 0.5,
   },
 });

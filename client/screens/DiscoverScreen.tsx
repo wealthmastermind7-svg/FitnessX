@@ -7,7 +7,6 @@ import {
   Animated,
   Dimensions,
   Image,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -17,21 +16,14 @@ import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
 import { BlurView } from "expo-blur";
-import polyline from "@mapbox/polyline";
 
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import ReadinessWidget from "@/components/ReadinessWidget";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
 import type { RootStackParamList, Workout } from "@/navigation/RootStackNavigator";
 import { Image as ExpoImage } from "expo-image";
-import { useStrava } from "@/lib/strava";
-import Svg, { Polyline as SvgPolyline } from "react-native-svg";
-
-import CommunityFeedScreen from "./CommunityFeedScreen";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -52,17 +44,6 @@ const MUSCLE_GROUPS = [
   "Cardio",
 ];
 
-const CATEGORIES = [
-  "strength",
-  "cardio",
-  "mobility",
-  "balance",
-  "stretching",
-  "plyometrics",
-  "rehabilitation",
-];
-
-// Hardcoded muscle group images
 const muscleGroupImages: Record<string, any> = {
   "Chest": require("../assets/muscle-groups/chest.jpeg"),
   "Back": require("../assets/muscle-groups/back.jpeg"),
@@ -157,7 +138,6 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
     navigation.navigate("ExerciseBrowser", { filterByMuscle: muscle });
   };
 
-  // Gradient colors for fallback background
   const gradientColors = [
     ["#FF6B6B", "#FF8C8C"],
     ["#4ECDC4", "#6FE4DD"],
@@ -195,7 +175,6 @@ function MuscleCard({ muscle, index, navigation }: { muscle: string; index: numb
           contentFit="contain"
           onLoad={() => setImageLoaded(true)}
           onError={() => {
-            console.log(`Failed to load image for ${muscle}`);
             setImageLoaded(false);
           }}
         />
@@ -259,125 +238,13 @@ function WorkoutCard({ workout, onPress }: { workout: typeof POPULAR_WORKOUTS[0]
   );
 }
 
-function StravaActivityMapCard({ activity }: { activity: any }) {
-  const MAP_WIDTH = SCREEN_WIDTH * 0.7;
-  const MAP_HEIGHT = 120;
-  
-  const decodeAndNormalize = () => {
-    if (!activity.map?.summary_polyline) return null;
-    
-    try {
-      const decoded = polyline.decode(activity.map.summary_polyline);
-      if (decoded.length < 2) return null;
-      
-      const lats = decoded.map(([lat]) => lat);
-      const lngs = decoded.map(([, lng]) => lng);
-      const minLat = Math.min(...lats);
-      const maxLat = Math.max(...lats);
-      const minLng = Math.min(...lngs);
-      const maxLng = Math.max(...lngs);
-      
-      const padding = 10;
-      const width = MAP_WIDTH - padding * 2;
-      const height = MAP_HEIGHT - padding * 2;
-      
-      const points = decoded.map(([lat, lng]) => {
-        const x = padding + ((lng - minLng) / (maxLng - minLng || 1)) * width;
-        const y = padding + ((maxLat - lat) / (maxLat - minLat || 1)) * height;
-        return `${x},${y}`;
-      }).join(' ');
-      
-      return points;
-    } catch (e) {
-      return null;
-    }
-  };
-  
-  const pathPoints = decodeAndNormalize();
-  
-  const sportIcon = activity.sport_type === 'Run' ? 'wind' : 
-                    activity.sport_type === 'Ride' ? 'compass' : 
-                    activity.sport_type === 'Swim' ? 'droplet' : 'activity';
-  
-  return (
-    <View style={styles.stravaMapCard}>
-      <View style={styles.stravaMapContainer}>
-        {pathPoints ? (
-          <Svg width={MAP_WIDTH} height={MAP_HEIGHT}>
-            <SvgPolyline
-              points={pathPoints}
-              fill="none"
-              stroke="#FC4C02"
-              strokeWidth="3"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </Svg>
-        ) : (
-          <View style={styles.stravaMapPlaceholder}>
-            <Feather name={sportIcon} size={32} color="#FC4C02" />
-          </View>
-        )}
-      </View>
-      <View style={styles.stravaMapInfo}>
-        <ThemedText style={styles.stravaMapName} numberOfLines={1}>{activity.name}</ThemedText>
-        <View style={styles.stravaMapStats}>
-          <View style={styles.stravaMapStat}>
-            <Feather name="map-pin" size={12} color="#FC4C02" />
-            <ThemedText style={styles.stravaMapStatText}>{(activity.distance / 1000).toFixed(1)}km</ThemedText>
-          </View>
-          <View style={styles.stravaMapStat}>
-            <Feather name="clock" size={12} color={Colors.dark.textSecondary} />
-            <ThemedText style={styles.stravaMapStatText}>{Math.floor(activity.moving_time / 60)}min</ThemedText>
-          </View>
-          {activity.total_elevation_gain > 0 && (
-            <View style={styles.stravaMapStat}>
-              <Feather name="trending-up" size={12} color={Colors.dark.textSecondary} />
-              <ThemedText style={styles.stravaMapStatText}>{Math.round(activity.total_elevation_gain)}m</ThemedText>
-            </View>
-          )}
-        </View>
-      </View>
-    </View>
-  );
-}
-
 export default function DiscoverScreen() {
   const insets = useSafeAreaInsets();
   const tabBarHeight = useBottomTabBarHeight();
   const scrollY = useRef(new Animated.Value(0)).current;
   const navigation = useNavigation<NavigationProp>();
-  const { isConnected: isStravaConnected, activities: stravaActivities, isLoading: isStravaLoading } = useStrava();
-
-  // Demo activities to show when not connected or no activities
-  const demoActivities = [
-    {
-      id: 'demo-1',
-      name: 'Morning Coastal Run',
-      sport_type: 'Run',
-      distance: 8500,
-      moving_time: 2700,
-      total_elevation_gain: 45,
-      map: {
-        summary_polyline: '|_~iFv~uVGY_@c@u@w@mAgAmBeBoCcCwDqDsEiEmFiFmGiGqHiHqIiIiJiJkKkKmLiLmMiMmNiNmOiOmPiPmQiQmRiRmSiSmTiTmUiUmViVmWiWmXiXmYiYmZiZm[i[m\\i\\m]i]m^i^m_i_m`i`maia'
-      }
-    },
-    {
-      id: 'demo-2',
-      name: 'Mountain Peak Climb',
-      sport_type: 'Ride',
-      distance: 25400,
-      moving_time: 5400,
-      total_elevation_gain: 850,
-      map: {
-        summary_polyline: 's_~iFv~uV_@c@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@_@u@_@w@'
-      }
-    }
-  ];
-
-  const displayActivities = isStravaConnected && stravaActivities.length > 0 ? stravaActivities : demoActivities;
-
-  const { data: generatedWorkouts, isLoading } = useQuery<Workout[]>({
+  
+  const { data: generatedWorkouts } = useQuery<Workout[]>({
     queryKey: ["/api/workouts"],
   });
 
@@ -397,14 +264,6 @@ export default function DiscoverScreen() {
     navigation.navigate("WorkoutDetail", { workout });
   }, [navigation]);
 
-  const parallaxTransform = scrollY.interpolate({
-    inputRange: [-100, 0, 200],
-    outputRange: [50, 0, -100],
-    extrapolate: "clamp",
-  });
-
-  console.log("Strava State:", { isStravaConnected, activitiesCount: stravaActivities.length, isStravaLoading });
-
   return (
     <ThemedView style={styles.container}>
       <Animated.ScrollView
@@ -419,7 +278,6 @@ export default function DiscoverScreen() {
           { useNativeDriver: true }
         )}
       >
-        {/* Premium Food Analysis Highlight */}
         <View style={styles.premiumHighlightContainer}>
           <Pressable
             onPress={() => {
@@ -449,7 +307,6 @@ export default function DiscoverScreen() {
                 </View>
               </View>
 
-              {/* Floating Result Bubbles - Removed static values that don't match scan results */}
               <BlurView intensity={60} tint="dark" style={[styles.resultBubble, { top: '15%', right: '-5%' }]}>
                 <Feather name="activity" size={24} color="#FF6B6B" />
                 <ThemedText style={styles.resultBubbleLabel}>STATS</ThemedText>
@@ -463,41 +320,6 @@ export default function DiscoverScreen() {
         </View>
 
         <ReadinessWidget />
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <View style={styles.stravaSectionTitle}>
-              <Feather name="compass" size={18} color="#FC4C02" />
-              <ThemedText style={[styles.sectionTitle, { color: "#FC4C02" }]}>
-                {isStravaConnected && stravaActivities.length > 0 ? "Strava Activities" : "Strava Performance"}
-              </ThemedText>
-            </View>
-            <Pressable
-              onPress={() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                navigation.navigate("Main", { screen: "Profile" } as any);
-              }}
-            >
-              <ThemedText style={styles.seeAllText}>
-                {isStravaConnected ? "See All" : "Connect"}
-              </ThemedText>
-            </Pressable>
-          </View>
-          {!isStravaConnected && (
-            <ThemedText style={[styles.stravaMapStatText, { marginLeft: Spacing.lg, marginBottom: Spacing.sm }]}>
-              Sync your runs and rides to see interactive maps and stats
-            </ThemedText>
-          )}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScroll}
-          >
-            {displayActivities.slice(0, 5).map((activity) => (
-              <StravaActivityMapCard key={activity.id} activity={activity} />
-            ))}
-          </ScrollView>
-        </View>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -526,7 +348,6 @@ export default function DiscoverScreen() {
           decelerationRate="fast"
           snapToInterval={SCREEN_WIDTH * 0.85 + Spacing.md}
         >
-          {/* Micro-Habits Card */}
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -566,7 +387,6 @@ export default function DiscoverScreen() {
             </View>
           </Pressable>
 
-          {/* AI Coach Card */}
           <Pressable
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -603,173 +423,23 @@ export default function DiscoverScreen() {
               </View>
             </View>
           </Pressable>
-
-          {/* Generate Workout Plan Card */}
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Main", { screen: "Workout" } as any);
-            }}
-            style={({ pressed }) => [
-              styles.aiChatCard,
-              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
-              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
-            ]}
-          >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
-              <View style={styles.exerciseLibraryContent}>
-                <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
-                    <Feather name="zap" size={14} color="#9D4EDD" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
-                      PRO
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.exerciseLibraryTitle}>
-                    Generate Plan
-                  </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
-                    Create a personalized multi-week training program
-                  </ThemedText>
-                </View>
-                <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
-                    <Feather name="calendar" size={32} color="#9D4EDD" />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#9D4EDD" />
-              </View>
-            </View>
-          </Pressable>
-
-          {/* Nutrition Advice Card */}
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("Main", { screen: "AI" } as any);
-            }}
-            style={({ pressed }) => [
-              styles.aiChatCard,
-              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
-              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
-            ]}
-          >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#2C124B', height: '100%' }]}>
-              <View style={styles.exerciseLibraryContent}>
-                <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.15)" }]}>
-                    <Feather name="zap" size={14} color="#9D4EDD" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#9D4EDD" }]}>
-                      PRO
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.exerciseLibraryTitle}>
-                    Nutrition Advice
-                  </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.7)" }]}>
-                    Get personalized nutrition recommendations for your goals
-                  </ThemedText>
-                </View>
-                <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(157, 78, 221, 0.2)', borderWidth: 0 }]}>
-                    <Feather name="heart" size={32} color="#9D4EDD" />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#9D4EDD" />
-              </View>
-            </View>
-          </Pressable>
-
-          {/* Micro-Habits Autopilot Card */}
-          <Pressable
-            onPress={() => {
-              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-              navigation.navigate("MicroHabits");
-            }}
-            style={({ pressed }) => [
-              styles.aiChatCard,
-              { width: SCREEN_WIDTH * 0.85, marginBottom: 0 },
-              pressed && { opacity: 0.9, transform: [{ scale: 0.99 }] },
-            ]}
-          >
-            <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
-              <View style={styles.exerciseLibraryContent}>
-                <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <Feather name="coffee" size={14} color="#FFF" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
-                      NEW
-                    </ThemedText>
-                  </View>
-                  <ThemedText style={styles.exerciseLibraryTitle}>
-                    Micro-Habits
-                  </ThemedText>
-                  <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.85)" }]}>
-                    30-90 sec movements triggered by daily moments
-                  </ThemedText>
-                </View>
-                <View style={styles.exerciseLibraryPreview}>
-                  <View style={[styles.previewCard, { backgroundColor: 'rgba(255,255,255,0.2)', borderWidth: 0 }]}>
-                    <Feather name="clock" size={32} color="#FFF" />
-                  </View>
-                </View>
-              </View>
-              <View style={styles.exerciseLibraryArrow}>
-                <Feather name="arrow-right" size={20} color="#FFF" />
-              </View>
-            </View>
-          </Pressable>
         </ScrollView>
 
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Categories</ThemedText>
-          </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.horizontalScroll}
-          >
-            {CATEGORIES.map((category, index) => (
-              <Pressable
-                key={category}
-                onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                  navigation.navigate("ExerciseBrowser", { filterByCategory: category });
-                }}
-                style={({ pressed }) => [
-                  styles.categoryCard,
-                  pressed && { opacity: 0.8 }
-                ]}
-              >
-                <BlurView intensity={40} tint="dark" style={styles.categoryBlur}>
-                  <ThemedText style={styles.categoryName}>{category}</ThemedText>
-                </BlurView>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Muscle Groups</ThemedText>
+            <ThemedText style={styles.sectionTitle}>Exercise Library</ThemedText>
+            <Feather name="chevron-right" size={20} color={Colors.dark.textSecondary} />
           </View>
           <View style={styles.muscleGrid}>
             {MUSCLE_GROUPS.map((muscle, index) => (
-              <MuscleCard key={muscle} muscle={muscle} index={index} navigation={navigation} />
+              <MuscleCard
+                key={muscle}
+                muscle={muscle}
+                index={index}
+                navigation={navigation}
+              />
             ))}
           </View>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>Community Activity</ThemedText>
-          </View>
-          <CommunityFeedScreen isNested={true} />
         </View>
       </Animated.ScrollView>
     </ThemedView>
@@ -779,141 +449,87 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
   },
   scrollContent: {
-    paddingHorizontal: Spacing.lg,
-  },
-  heroSection: {
-    marginBottom: Spacing.xxl,
-    paddingTop: Spacing.lg,
-  },
-  heroTagline: {
-    fontSize: 12,
-    fontWeight: "600",
-    letterSpacing: 2,
-    color: Colors.dark.accent,
-    marginBottom: Spacing.xs,
-  },
-  heroTitle: {
-    fontSize: 48,
-    fontWeight: "800",
-    color: Colors.dark.text,
-    marginBottom: Spacing.sm,
-    letterSpacing: -1,
-    lineHeight: 60,
-  },
-  heroSubtitle: {
-    fontSize: 16,
-    color: Colors.dark.textSecondary,
-    fontWeight: "400",
-    lineHeight: 24,
+    paddingBottom: Spacing.xl,
   },
   premiumHighlightContainer: {
-    alignItems: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: Spacing.xl,
-    paddingHorizontal: Spacing.lg,
+    height: 340,
   },
   premiumCirclePressable: {
-    width: SCREEN_WIDTH * 0.75,
-    aspectRatio: 1,
+    width: 280,
+    height: 280,
+    borderRadius: 140,
+    overflow: "visible",
   },
   premiumCircleOuter: {
-    width: '100%',
-    height: '100%',
-    borderRadius: SCREEN_WIDTH * 0.4,
-    overflow: 'visible',
-    backgroundColor: '#1A1A1A',
-    borderWidth: 4,
-    borderColor: '#FF6B6B',
-    shadowColor: '#FF6B6B',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 20,
-    elevation: 10,
-    position: 'relative',
+    width: "100%",
+    height: "100%",
+    borderRadius: 140,
+    overflow: "hidden",
+    position: "relative",
+    borderWidth: 8,
+    borderColor: "rgba(255, 107, 107, 0.3)",
+    backgroundColor: "#000",
   },
   premiumCircleImage: {
-    width: '100%',
-    height: '100%',
-    borderRadius: SCREEN_WIDTH * 0.4,
+    ...StyleSheet.absoluteFillObject,
     opacity: 0.8,
   },
   premiumCircleGradient: {
     ...StyleSheet.absoluteFillObject,
-    borderRadius: SCREEN_WIDTH * 0.4,
   },
   premiumCircleContent: {
     ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: Spacing.lg,
-  },
-  premiumBadge: {
-    display: 'none',
-    position: 'absolute',
-    top: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#FF6B6B',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 20,
-    gap: 4,
-  },
-  premiumBadgeText: {
-    fontSize: 12,
-    fontWeight: '800',
-    color: 'white',
+    justifyContent: "center",
+    alignItems: "center",
+    padding: Spacing.xl,
   },
   premiumCircleTitle: {
+    ...Typography.h2,
+    color: "#FFF",
+    textAlign: "center",
     fontSize: 28,
-    fontWeight: '900',
-    color: 'white',
-    textAlign: 'center',
-    textShadowColor: 'rgba(0,0,0,0.5)',
+    marginBottom: Spacing.md,
+    textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
-    marginBottom: Spacing.md,
   },
   premiumScanIndicator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 24,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FF6B6B",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 25,
     gap: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
   },
   premiumScanText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: 'white',
+    ...Typography.caption,
+    color: "#FFF",
+    fontWeight: "900",
     letterSpacing: 1,
   },
   resultBubble: {
-    position: 'absolute',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: "absolute",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    justifyContent: "center",
+    alignItems: "center",
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.2)',
-    overflow: 'hidden',
-  },
-  resultBubbleValue: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: '#FF6B6B',
+    borderColor: "rgba(255,255,255,0.2)",
+    overflow: "hidden",
   },
   resultBubbleLabel: {
+    ...Typography.caption,
     fontSize: 10,
-    fontWeight: '600',
-    color: 'white',
-    opacity: 0.8,
+    marginTop: 4,
+    color: "#FF6B6B",
+    fontWeight: "800",
   },
   section: {
     marginBottom: Spacing.xl,
@@ -922,137 +538,109 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: Colors.dark.text,
-    letterSpacing: -0.3,
+    ...Typography.h3,
+    fontSize: 20,
   },
   horizontalScroll: {
+    paddingLeft: Spacing.lg,
     paddingRight: Spacing.lg,
-    gap: Spacing.md,
+  },
+  muscleGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    paddingHorizontal: Spacing.md,
+    justifyContent: "space-between",
+  },
+  muscleCard: {
+    width: (SCREEN_WIDTH - Spacing.md * 2 - Spacing.md * 2) / 2,
+    height: 120,
+    backgroundColor: Colors.dark.card,
+    borderRadius: BorderRadius.lg,
+    marginBottom: Spacing.md,
+    overflow: "hidden",
+    marginHorizontal: Spacing.xs,
+  },
+  muscleImage: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  muscleGradient: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "flex-end",
+    padding: Spacing.md,
+  },
+  muscleName: {
+    ...Typography.body,
+    fontWeight: "700",
+    color: "#FFF",
   },
   workoutCard: {
     width: SCREEN_WIDTH * 0.7,
-    borderRadius: BorderRadius.lg,
+    height: 160,
+    marginRight: Spacing.md,
+    borderRadius: BorderRadius.xl,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
   },
   workoutCardBlur: {
+    flex: 1,
     padding: Spacing.lg,
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
+    justifyContent: "space-between",
   },
   workoutCardHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    marginBottom: Spacing.sm,
-    gap: Spacing.sm,
   },
   workoutCardTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.dark.text,
-    letterSpacing: -0.3,
+    ...Typography.h3,
+    fontSize: 18,
     flex: 1,
-    flexWrap: "wrap",
+    marginRight: Spacing.sm,
   },
   difficultyBadge: {
-    backgroundColor: Colors.dark.accent + "20",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.xs,
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
   },
   difficultyText: {
-    ...Typography.small,
-    color: Colors.dark.accent,
-    fontWeight: "600",
+    ...Typography.caption,
+    fontSize: 10,
+    fontWeight: "700",
   },
   workoutCardDescription: {
     ...Typography.body,
+    fontSize: 13,
     color: Colors.dark.textSecondary,
-    marginBottom: Spacing.md,
   },
   workoutCardMuscles: {
     flexDirection: "row",
-    flexWrap: "wrap",
     gap: Spacing.xs,
   },
   musclePill: {
-    backgroundColor: Colors.dark.backgroundSecondary,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
+    backgroundColor: "rgba(255, 107, 107, 0.2)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 6,
   },
   musclePillText: {
-    ...Typography.small,
-    color: Colors.dark.text,
-  },
-  muscleGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    gap: Spacing.md,
-  },
-  categoryCard: {
-    width: 140,
-    borderRadius: BorderRadius.md,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-  },
-  categoryBlur: {
-    padding: Spacing.md,
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  categoryName: {
-    fontSize: 14,
+    ...Typography.caption,
+    fontSize: 10,
+    color: "#FF6B6B",
     fontWeight: "600",
-    color: Colors.dark.text,
-    textTransform: 'capitalize',
   },
-  muscleCard: {
-    width: (SCREEN_WIDTH - Spacing.lg * 2 - Spacing.md) / 2,
-    aspectRatio: 1,
-    backgroundColor: 'rgba(30, 30, 40, 0.7)',
-    borderRadius: BorderRadius.lg,
+  aiChatCard: {
+    height: 180,
+    borderRadius: BorderRadius.xl,
     overflow: "hidden",
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 107, 0.15)',
-  },
-  muscleImage: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-  },
-  muscleGradient: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: Spacing.md,
-    justifyContent: "flex-end",
-    height: "50%",
-  },
-  muscleName: {
-    fontSize: 18,
-    fontWeight: "700",
-    color: Colors.dark.text,
-    letterSpacing: -0.2,
-  },
-  exerciseLibraryCard: {
     marginBottom: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
   },
   exerciseLibraryGradient: {
-    padding: Spacing.lg,
+    padding: Spacing.xl,
+    position: "relative",
   },
   exerciseLibraryContent: {
     flexDirection: "row",
@@ -1066,29 +654,26 @@ const styles = StyleSheet.create({
   exerciseLibraryBadge: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.xs,
-    backgroundColor: Colors.dark.accent + "20",
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.full,
     alignSelf: "flex-start",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
     marginBottom: Spacing.sm,
   },
   exerciseLibraryBadgeText: {
-    ...Typography.small,
-    color: Colors.dark.accent,
-    fontWeight: "600",
+    ...Typography.caption,
+    fontWeight: "800",
+    fontSize: 10,
   },
   exerciseLibraryTitle: {
-    fontSize: 24,
-    fontWeight: "700",
-    color: Colors.dark.text,
-    marginBottom: Spacing.xs,
-    letterSpacing: -0.3,
+    ...Typography.h2,
+    color: "#FFF",
+    marginBottom: 4,
   },
   exerciseLibrarySubtitle: {
     ...Typography.body,
-    color: Colors.dark.textSecondary,
+    fontSize: 14,
   },
   exerciseLibraryPreview: {
     width: 80,
@@ -1096,121 +681,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  previewStack: {
+  previewCard: {
     width: 60,
     height: 60,
-    position: "relative",
-  },
-  previewCard: {
-    position: "absolute",
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.md,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(255,255,255,0.1)",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  previewCard1: {
-    top: 0,
-    left: 0,
-    zIndex: 2,
-  },
-  previewCard2: {
-    bottom: 0,
-    right: 0,
-    zIndex: 1,
-    backgroundColor: "#9D4EDD20",
   },
   exerciseLibraryArrow: {
     position: "absolute",
-    right: Spacing.lg,
     bottom: Spacing.lg,
-  },
-  aiChatCard: {
-    marginBottom: Spacing.xl,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-  },
-  socialRow: {
-    flexDirection: "row",
-    gap: Spacing.md,
-  },
-  socialCard: {
-    flex: 1,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    borderWidth: 1,
-    borderColor: Colors.dark.border,
-  },
-  socialCardGradient: {
-    padding: Spacing.lg,
-    alignItems: "center",
-  },
-  socialCardTitle: {
-    ...Typography.body,
-    color: Colors.dark.text,
-    fontWeight: "600",
-    marginTop: Spacing.sm,
-  },
-  socialCardSubtitle: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
-    marginTop: Spacing.xs,
-  },
-  stravaSectionTitle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-  },
-  seeAllText: {
-    ...Typography.small,
-    color: "#FC4C02",
-    fontWeight: "600",
-  },
-  stravaMapCard: {
-    width: SCREEN_WIDTH * 0.7,
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: BorderRadius.lg,
-    overflow: "hidden",
-    marginRight: Spacing.md,
-    borderWidth: 1,
-    borderColor: "rgba(252, 76, 2, 0.2)",
-  },
-  stravaMapContainer: {
-    height: 120,
-    backgroundColor: "rgba(252, 76, 2, 0.05)",
+    right: Spacing.lg,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "rgba(255,255,255,0.1)",
     justifyContent: "center",
     alignItems: "center",
-  },
-  stravaMapPlaceholder: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(252, 76, 2, 0.08)",
-  },
-  stravaMapInfo: {
-    padding: Spacing.md,
-  },
-  stravaMapName: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: Colors.dark.text,
-    marginBottom: Spacing.xs,
-  },
-  stravaMapStats: {
-    flexDirection: "row",
-    gap: Spacing.md,
-  },
-  stravaMapStat: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-  stravaMapStatText: {
-    ...Typography.small,
-    color: Colors.dark.textSecondary,
   },
 });

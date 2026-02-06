@@ -13,7 +13,6 @@ import RootStackNavigator from "@/navigation/RootStackNavigator";
 import OnboardingStackNavigator from "@/navigation/OnboardingStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { RevenueCatProvider } from "@/lib/revenuecat";
-import { StravaProvider } from "@/lib/strava";
 import { OnboardingProvider, useOnboarding } from "@/contexts/OnboardingContext";
 import { Colors } from "@/constants/theme";
 
@@ -43,8 +42,7 @@ export default function App() {
     <ErrorBoundary>
       <OnboardingProvider>
         <RevenueCatProvider>
-          <StravaProvider>
-            <QueryClientProvider client={queryClient}>
+          <QueryClientProvider client={queryClient}>
               <SafeAreaProvider>
                 <GestureHandlerRootView style={styles.root}>
                   <KeyboardProvider>
@@ -54,7 +52,6 @@ export default function App() {
                 </GestureHandlerRootView>
               </SafeAreaProvider>
             </QueryClientProvider>
-          </StravaProvider>
         </RevenueCatProvider>
       </OnboardingProvider>
     </ErrorBoundary>
