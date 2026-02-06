@@ -116,8 +116,8 @@ export default function OnboardingProgressScreen() {
     navigation.navigate("OnboardingFoodPlate" as never);
   };
 
-  const handleSkip = () => {
-    completeOnboarding();
+  const handleSkip = async () => {
+    await completeOnboarding();
   };
 
   return (

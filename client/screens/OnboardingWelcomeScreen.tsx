@@ -33,9 +33,9 @@ export default function OnboardingWelcomeScreen() {
     navigation.navigate("OnboardingDiscover" as never);
   };
 
-  const handleSkip = () => {
+  const handleSkip = async () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    completeOnboarding();
+    await completeOnboarding();
   };
 
   return (

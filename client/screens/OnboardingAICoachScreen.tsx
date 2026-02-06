@@ -24,11 +24,11 @@ export default function OnboardingAICoachScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingWorkout");
+    navigation.navigate("OnboardingWorkout" as never);
   };
 
-  const handleSkip = () => {
-    completeOnboarding();
+  const handleSkip = async () => {
+    await completeOnboarding();
   };
 
   return (

@@ -39,8 +39,8 @@ export default function OnboardingDiscoverScreen() {
     navigation.goBack();
   };
 
-  const handleSkip = () => {
-    completeOnboarding();
+  const handleSkip = async () => {
+    await completeOnboarding();
   };
 
   return (

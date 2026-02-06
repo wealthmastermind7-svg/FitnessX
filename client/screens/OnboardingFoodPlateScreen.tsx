@@ -24,11 +24,11 @@ export default function OnboardingFoodPlateScreen() {
   const { completeOnboarding } = useOnboarding();
 
   const handleNext = () => {
-    navigation.navigate("OnboardingAICoach");
+    navigation.navigate("OnboardingAICoach" as never);
   };
 
-  const handleSkip = () => {
-    completeOnboarding();
+  const handleSkip = async () => {
+    await completeOnboarding();
   };
 
   return (
