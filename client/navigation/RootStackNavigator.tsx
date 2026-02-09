@@ -205,6 +205,8 @@ export default function RootStackNavigator() {
           headerShown: false,
         }}
       />
+      {/* HealthSync Screen Hidden */}
+      {/*
       <Stack.Screen
         name="HealthSync"
         component={HealthSyncScreen}
@@ -213,6 +215,7 @@ export default function RootStackNavigator() {
           headerShown: false,
         }}
       />
+      */}
       <Stack.Screen
         name="PlateCalculator"
         component={PlateCalculatorScreen}

@@ -335,6 +335,8 @@ export default function ReadinessWidget() {
           </View>
         )}
         
+        {/* Health Sync Section Hidden */}
+        {/*
         <Pressable
           onPress={() => {
             Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -352,6 +354,7 @@ export default function ReadinessWidget() {
             <ThemedText style={styles.syncButtonText}>Sync Health Data</ThemedText>
           </LinearGradient>
         </Pressable>
+        */}
       </View>
     </Animated.View>
   );

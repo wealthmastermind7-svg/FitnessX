@@ -744,6 +744,8 @@ export default function ProfileScreen() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Data & Connectivity</ThemedText>
           <View style={styles.settingsCard}>
+            {/* Health Sync Hidden */}
+            {/*
             <SettingsRow
               icon="activity"
               label="Health Sync"
@@ -753,6 +755,7 @@ export default function ProfileScreen() {
               }}
             />
             <View style={styles.settingsDivider} />
+            */}
             <SettingsRow
               icon="trash-2"
               label="Clear All Data"
