@@ -557,7 +557,7 @@ export default function ProfileScreen() {
               <View style={styles.progressAnalyticsIcon}>
                 <Feather name="trending-up" size={24} color="#FF6B6B" />
               </View>
-              <View>
+              <View style={styles.progressAnalyticsContent}>
                 <ThemedText style={styles.progressAnalyticsTitle}>Progress Analytics</ThemedText>
                 <ThemedText style={styles.progressAnalyticsSubtitle}>Track your strength gains over time</ThemedText>
               </View>
@@ -873,6 +873,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 107, 107, 0.1)",
     justifyContent: "center",
     alignItems: "center",
+    flexShrink: 0,
+  },
+  progressAnalyticsContent: {
+    flex: 1,
   },
   progressAnalyticsTitle: {
     ...Typography.h3,
