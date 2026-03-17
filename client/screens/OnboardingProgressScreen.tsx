@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     color: "#666",
     textAlign: "center",
     lineHeight: 22,
-    maxWidth: 300,
+    maxWidth: "90%",
     marginBottom: Spacing.lg,
   },
   progressDots: {
