@@ -454,6 +454,11 @@ export default function AIHubScreen() {
   const renderNutritionResult = () => {
     if (!showNutritionResult || !nutritionResult) return null;
     const nutrition = nutritionResult;
+    
+    const calorieValue = nutrition.calories || nutrition.calories_per_day;
+    const macros = nutrition.macros || nutrition.macronutrients;
+    const advice = nutrition.advice || nutrition.description;
+    
     return (
       <View style={styles.modalOverlay}>
         <View style={styles.resultContent}>
@@ -467,49 +472,47 @@ export default function AIHubScreen() {
             </Pressable>
           </View>
           <ScrollView showsVerticalScrollIndicator={false}>
-            {nutrition.description ? (
-              <View style={styles.nutritionCard}>
-                <ThemedText style={styles.nutritionDesc}>{nutrition.description}</ThemedText>
-                
+            <View style={styles.nutritionCard}>
+              {advice && (
+                <View style={styles.adviceSection}>
+                  <ThemedText style={styles.sectionTitle}>Advice</ThemedText>
+                  <ThemedText style={styles.nutritionDesc}>{advice}</ThemedText>
+                </View>
+              )}
+              
+              {calorieValue && (
                 <View style={styles.macrosGrid}>
                   <View style={styles.macroItem}>
-                    <ThemedText style={styles.macroValue}>{nutrition.calories_per_day}</ThemedText>
+                    <ThemedText style={styles.macroValue}>{calorieValue}</ThemedText>
                     <ThemedText style={styles.macroLabel}>Daily Calories</ThemedText>
                   </View>
                 </View>
+              )}
 
-                {nutrition.macronutrients && (
-                  <View style={styles.macrosBreakdown}>
-                    <ThemedText style={styles.sectionTitle}>Macronutrients</ThemedText>
+              {macros && (
+                <View style={styles.macrosBreakdown}>
+                  <ThemedText style={styles.sectionTitle}>Macronutrients</ThemedText>
+                  {(macros.carbs || macros.carbohydrates) && (
                     <View style={styles.macroRow}>
                       <ThemedText style={styles.macroRowLabel}>Carbs</ThemedText>
-                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.carbohydrates}</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{macros.carbs || macros.carbohydrates}</ThemedText>
                     </View>
+                  )}
+                  {(macros.protein || macros.proteins) && (
                     <View style={styles.macroRow}>
                       <ThemedText style={styles.macroRowLabel}>Protein</ThemedText>
-                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.proteins}</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{macros.protein || macros.proteins}</ThemedText>
                     </View>
+                  )}
+                  {(macros.fats || macros.fat) && (
                     <View style={styles.macroRow}>
                       <ThemedText style={styles.macroRowLabel}>Fats</ThemedText>
-                      <ThemedText style={styles.macroRowValue}>{nutrition.macronutrients.fats}</ThemedText>
+                      <ThemedText style={styles.macroRowValue}>{macros.fats || macros.fat}</ThemedText>
                     </View>
-                  </View>
-                )}
-
-                {nutrition.advice && (
-                  <View style={styles.adviceSection}>
-                    <ThemedText style={styles.sectionTitle}>Key Advice</ThemedText>
-                    <ThemedText style={styles.resultText}>{nutrition.advice}</ThemedText>
-                  </View>
-                )}
-              </View>
-            ) : (
-              <ThemedText style={styles.resultText}>
-                {typeof nutrition === "string" 
-                  ? nutrition 
-                  : JSON.stringify(nutrition, null, 2)}
-              </ThemedText>
-            )}
+                  )}
+                </View>
+              )}
+            </View>
           </ScrollView>
         </View>
       </View>
