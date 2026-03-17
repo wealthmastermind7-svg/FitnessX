@@ -56,7 +56,7 @@ export default function OnboardingWorkoutScreen() {
               <Feather name="wifi" size={14} color="#333" />
               <Feather name="battery" size={14} color="#333" />
             </View>
-            <Pressable onPress={handleSkip} style={styles.skipButton}>
+            <Pressable onPress={handleSkip} hitSlop={10} style={styles.skipButton}>
               <View style={styles.moonIcon}>
                 <Feather name="moon" size={16} color="#333" />
               </View>
@@ -136,6 +136,7 @@ export default function OnboardingWorkoutScreen() {
 
         <Pressable
           onPress={handleGetStarted}
+          hitSlop={10}
           style={({ pressed }) => [
             styles.primaryButton,
             pressed && styles.buttonPressed,
