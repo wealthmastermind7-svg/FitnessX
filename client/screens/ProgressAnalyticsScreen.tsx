@@ -19,7 +19,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { Colors, Spacing, BorderRadius, Typography } from "@/constants/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const CHART_WIDTH = SCREEN_WIDTH - Spacing.lg * 4;
+const CHART_WIDTH = Math.max(200, SCREEN_WIDTH - Spacing.lg * 4 - 70); // Account for padding and Y-axis labels
 const CHART_HEIGHT = 180;
 
 interface ExerciseProgress {
@@ -127,7 +127,8 @@ function ProgressChart({ data, color }: { data: { date: string; weight: number }
         <ThemedText style={styles.axisLabel}>{Math.round((maxWeight + minWeight) / 2)} kg</ThemedText>
         <ThemedText style={styles.axisLabel}>{minWeight} kg</ThemedText>
       </View>
-      <Svg width={CHART_WIDTH} height={CHART_HEIGHT + 30}>
+      <View style={styles.chartSvgWrapper}>
+        <Svg width={CHART_WIDTH} height={CHART_HEIGHT + 30}>
         <Defs>
           <SvgLinearGradient id="areaGradient" x1="0" y1="0" x2="0" y2="1">
             <Stop offset="0%" stopColor={color} stopOpacity="0.3" />
@@ -179,6 +180,7 @@ function ProgressChart({ data, color }: { data: { date: string; weight: number }
           );
         })}
       </Svg>
+      </View>
     </View>
   );
 }
@@ -527,6 +529,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-start",
     marginVertical: Spacing.md,
+    overflow: "hidden",
+  },
+  chartSvgWrapper: {
+    flex: 1,
+    overflow: "hidden",
   },
   yAxisLabels: {
     width: 50,
