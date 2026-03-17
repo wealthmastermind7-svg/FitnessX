@@ -47,39 +47,7 @@ interface Post {
   };
 }
 
-const SAMPLE_POSTS: Post[] = [
-  {
-    id: "1",
-    author: {
-      name: "Sarah Mitchell",
-      avatar: "https://i.pravatar.cc/100?img=5",
-      verified: true,
-    },
-    content: "Just completed my 100th workout this year! Consistency is truly the key to success. Never give up on your fitness journey!",
-    image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=800",
-    likes: 247,
-    dislikes: 3,
-    comments: 42,
-    timestamp: "2h ago",
-    liked: false,
-    bookmarked: false,
-  },
-  {
-    id: "2",
-    author: {
-      name: "Mike Johnson",
-      avatar: "https://i.pravatar.cc/100?img=8",
-      verified: false,
-    },
-    content: "New personal record on deadlifts today - 180kg! The grind never stops. Thanks to everyone for the support and motivation.",
-    likes: 156,
-    dislikes: 2,
-    comments: 28,
-    timestamp: "4h ago",
-    liked: true,
-    bookmarked: false,
-  },
-];
+const SAMPLE_POSTS: Post[] = [];
 
 function PostCard({ post, onLike, onBookmark }: { post: Post; onLike: () => void; onBookmark: () => void }) {
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -399,14 +367,22 @@ export default function CommunityScreen({ navigation }: any) {
           ))}
         </View>
 
-        {posts.map((post) => (
-          <PostCard
-            key={post.id}
-            post={post}
-            onLike={() => toggleLike(post.id)}
-            onBookmark={() => toggleBookmark(post.id)}
-          />
-        ))}
+        {posts.length === 0 ? (
+          <View style={styles.emptyState}>
+            <Feather name="users" size={64} color="rgba(255,107,107,0.3)" />
+            <ThemedText style={styles.emptyStateTitle}>No posts yet</ThemedText>
+            <ThemedText style={styles.emptyStateSubtitle}>Be the first to share your fitness journey</ThemedText>
+          </View>
+        ) : (
+          posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              onLike={() => toggleLike(post.id)}
+              onBookmark={() => toggleBookmark(post.id)}
+            />
+          ))
+        )}
       </ScrollView>
 
       <Pressable
@@ -428,6 +404,23 @@ export default function CommunityScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    marginTop: Spacing.md,
+  },
+  emptyStateSubtitle: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,

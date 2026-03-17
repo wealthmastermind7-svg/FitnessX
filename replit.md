@@ -10,7 +10,17 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.2 Build 7)
+## Recent Changes (v1.0.2 Build 6)
+
+**Removal of Demo/Sample Data (App Store Ready):**
+- Removed all hardcoded sample data from ProgressAnalyticsScreen, CommunityScreen, and CommunityFeedScreen
+- `SAMPLE_EXERCISES` in ProgressAnalyticsScreen: removed 3 hardcoded workouts → now empty array with empty state UI
+- `SAMPLE_POSTS` in CommunityScreen: removed 2 hardcoded posts → now empty array with empty state UI
+- `SAMPLE_FEED` in CommunityFeedScreen: removed 5 hardcoded workout posts → now empty array (uses only user-generated posts from AsyncStorage)
+- Added empty state messages to encourage users to start using features or upgrade
+- App is now 100% production-ready with no demo figures
+
+## Previous Changes (v1.0.2 Build 7)
 
 **Strava Removal:**
 - Completely removed Strava integration from the application due to API limitations for commercial apps.

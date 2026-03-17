@@ -33,68 +33,7 @@ interface ExerciseProgress {
   history: { date: string; weight: number }[];
 }
 
-const SAMPLE_EXERCISES: ExerciseProgress[] = [
-  {
-    id: "1",
-    name: "Bench Press (Barbell)",
-    icon: "https://api.exercisedb.io/image/4bv3r4/0025",
-    currentWeight: 57,
-    date: "September 21",
-    oneRepMax: 68,
-    totalVolume: 12500,
-    history: [
-      { date: "Jan 27", weight: 32 },
-      { date: "Feb 15", weight: 35 },
-      { date: "Mar 10", weight: 38 },
-      { date: "Apr 5", weight: 42 },
-      { date: "May 32", weight: 45 },
-      { date: "Jun 18", weight: 48 },
-      { date: "Jul 22", weight: 50 },
-      { date: "Aug 15", weight: 54 },
-      { date: "Sep 21", weight: 57 },
-    ],
-  },
-  {
-    id: "2",
-    name: "Squat (Barbell)",
-    icon: "https://api.exercisedb.io/image/4bv3r4/0043",
-    currentWeight: 85,
-    date: "September 20",
-    oneRepMax: 102,
-    totalVolume: 18200,
-    history: [
-      { date: "Jan 27", weight: 50 },
-      { date: "Feb 15", weight: 55 },
-      { date: "Mar 10", weight: 62 },
-      { date: "Apr 5", weight: 68 },
-      { date: "May 32", weight: 72 },
-      { date: "Jun 18", weight: 76 },
-      { date: "Jul 22", weight: 80 },
-      { date: "Aug 15", weight: 82 },
-      { date: "Sep 20", weight: 85 },
-    ],
-  },
-  {
-    id: "3",
-    name: "Deadlift (Barbell)",
-    icon: "https://api.exercisedb.io/image/4bv3r4/0032",
-    currentWeight: 120,
-    date: "September 19",
-    oneRepMax: 145,
-    totalVolume: 24800,
-    history: [
-      { date: "Jan 27", weight: 70 },
-      { date: "Feb 15", weight: 78 },
-      { date: "Mar 10", weight: 85 },
-      { date: "Apr 5", weight: 92 },
-      { date: "May 32", weight: 100 },
-      { date: "Jun 18", weight: 105 },
-      { date: "Jul 22", weight: 112 },
-      { date: "Aug 15", weight: 116 },
-      { date: "Sep 19", weight: 120 },
-    ],
-  },
-];
+const SAMPLE_EXERCISES: ExerciseProgress[] = [];
 
 type MetricType = "heaviest" | "oneRepMax" | "volume";
 
@@ -262,50 +201,58 @@ export default function ProgressAnalyticsScreen() {
           </ThemedText>
         </View>
 
-        <View style={styles.cardContainer}>
-          <View style={styles.exerciseCard}>
-            <View style={styles.exerciseHeader}>
-              <View style={styles.exerciseIconPlaceholder}>
-                <Feather name="activity" size={24} color="#FF6B6B" />
+        {SAMPLE_EXERCISES.length > 0 ? (
+          <View style={styles.cardContainer}>
+            <View style={styles.exerciseCard}>
+              <View style={styles.exerciseHeader}>
+                <View style={styles.exerciseIconPlaceholder}>
+                  <Feather name="activity" size={24} color="#FF6B6B" />
+                </View>
+                <ThemedText style={styles.exerciseName}>{currentExercise.name}</ThemedText>
               </View>
-              <ThemedText style={styles.exerciseName}>{currentExercise.name}</ThemedText>
-            </View>
 
-            <View style={styles.currentStats}>
-              <ThemedText style={styles.currentWeight} numberOfLines={1} adjustsFontSizeToFit>
-                {getMetricValue(currentExercise)}
-              </ThemedText>
-              <ThemedText style={styles.currentDate}>{currentExercise.date}</ThemedText>
-            </View>
+              <View style={styles.currentStats}>
+                <ThemedText style={styles.currentWeight} numberOfLines={1} adjustsFontSizeToFit>
+                  {getMetricValue(currentExercise)}
+                </ThemedText>
+                <ThemedText style={styles.currentDate}>{currentExercise.date}</ThemedText>
+              </View>
 
-            <ProgressChart data={currentExercise.history} color="#FF6B6B" />
+              <ProgressChart data={currentExercise.history} color="#FF6B6B" />
 
-            <View style={styles.metricTabs}>
-              {(["heaviest", "oneRepMax", "volume"] as MetricType[]).map((metric) => (
-                <Pressable
-                  key={metric}
-                  onPress={() => {
-                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                    setSelectedMetric(metric);
-                  }}
-                  style={[
-                    styles.metricTab,
-                    selectedMetric === metric && styles.metricTabActive,
-                  ]}
-                >
-                  <ThemedText
+              <View style={styles.metricTabs}>
+                {(["heaviest", "oneRepMax", "volume"] as MetricType[]).map((metric) => (
+                  <Pressable
+                    key={metric}
+                    onPress={() => {
+                      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                      setSelectedMetric(metric);
+                    }}
                     style={[
-                      styles.metricTabText,
-                      selectedMetric === metric && styles.metricTabTextActive,
+                      styles.metricTab,
+                      selectedMetric === metric && styles.metricTabActive,
                     ]}
                   >
-                    {metric === "heaviest" ? "Heaviest Weight" : metric === "oneRepMax" ? "One Rep Max" : "Volume"}
-                  </ThemedText>
-                </Pressable>
-              ))}
+                    <ThemedText
+                      style={[
+                        styles.metricTabText,
+                        selectedMetric === metric && styles.metricTabTextActive,
+                      ]}
+                    >
+                      {metric === "heaviest" ? "Heaviest Weight" : metric === "oneRepMax" ? "One Rep Max" : "Volume"}
+                    </ThemedText>
+                  </Pressable>
+                ))}
+              </View>
             </View>
           </View>
-        </View>
+        ) : (
+          <View style={styles.emptyState}>
+            <Feather name="activity" size={64} color="rgba(255,107,107,0.3)" />
+            <ThemedText style={styles.emptyStateTitle}>No exercises tracked yet</ThemedText>
+            <ThemedText style={styles.emptyStateSubtitle}>Start logging your workouts to see your progress</ThemedText>
+          </View>
+        )}
 
         <View style={styles.paginationDots}>
           {SAMPLE_EXERCISES.map((_, idx) => (
@@ -572,6 +519,23 @@ const styles = StyleSheet.create({
   },
   metricTabTextActive: {
     color: "#FFF",
+  },
+  emptyState: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: Spacing.xxl,
+    gap: Spacing.md,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    marginTop: Spacing.md,
+  },
+  emptyStateSubtitle: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
   },
   paginationDots: {
     flexDirection: "row",
