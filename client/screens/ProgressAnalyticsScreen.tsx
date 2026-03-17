@@ -514,13 +514,13 @@ const styles = StyleSheet.create({
   },
   currentStats: {
     marginBottom: Spacing.md,
-    marginRight: Spacing.md,
+    marginRight: Spacing.lg,
+    paddingRight: Spacing.md,
   },
   currentWeight: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "800",
     color: "#1A1A2E",
-    maxWidth: "90%",
   },
   currentDate: {
     fontSize: 14,
