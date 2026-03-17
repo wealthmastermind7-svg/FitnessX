@@ -26,17 +26,21 @@ export default function OnboardingWorkoutScreen() {
 
   const handleGetStarted = async () => {
     try {
+      console.log("[Onboarding] Get Started pressed");
       await completeOnboarding();
+      console.log("[Onboarding] Onboarding completed successfully");
     } catch (error) {
-      console.error("Failed to complete onboarding:", error);
+      console.error("[Onboarding] Failed to complete onboarding:", error);
     }
   };
 
   const handleSkip = async () => {
     try {
+      console.log("[Onboarding] Skip pressed");
       await completeOnboarding();
+      console.log("[Onboarding] Onboarding skipped successfully");
     } catch (error) {
-      console.error("Failed to skip onboarding:", error);
+      console.error("[Onboarding] Failed to skip onboarding:", error);
     }
   };
 
