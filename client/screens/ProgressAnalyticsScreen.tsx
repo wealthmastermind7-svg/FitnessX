@@ -272,7 +272,7 @@ export default function ProgressAnalyticsScreen() {
             </View>
 
             <View style={styles.currentStats}>
-              <ThemedText style={styles.currentWeight}>
+              <ThemedText style={styles.currentWeight} numberOfLines={1} adjustsFontSizeToFit>
                 {getMetricValue(currentExercise)}
               </ThemedText>
               <ThemedText style={styles.currentDate}>{currentExercise.date}</ThemedText>
@@ -514,11 +514,13 @@ const styles = StyleSheet.create({
   },
   currentStats: {
     marginBottom: Spacing.md,
+    marginRight: Spacing.md,
   },
   currentWeight: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: "800",
     color: "#1A1A2E",
+    maxWidth: "90%",
   },
   currentDate: {
     fontSize: 14,
