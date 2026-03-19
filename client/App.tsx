@@ -30,8 +30,10 @@ function NavigationRoot() {
     );
   }
 
+  console.log("[Navigation] isOnboardingComplete:", isOnboardingComplete, "showing:", isOnboardingComplete ? "RootStack" : "OnboardingStack");
+
   return (
-    <NavigationContainer>
+    <NavigationContainer key={isOnboardingComplete ? "root-stack" : "onboarding-stack"}>
       {isOnboardingComplete ? <RootStackNavigator /> : <OnboardingStackNavigator />}
     </NavigationContainer>
   );

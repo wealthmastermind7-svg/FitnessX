@@ -34,8 +34,11 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
 
   const completeOnboarding = async () => {
     try {
+      console.log("[Onboarding] Saving onboarding complete flag to AsyncStorage");
       await AsyncStorage.setItem(ONBOARDING_KEY, "true");
+      console.log("[Onboarding] Setting isOnboardingComplete to true");
       setIsOnboardingComplete(true);
+      console.log("[Onboarding] Onboarding state updated");
     } catch (error) {
       console.error("Error marking onboarding as complete:", error);
     }
