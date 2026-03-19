@@ -983,11 +983,10 @@ const styles = StyleSheet.create({
   muscleDistEmptyOverlayText: {
     ...Typography.caption,
     position: "absolute",
-    top: "50%",
+    bottom: Spacing.lg,
     left: 0,
     right: 0,
     textAlign: "center",
-    marginTop: -15,
     color: Colors.dark.textSecondary,
     fontStyle: "italic",
   },
