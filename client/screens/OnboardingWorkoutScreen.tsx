@@ -46,7 +46,7 @@ export default function OnboardingWorkoutScreen() {
 
   return (
     <View style={styles.root}>
-      <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.lg }]}>
+      <View style={[styles.container, { paddingTop: insets.top + Spacing.lg, paddingBottom: insets.bottom + Spacing.xl }]}>
         <View style={styles.header}>
           <Image source={require("@/assets/images/fitforge-icon.png")} style={styles.headerIcon} />
           <ThemedText style={styles.timeText}>9:41</ThemedText>
@@ -134,17 +134,19 @@ export default function OnboardingWorkoutScreen() {
           </View>
         </View>
 
-        <Pressable
-          onPress={handleGetStarted}
-          hitSlop={10}
-          style={({ pressed }) => [
-            styles.primaryButton,
-            pressed && styles.buttonPressed,
-          ]}
-        >
-          <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
-          <Feather name="arrow-right" size={20} color="white" />
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            onPress={handleGetStarted}
+            hitSlop={15}
+            style={({ pressed }) => [
+              styles.primaryButton,
+              pressed && styles.buttonPressed,
+            ]}
+          >
+            <ThemedText style={styles.primaryButtonText}>Get Started</ThemedText>
+            <Feather name="arrow-right" size={20} color="white" />
+          </Pressable>
+        </View>
       </View>
 
       <View style={styles.homeIndicator} />
@@ -325,6 +327,12 @@ const styles = StyleSheet.create({
   descriptionSection: {
     alignItems: "center",
     marginVertical: Spacing.xl,
+    marginBottom: Spacing.md,
+  },
+  buttonContainer: {
+    minHeight: 70,
+    justifyContent: "flex-end",
+    paddingHorizontal: Spacing.lg,
   },
   workoutTitleRow: {
     flexDirection: "row",
