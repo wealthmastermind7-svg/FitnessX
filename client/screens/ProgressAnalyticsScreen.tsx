@@ -273,43 +273,45 @@ export default function ProgressAnalyticsScreen() {
           ))}
         </View>
 
-        <View style={styles.insightsSection}>
-          <ThemedText style={styles.sectionTitle}>AI Insights</ThemedText>
-          
-          <View style={styles.insightCard}>
-            <LinearGradient
-              colors={["rgba(255, 107, 107, 0.15)", "rgba(255, 107, 107, 0.05)"]}
-              style={styles.insightGradient}
-            >
-              <View style={styles.insightIcon}>
-                <Feather name="trending-up" size={20} color="#FF6B6B" />
-              </View>
-              <View style={styles.insightContent}>
-                <ThemedText style={styles.insightTitle}>Strong Progress</ThemedText>
-                <ThemedText style={styles.insightText}>
-                  Your {currentExercise.name.split(" ")[0]} has increased by {Math.round(((currentExercise.currentWeight - currentExercise.history[0].weight) / currentExercise.history[0].weight) * 100)}% over the last 9 months. Keep up the consistency!
-                </ThemedText>
-              </View>
-            </LinearGradient>
-          </View>
+        {SAMPLE_EXERCISES.length > 0 && (
+          <View style={styles.insightsSection}>
+            <ThemedText style={styles.sectionTitle}>AI Insights</ThemedText>
+            
+            <View style={styles.insightCard}>
+              <LinearGradient
+                colors={["rgba(255, 107, 107, 0.15)", "rgba(255, 107, 107, 0.05)"]}
+                style={styles.insightGradient}
+              >
+                <View style={styles.insightIcon}>
+                  <Feather name="trending-up" size={20} color="#FF6B6B" />
+                </View>
+                <View style={styles.insightContent}>
+                  <ThemedText style={styles.insightTitle}>Strong Progress</ThemedText>
+                  <ThemedText style={styles.insightText}>
+                    Your {currentExercise.name.split(" ")[0]} has increased by {Math.round(((currentExercise.currentWeight - currentExercise.history[0].weight) / currentExercise.history[0].weight) * 100)}% over the last 9 months. Keep up the consistency!
+                  </ThemedText>
+                </View>
+              </LinearGradient>
+            </View>
 
-          <View style={styles.insightCard}>
-            <LinearGradient
-              colors={["rgba(78, 205, 196, 0.15)", "rgba(78, 205, 196, 0.05)"]}
-              style={styles.insightGradient}
-            >
-              <View style={[styles.insightIcon, { backgroundColor: "rgba(78, 205, 196, 0.2)" }]}>
-                <Feather name="target" size={20} color="#4ECDC4" />
-              </View>
-              <View style={styles.insightContent}>
-                <ThemedText style={styles.insightTitle}>Next Milestone</ThemedText>
-                <ThemedText style={styles.insightText}>
-                  You're {currentExercise.oneRepMax - currentExercise.currentWeight} kg away from your projected one rep max. Focus on progressive overload to get there.
-                </ThemedText>
-              </View>
-            </LinearGradient>
+            <View style={styles.insightCard}>
+              <LinearGradient
+                colors={["rgba(78, 205, 196, 0.15)", "rgba(78, 205, 196, 0.05)"]}
+                style={styles.insightGradient}
+              >
+                <View style={[styles.insightIcon, { backgroundColor: "rgba(78, 205, 196, 0.2)" }]}>
+                  <Feather name="target" size={20} color="#4ECDC4" />
+                </View>
+                <View style={styles.insightContent}>
+                  <ThemedText style={styles.insightTitle}>Next Milestone</ThemedText>
+                  <ThemedText style={styles.insightText}>
+                    You're {currentExercise.oneRepMax - currentExercise.currentWeight} kg away from your projected one rep max. Focus on progressive overload to get there.
+                  </ThemedText>
+                </View>
+              </LinearGradient>
+            </View>
           </View>
-        </View>
+        )}
 
         <View style={styles.statsGrid}>
           <View style={styles.statCard}>
