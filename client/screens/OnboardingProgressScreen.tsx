@@ -264,9 +264,10 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   currentWeight: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "800",
     color: "#1A1A2E",
+    maxWidth: "100%",
   },
   currentDate: {
     fontSize: 14,

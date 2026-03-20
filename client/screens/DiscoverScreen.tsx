@@ -492,11 +492,12 @@ const styles = StyleSheet.create({
     ...Typography.h2,
     color: "#FFF",
     textAlign: "center",
-    fontSize: 28,
+    fontSize: 24,
     marginBottom: Spacing.md,
     textShadowColor: "rgba(0,0,0,0.5)",
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
+    maxWidth: "90%",
   },
   premiumScanIndicator: {
     flexDirection: "row",
