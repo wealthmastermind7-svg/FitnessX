@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     color: "#1A1A2E",
     maxWidth: "100%",
+    flexWrap: "wrap",
   },
   currentDate: {
     fontSize: 14,

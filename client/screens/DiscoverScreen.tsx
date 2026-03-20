@@ -498,6 +498,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
     maxWidth: "90%",
+    flexWrap: "wrap",
   },
   premiumScanIndicator: {
     flexDirection: "row",
