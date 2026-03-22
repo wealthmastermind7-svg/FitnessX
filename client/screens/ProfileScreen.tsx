@@ -109,7 +109,7 @@ function StatCard({ label, value, icon }: { label: string; value: string | numbe
     <View style={styles.statCard}>
       <Feather name={icon} size={24} color="#FF6B6B" style={{ marginBottom: Spacing.sm }} />
       <ThemedText style={styles.statValue}>{value}</ThemedText>
-      <ThemedText style={styles.statLabel}>{label}</ThemedText>
+      <ThemedText style={styles.statLabel} numberOfLines={1}>{label}</ThemedText>
     </View>
   );
 }
