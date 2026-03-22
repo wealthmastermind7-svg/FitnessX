@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.fitforge.app",
+      "bundleIdentifier": "com.cerolauto.fitforge",
       "buildNumber": "3",
       "infoPlist": {
         "NSAppTransportSecurity": {
@@ -44,7 +44,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.fitforge.app"
+      "package": "com.cerolauto.fitforge"
     },
     "web": {
       "output": "single",
