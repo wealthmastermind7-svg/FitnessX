@@ -802,11 +802,13 @@ const styles = StyleSheet.create({
     color: "#FF6B6B",
     letterSpacing: 2,
     marginBottom: Spacing.xs,
+    lineHeight: 20,
   },
   screenTitle: {
     ...Typography.h1,
     fontSize: 42,
     marginBottom: Spacing.xl,
+    lineHeight: 52,
   },
   avatarSection: {
     alignItems: "center",

@@ -10,7 +10,18 @@ The project's ambition is to provide a comprehensive, local-first fitness soluti
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (v1.0.2 Build 6)
+## Recent Changes (v1.0.2 Build 7 - UI Polish & Cleanup)
+
+**Text Rendering & Layout Fixes:**
+- Fixed vertical text truncation on OnboardingProgressScreen: added `lineHeight: 40` to currentWeight (57 kg) and `marginTop: Spacing.sm` to currentStats
+- Fixed vertical text truncation on ProfileScreen: added `lineHeight: 20` to screenTagline (YOUR) and `lineHeight: 52` to screenTitle (Profile)
+- Added `flexWrap: "wrap"` to DiscoverScreen (Analyse Food Plate) and OnboardingProgressScreen text elements for proper word wrapping
+
+**Project Cleanup:**
+- Removed 122MB `attached_assets/` directory containing old canvas/design development images
+- Project is now production-optimized with only necessary assets
+
+## Previous Changes (v1.0.2 Build 6)
 
 **Removal of Demo/Sample Data (App Store Ready):**
 - Removed all hardcoded sample data from ProgressAnalyticsScreen, CommunityScreen, and CommunityFeedScreen
