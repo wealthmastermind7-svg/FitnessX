@@ -325,15 +325,15 @@ export default function PaywallScreen() {
             <ThemedText style={styles.footerLink}>Restore Purchases</ThemedText>
           </Pressable>
           <ThemedText style={styles.footerSeparator}>•</ThemedText>
-          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms-of-service')}>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/terms-of-service')}>
             <ThemedText style={styles.footerLink}>Terms</ThemedText>
           </Pressable>
           <ThemedText style={styles.footerSeparator}>•</ThemedText>
-          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/privacy-policy')}>
             <ThemedText style={styles.footerLink}>Privacy</ThemedText>
           </Pressable>
           <ThemedText style={styles.footerSeparator}>•</ThemedText>
-          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/sources')}>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/sources')}>
             <ThemedText style={styles.footerLink}>Sources</ThemedText>
           </Pressable>
         </View>
