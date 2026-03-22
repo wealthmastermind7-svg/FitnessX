@@ -786,7 +786,7 @@ export default function ProfileScreen() {
           <ThemedText style={styles.copyrightText}>© 2026 FitForgeX. All rights reserved.</ThemedText>
           
           <View style={styles.legalLinks}>
-            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms-of-service')}>
               <ThemedText style={styles.legalLink}>Terms of Service</ThemedText>
             </Pressable>
             <ThemedText style={styles.legalSeparator}>•</ThemedText>
