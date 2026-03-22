@@ -764,23 +764,6 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Legal</ThemedText>
-          <View style={styles.settingsCard}>
-            <SettingsRow
-              icon="shield"
-              label="Privacy Policy"
-              onPress={() => WebBrowser.openBrowserAsync("https://luxeweb.cerolauto.store/FitForgeX/privacy-policy")}
-            />
-            <View style={styles.settingsDivider} />
-            <SettingsRow
-              icon="file-text"
-              label="Terms of Service"
-              onPress={() => WebBrowser.openBrowserAsync("https://luxeweb.cerolauto.store/FitForgeX/terms")}
-            />
-          </View>
-        </View>
-
         <View style={styles.footer}>
           <ThemedText style={styles.versionText}>FitForgeX v1.0.2 Build 7</ThemedText>
           <ThemedText style={styles.copyrightText}>© 2026 FitForgeX. All rights reserved.</ThemedText>
