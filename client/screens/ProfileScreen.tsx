@@ -786,11 +786,11 @@ export default function ProfileScreen() {
           <ThemedText style={styles.copyrightText}>© 2026 FitForgeX. All rights reserved.</ThemedText>
           
           <View style={styles.legalLinks}>
-            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/terms-of-service')}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms-of-service')}>
               <ThemedText style={styles.legalLink}>Terms of Service</ThemedText>
             </Pressable>
             <ThemedText style={styles.legalSeparator}>•</ThemedText>
-            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://fitforgex.com/privacy-policy')}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}>
               <ThemedText style={styles.legalLink}>Privacy Policy</ThemedText>
             </Pressable>
           </View>
