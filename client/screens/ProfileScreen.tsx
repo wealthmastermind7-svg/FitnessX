@@ -770,13 +770,13 @@ export default function ProfileScreen() {
             <SettingsRow
               icon="shield"
               label="Privacy Policy"
-              onPress={() => WebBrowser.openBrowserAsync("https://fitforgex.com/privacy")}
+              onPress={() => WebBrowser.openBrowserAsync("https://luxeweb.cerolauto.store/FitForgeX/privacy-policy")}
             />
             <View style={styles.settingsDivider} />
             <SettingsRow
               icon="file-text"
               label="Terms of Service"
-              onPress={() => WebBrowser.openBrowserAsync("https://fitforgex.com/terms")}
+              onPress={() => WebBrowser.openBrowserAsync("https://luxeweb.cerolauto.store/FitForgeX/terms")}
             />
           </View>
         </View>
