@@ -325,7 +325,7 @@ export default function PaywallScreen() {
             <ThemedText style={styles.footerLink}>Restore Purchases</ThemedText>
           </Pressable>
           <ThemedText style={styles.footerSeparator}>•</ThemedText>
-          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms-of-service')}>
+          <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}>
             <ThemedText style={styles.footerLink}>Terms</ThemedText>
           </Pressable>
           <ThemedText style={styles.footerSeparator}>•</ThemedText>
