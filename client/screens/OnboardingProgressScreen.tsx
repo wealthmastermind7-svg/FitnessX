@@ -262,6 +262,7 @@ const styles = StyleSheet.create({
   },
   currentStats: {
     marginBottom: Spacing.sm,
+    marginTop: Spacing.sm,
   },
   currentWeight: {
     fontSize: 32,
@@ -269,6 +270,7 @@ const styles = StyleSheet.create({
     color: "#1A1A2E",
     maxWidth: "100%",
     flexWrap: "wrap",
+    lineHeight: 40,
   },
   currentDate: {
     fontSize: 14,
