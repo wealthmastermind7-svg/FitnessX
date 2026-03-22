@@ -782,8 +782,18 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.footer}>
-          <ThemedText style={styles.versionText}>FitForgeX v1.0.2 Build 6</ThemedText>
+          <ThemedText style={styles.versionText}>FitForgeX v1.0.2 Build 7</ThemedText>
           <ThemedText style={styles.copyrightText}>© 2026 FitForgeX. All rights reserved.</ThemedText>
+          
+          <View style={styles.legalLinks}>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/terms')}>
+              <ThemedText style={styles.legalLink}>Terms of Service</ThemedText>
+            </Pressable>
+            <ThemedText style={styles.legalSeparator}>•</ThemedText>
+            <Pressable onPress={() => WebBrowser.openBrowserAsync('https://luxeweb.cerolauto.store/FitForgeX/privacy-policy')}>
+              <ThemedText style={styles.legalLink}>Privacy Policy</ThemedText>
+            </Pressable>
+          </View>
         </View>
       </ScrollView>
     </ThemedView>
@@ -1118,6 +1128,24 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   copyrightText: {
+    ...Typography.caption,
+    fontSize: 10,
+    color: Colors.dark.textSecondary,
+    opacity: 0.5,
+    marginBottom: Spacing.md,
+  },
+  legalLinks: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  legalLink: {
+    ...Typography.caption,
+    fontSize: 10,
+    color: "#FF6B6B",
+  },
+  legalSeparator: {
     ...Typography.caption,
     fontSize: 10,
     color: Colors.dark.textSecondary,
