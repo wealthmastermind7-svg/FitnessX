@@ -300,9 +300,9 @@ export default function MicroHabitsScreen() {
         showsVerticalScrollIndicator={false}
       >
         <ThemedText style={styles.screenTagline}>MICRO-HABIT</ThemedText>
-        <ThemedText style={styles.screenTitle}>Autopilot</ThemedText>
+        <ThemedText style={styles.screenTitle}>Daily Movement Reminders</ThemedText>
         <ThemedText style={styles.screenSubtitle}>
-          Fitness that fits into your life. Quick movements triggered by everyday moments.
+          Quick exercises tied to everyday moments. Enable the habits you want to practice and track your progress.
         </ThemedText>
 
         <View style={styles.statsCard}>
