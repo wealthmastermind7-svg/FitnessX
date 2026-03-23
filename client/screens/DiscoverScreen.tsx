@@ -362,17 +362,11 @@ export default function DiscoverScreen() {
             <View style={[styles.exerciseLibraryGradient, { backgroundColor: '#FF6B6B', height: '100%' }]}>
               <View style={styles.exerciseLibraryContent}>
                 <View style={styles.exerciseLibraryText}>
-                  <View style={[styles.exerciseLibraryBadge, { backgroundColor: "rgba(255,255,255,0.2)" }]}>
-                    <Feather name="coffee" size={14} color="#FFF" />
-                    <ThemedText style={[styles.exerciseLibraryBadgeText, { color: "#FFF" }]}>
-                      AUTOPILOT
-                    </ThemedText>
-                  </View>
                   <ThemedText style={styles.exerciseLibraryTitle}>
                     Micro-Habits
                   </ThemedText>
                   <ThemedText style={[styles.exerciseLibrarySubtitle, { color: "rgba(255,255,255,0.85)" }]}>
-                    30-90 sec movements triggered by daily moments
+                    Quick exercises you can practice anytime
                   </ThemedText>
                 </View>
                 <View style={styles.exerciseLibraryPreview}>
